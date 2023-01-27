@@ -2,6 +2,17 @@
 @section('title', 'UGEL - HUACAYBAMBA')
 @section('content')
 <!-- START SECTION BANNER -->
+<div class="news_ticker bg-warning">
+    <div class="container">
+        <marquee behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+            <span style="color:black; font-weight: bold">NOTICIAS RECIENTES </span>&nbsp;:&nbsp;
+            @foreach ($noticias as $item)
+                <a href="{{route('noticia', $item->id)}}" target="_blank">{{$item->titulo}}</a> ||
+            @endforeach
+        </marquee>
+    </div>
+</div>
+
 <section class="banner_section p-0 full_screen">
     <div id="carouselExampleControls" class="banner_content_wrap carousel slide" data-ride="carousel">
         <div class="carousel-inner">
@@ -41,54 +52,107 @@
 </section>
   <!-- END SECTION BANNER -->
 
-  <section class="p-0 overlap_box">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="cat_overlap_box course_categories carousel_slider owl-carousel owl-theme nav_style1" data-margin="15" data-nav="true" data-dots="false" data-loop="true" data-autoplay="true" data-responsive='{"0":{"items": "1"}, "380":{"items": "2"}, "576":{"items": "3"}, "1000":{"items": "4"}, "1199":{"items": "5"}}'>
-                    <div class="item">
+
+
+
+<div class="row">
+    <div class="col-10">
+        <section class="pb-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
                         <div class="single_categories">
-                            <a href="#" class="bg_danger">
-                                <i class="fa fa-globe"></i>
-                                Scholarship
+                            <a href="{{route('directorioweb')}}" class="bg_danger small p-3">
+                                <i class="fa fa-desktop"></i>
+                                Directorio Institucional
                             </a>
                         </div>
                     </div>
-                    <div class="item">
+                    <div class="col">
                         <div class="single_categories">
-                            <a href="#" class="bg_light_green">
+                            <a href="#" class="bg_light_green small p-3">
                                 <i class="fa fa-chart-line"></i>
                                 2500+ Courses
                             </a>
                         </div>
                     </div>
-                    <div class="item">
+                    <div class="col">
                         <div class="single_categories">
-                            <a href="#" class="bg_default">
+                            <a href="#" class="bg_default small p-3">
                                 <i class="fa fa-book"></i>
                                 Admission
                             </a>
                         </div>
                     </div>
-                    <div class="item">
+                    <div class="col">
                         <div class="single_categories">
-                            <a href="#" class="bg_pink">
+                            <a href="{{route('galerias')}}" class="bg_pink small p-3">
+                                <i class="fa fa-camera"></i>
+                                Galeria de Imagenes
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="single_categories">
+                            <a href="#" class="bg_blue small p-3">
+                                <i class="fa fa-heartbeat"></i>
+                                    academics
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="single_categories">
+                            <a href="#" class="bg_orange small p-3">
+                                <i class="fa fa-code"></i>
+                                Campus life
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="single_categories">
+                            <a href="#" class="bg_danger small p-3">
+                                <i class="fa fa-globe"></i>
+                                Scholarship
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="single_categories">
+                            <a href="#" class="bg_light_green small p-3">
+                                <i class="fa fa-chart-line"></i>
+                                2500+ Courses
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="single_categories">
+                            <a href="#" class="bg_default small p-3">
+                                <i class="fa fa-book"></i>
+                                Admission
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="single_categories">
+                            <a href="#" class="bg_pink small p-3">
                                 <i class="fa fa-camera"></i>
                                 Global exposure
                             </a>
                         </div>
                     </div>
-                    <div class="item">
+                    <div class="col">
                         <div class="single_categories">
-                            <a href="#" class="bg_blue">
+                            <a href="#" class="bg_blue small p-3">
                                 <i class="fa fa-heartbeat"></i>
-                                 academics
+                                    academics
                             </a>
                         </div>
                     </div>
-                    <div class="item">
+                    <div class="col">
                         <div class="single_categories">
-                            <a href="#" class="bg_orange">
+                            <a href="#" class="bg_orange small p-3">
                                 <i class="fa fa-code"></i>
                                 Campus life
                             </a>
@@ -96,940 +160,157 @@
                     </div>
                 </div>
             </div>
+        </section>
+
+      <!-- START SECTION NOTICIAS -->
+      <section class="pt-0">
+        <div class="container">
+                <div class="row mb-0 mt-0">
+                    <div class="col d-flex align-items-start flex-column">
+                        <div class="mt-auto p-0"><br>
+                            <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                            <h2>NOTICIAS</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3 align-self-end pb-3">
+                        <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.07s">
+                            <div class="medium_divider"></div>
+                            <a href="{{route('allnoticias')}}" class="btn btn-sm btn-default rounded-0">Ver Mas Noticias <i class="ion-ios-arrow-thin-right ml-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+    
+                    <div class="col-12 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                        <div class="testimonial_slider testimonial_style2 carousel_slider owl-carousel owl-theme" data-margin="30" data-loop="true" data-autoplay="true" data-dots="false" data-responsive='{"0":{"items": "1"}, "380":{"items": "1"}, "576":{"items": "2"}, "1199":{"items": "3"}}'>
+                              
+                            @foreach ($noticias as $item)
+                            <div class="testimonial_box mt-4">
+                                <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                                    <div class="content_img">
+                                        <a href="{{route('noticia', $item->id)}}"><img src="{{asset('img/noticias/'.$item->img1)}}" alt="{{$item->titulo}}" height="190px"/></a>
+                                    </div>
+                                    <div class="content_desc">
+                                        <h4 class="content_title"><a href="{{route('noticia', $item->id)}}" title="{{$item->titulo}}">{{ Str::limit($item->titulo, 30) }}</a></h4>
+                                          <p>{{ Str::limit($item->descripcioncorta, 40) }}</p>
+                                        @php
+                                            $date = date_create($item->fechapubli);
+                                        @endphp
+                                    </div>
+                                    <div class="content_footer">
+                                        <div class="teacher">
+                                            <a href="{{route('noticia', $item->id)}}" class="btn btn-primary btn-sm"><span>Ver Mas</span></a>
+                                        </div>
+                                        <div class="price">
+                                          <span class="alert alert-default"> Pub : {{ date_format($date, 'd-m-Y')}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                          </div>
+                      </div>
+                  </div>
+          </div>
+        </section>
+        <!-- END SECTION NOTICIAS -->
+    <!-- START SECTION COUNTER -->
+    <section class="parallax_bg overlay_bg_blue_70" data-parallax-bg-image="{{asset('plantillas/eduglobal/assets/images/video_bg.jpg')}}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-6 ">
+                    <div class="box_counter counter_style1 text_white text-center animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                      <div class="counter_icon">
+                          <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon1.png') }}" alt="counter_icon1" />
+                        </div>
+                        <div class="counter_content">
+                            <h3 class="counter_text"><span class="counter">1800</span>+</h3>
+                            <p>Students</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-6 ">
+                    <div class="box_counter counter_style1 text_white text-center animation" data-animation="fadeInUp" data-animation-delay="0.03s">
+                        <div class="counter_icon">
+                          <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon2.png') }}" alt="counter_icon2" />
+                        </div>
+                        <div class="counter_content">
+                            <h3 class="counter_text"><span class="counter">70</span></h3>
+                            <p>Courses</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-6 ">
+                    <div class="box_counter counter_style1 text_white text-center animation" data-animation="fadeInUp" data-animation-delay="0.04s">
+                        <div class="counter_icon">
+                          <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon3.png') }}" alt="counter_icon3" />
+                        </div>
+                        <div class="counter_content">
+                            <h3 class="counter_text"><span class="counter">700</span>+</h3>
+                            <p>Certified teachers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-6 ">
+                    <div class="box_counter counter_style1 text_white text-center animation" data-animation="fadeInUp" data-animation-delay="0.05s">
+                      <div class="counter_icon">
+                          <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon4.png') }}" alt="counter_icon4" />
+                        </div>
+                        <div class="counter_content">
+                            <h3 class="counter_text"><span class="counter">1200</span>+</h3>
+                            <p>Award Winning</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-  </section>
+      </section>
+      <!-- END SECTION COUNTER -->
 
 
-<div class="row">
-    <div class="col-10">
+<!-- START SECTION COMUNICADOS -->
+<section class="bg_gray">
+	<div class="container">	
+    	<div class="row">
+        	<div class="col-12">
+            	<div class="heading_s1 text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                	<h2>COMUNICADOS</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
 
-  
 
-  
-  <!-- START SECTION FEATURE -->
-  <section class="small_pb">
-    <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-xl-6 col-lg-8">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                    <div class="heading_s1 text-center">
-                        <h2>Why Choose Us</h2>
-                    </div>
-                    <p>If you are going to use a passage of you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="icon_box icon_box_style1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-                  <div class="box_icon mb-3">
-                    <i class="fa fa-book text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>Books & Library</h5>
-                        <p>If you are going to use a passage of anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <div class="icon_box icon_box_style1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
-                  <div class="box_icon mb-3">
-                    <i class="fa fa-globe text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>Learn Courses Online</h5>
-                        <p>If you are going to use a passage of anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <div class="icon_box icon_box_style1 animation"  data-animation="fadeInUp" data-animation-delay="0.04s">
-                  <div class="box_icon mb-3">
-                        <i class="fa fa-user-tie text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>Expert Instructors</h5>
-                        <p>If you are going to use passage of anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <div class="icon_box icon_box_style1 animation"  data-animation="fadeInUp" data-animation-delay="0.05s">
-                  <div class="box_icon mb-3">
-                        <i class="fa fa-child text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>Kids Education</h5>
-                        <p>If you are going to use passage of anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <div class="icon_box icon_box_style1 animation"  data-animation="fadeInUp" data-animation-delay="0.06s">
-                  <div class="box_icon mb-3">
-                        <i class="fa fa-headphones-alt text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>music Programs</h5>
-                        <p>If you are going to use passage of anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <div class="icon_box icon_box_style1 animation"  data-animation="fadeInUp" data-animation-delay="0.07s">
-                  <div class="box_icon mb-3">
-                        <i class="fa fa-graduation-cap text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>Scholarship</h5>
-                        <p>If you are going to use passage of anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section> 
-  <!-- END SECTION FEATURE -->
-  
-  <!-- START SECTION ABOUT -->
-  <section class="overflow-hidden small_pt small_pb">
-  <div class="container-fluid p-0">
-      <div class="row no-gutters ">
-          <div class="col-lg-6">
-                <div class="bg_gray h-100 d-flex align-items-center padding_eight_all">
-                  <div class="animation" data-animation="fadeInLeft" data-animation-delay="0.02s">
-                        <div class="heading_s1"> 
-                          <h2>About Us</h2>
-                        </div>
-                        <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary</p>
-                        <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary.</p>
-                        <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text.</p>
-                        <ul class="list_none list_item">
-                          <li>
-                              <div class="counter_content">
-                                    <h3 class="h1 text_danger"><span class="counter">260</span></h3>
-                                    <h6>Free Courses</h6>
-                                </div>
-                            </li>
-                            <li>
-                              <div class="counter_content">
-                                    <h3 class="h1 text_light_green"><span class="counter">152</span></h3>
-                                    <h6>Paid Courses</h6>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 animation" data-animation="fadeInRight" data-animation-delay="0.03s">
-              <div class="overlay_bg_30 about_img z_index_minus1 h-100 background_bg md-height-300" data-img-src="{{ asset('plantillas/eduglobal/assets/images/about_img.jpg') }}"></div>
-                <a href="https://www.youtube.com/watch?v=7e90gBu4pas" class="video_popup video_play">
-                    <span class="ripple"><i class="ion-play ml-1"></i></span>
-                </a>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION ABOUT -->
-  
-  <!-- START SECTION FACULTY -->
-  <section class="small_pt">
-  <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-xl-6 col-lg-8">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.2s">
-                    <div class="heading_s1 text-center">
-                        <h2>Our Faculty</h2>
-                    </div>
-                    <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="overlay_bg_danger_90 icon_box text-center text_white background_bg animation" data-animation="fadeInUp" data-animation-delay="0.2s">
-                    <div class="intro_desc">
-                        <h5>Faculty of Pharmacy</h5>
-                        <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-              <div class="overlay_bg_light_green_90 icon_box text-center text_white background_bg animation" data-animation="fadeInUp" data-animation-delay="0.4s">
-                    <div class="intro_desc">
-                        <h5>Faculty of Computer Science</h5>
-                        <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-              <div class="overlay_bg_default_90 icon_box text-center text_white background_bg animation"  data-animation="fadeInUp" data-animation-delay="0.6s">
-                    <div class="intro_desc">
-                        <h5>Faculty of Design</h5>
-                        <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.2s">
-                  <div class="medium_divider"></div>
-                  <a href="#" class="btn btn-default rounded-0">View All Faculty <i class="ion-ios-arrow-thin-right ml-1"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION FACULTY -->
-  
-  <!-- START SECTION VIDEO -->
-  <section class="parallax_bg overlay_bg_blue_70" data-parallax-bg-image="{{asset('plantillas/eduglobal/assets/images/banner5.jpg')}}">
-  <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-md-6">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                  <a href="https://www.youtube.com/watch?v=7e90gBu4pas" class="video_popup">
-                      <span class="ripple"><i class="ion-play ml-1"></i></span>
-                    </a>
-                    <div class="mt-md-5 mt-4 text_white animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-                      <h2>Video Tutorial For Our Campus</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION VIDEO -->
-  
-  <!-- START SECTION COURSES -->
-  <section>
-  <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-xl-6 col-lg-8">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                    <div class="heading_s1 text-center">
-                        <h2>Popular Courses</h2>
-                    </div>
-                    <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-4 col-sm-6">
-              <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-                  <div class="content_img">
-                      <a href="#"><img src="{{asset('plantillas/eduglobal/assets/images/course_img1.jpg') }}" alt="course_img1"/></a>
-                    </div>
-                    <div class="content_desc">
-                      <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                        <div class="courses_info">
-                          <div class="rating_stars">
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star-half"></i> 
-                            </div>
-                            <ul class="list_none content_meta">
-                                <li><a href="#" ><i class="ti-user"></i>31</a></li>
-                                <li><a href="#"><i class="ti-heart"></i>10</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="content_footer">
-                        <div class="teacher">
-                            <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/user1.jpg') }}" alt="user1"><span>Alia Noor</span></a>
-                        </div>
-                        <div class="price">
-                          <span class="alert alert-success">Free</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-sm-6">
-              <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
-                  <div class="content_img">
-                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/course_img2.jpg') }}" alt="course_img2"/></a>
-                    </div>
-                    <div class="content_desc">
-                      <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                        <div class="courses_info">
-                          <div class="rating_stars">
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star-half"></i> 
-                            </div>
-                            <ul class="list_none content_meta">
-                                <li><a href="#" ><i class="ti-user"></i>31</a></li>
-                                <li><a href="#"><i class="ti-heart"></i>10</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="content_footer">
-                        <div class="teacher">
-                            <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/user2.jpg') }}" alt="user2"><span>Dany Core</span></a>
-                        </div>
-                        <div class="price">
-                          <span class="alert alert-info">$49</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-sm-6">
-              <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-                  <div class="content_img">
-                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/course_img3.jpg') }}" alt="course_img3"/></a>
-                    </div>
-                    <div class="content_desc">
-                      <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                        <div class="courses_info">
-                          <div class="rating_stars">
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star-half"></i> 
-                            </div>
-                            <ul class="list_none content_meta">
-                                <li><a href="#" ><i class="ti-user"></i>31</a></li>
-                                <li><a href="#"><i class="ti-heart"></i>10</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="content_footer">
-                        <div class="teacher">
-                            <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/user3.jpg') }}" alt="user3"><span>Smith Parker</span></a>
-                        </div>
-                        <div class="price">
-                          <span class="alert alert-success">Free</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-sm-6">
-              <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.05s">
-                  <div class="content_img">
-                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/course_img4.jpg') }}" alt="course_img4"/></a>
-                    </div>
-                    <div class="content_desc">
-                      <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                        <div class="courses_info">
-                          <div class="rating_stars">
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star-half"></i> 
-                            </div>
-                            <ul class="list_none content_meta">
-                                <li><a href="#" ><i class="ti-user"></i>31</a></li>
-                                <li><a href="#"><i class="ti-heart"></i>10</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="content_footer">
-                        <div class="teacher">
-                            <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/user4.jpg') }}" alt="user4"><span>Sara Robert</span></a>
-                        </div>
-                        <div class="price">
-                          <span class="alert alert-info">$54</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-sm-6">
-              <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.06s">
-                  <div class="content_img">
-                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/course_img5.jpg') }}" alt="course_img5"/></a>
-                    </div>
-                    <div class="content_desc">
-                      <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                        <div class="courses_info">
-                          <div class="rating_stars">
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star-half"></i> 
-                            </div>
-                            <ul class="list_none content_meta">
-                                <li><a href="#" ><i class="ti-user"></i>31</a></li>
-                                <li><a href="#"><i class="ti-heart"></i>10</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="content_footer">
-                        <div class="teacher">
-                            <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/user5.jpg') }}" alt="user5"><span>Wendy Nahse</span></a>
-                        </div>
-                        <div class="price">
-                          <span class="alert alert-info">$36</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-sm-6">
-              <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.07s">
-                  <div class="content_img">
-                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/course_img6.jpg') }}" alt="course_img6"/></a>
-                    </div>
-                    <div class="content_desc">
-                      <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                        <div class="courses_info">
-                          <div class="rating_stars">
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star"></i>
-                                <i class="ion-android-star-half"></i> 
-                            </div>
-                            <ul class="list_none content_meta">
-                                <li><a href="#" ><i class="ti-user"></i>31</a></li>
-                                <li><a href="#"><i class="ti-heart"></i>10</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="content_footer">
-                        <div class="teacher">
-                            <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/user6.jpg') }}" alt="user6"><span>John Wood</span></a>
-                        </div>
-                        <div class="price">
-                          <span class="alert alert-info">$22</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.07s">
-                  <div class="medium_divider"></div>
-                  <a href="#" class="btn btn-default rounded-0">View All Courses <i class="ion-ios-arrow-thin-right ml-1"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION COURSES -->
-  
-  <!-- START SECTION COUNTER -->
-  <section class="parallax_bg overlay_bg_blue_70" data-parallax-bg-image="{{asset('plantillas/eduglobal/assets/images/video_bg.jpg')}}">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-3 col-6 ">
-                <div class="box_counter counter_style1 text_white text-center animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-                  <div class="counter_icon">
-                      <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon1.png') }}" alt="counter_icon1" />
-                    </div>
-                    <div class="counter_content">
-                        <h3 class="counter_text"><span class="counter">1800</span>+</h3>
-                        <p>Students</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-6 ">
-                <div class="box_counter counter_style1 text_white text-center animation" data-animation="fadeInUp" data-animation-delay="0.03s">
-                    <div class="counter_icon">
-                      <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon2.png') }}" alt="counter_icon2" />
-                    </div>
-                    <div class="counter_content">
-                        <h3 class="counter_text"><span class="counter">70</span></h3>
-                        <p>Courses</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-6 ">
-                <div class="box_counter counter_style1 text_white text-center animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-                    <div class="counter_icon">
-                      <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon3.png') }}" alt="counter_icon3" />
-                    </div>
-                    <div class="counter_content">
-                        <h3 class="counter_text"><span class="counter">700</span>+</h3>
-                        <p>Certified teachers</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3 col-6 ">
-                <div class="box_counter counter_style1 text_white text-center animation" data-animation="fadeInUp" data-animation-delay="0.05s">
-                  <div class="counter_icon">
-                      <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon4.png') }}" alt="counter_icon4" />
-                    </div>
-                    <div class="counter_content">
-                        <h3 class="counter_text"><span class="counter">1200</span>+</h3>
-                        <p>Award Winning</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION COUNTER -->
-  
-  <!-- START SECTION EVENT -->
-  <section>
-  <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-xl-6 col-lg-8">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                    <div class="heading_s1 text-center">
-                        <h2>Upcoming events</h2>
-                    </div>
-                    <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                </div>
-            </div>
-        </div>
-        <div class="row event_list justify-content-center">
-          <div class="col-lg-6">
-              <div class="content_box event_box box_shadow1 animation mb-4 mb-lg-0" data-animation="fadeInUp" data-animation-delay="0.02s">
-                  <div class="content_img">
-                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/event_img1.jpg') }}" alt="event_img1"/></a>
-                    </div>
-                    <div class="event_date">
-                          <h5><span>16</span> May</h5>
-                            <span class="event_time bg_default">10:00 am 3:00 pm</span>
-                        </div>
-                    <div class="content_desc bg-white">
-                      <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                        <ul class="list_none content_meta">
-                          <li><i class="ti-user"></i> <a href="#" class="text_default">John Wood</a></li>
-                            <li><i class="ti-location-pin"></i><span class="text_default">New York City</span></li>
-                        </ul>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="content_box event_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
-                            <div class="event_date">
-                                    <h5><span>27</span> Apr</h5>
-                                    <span class="event_time bg_default">9:00 am 4:00 pm</span>
-                                </div>
-                            <div class="content_desc bg-white">	
-                                <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                                <ul class="list_none content_meta">
-                                    <li><i class="ti-user"></i> <a href="#" class="text_default">John Wood</a></li>
-                                    <li><i class="ti-location-pin"></i><span class="text_default">New York City</span></li>
-                                </ul>
-                                <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                            </div>
-                        </div>
-                        <div class="content_box event_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-                        <div class="event_date">
-                                <h5><span>22</span> Jun</h5>
-                                <span class="event_time bg_default">11:00 am 4:00 pm</span>
-                            </div>
-                        <div class="content_desc bg-white">
-                            <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                            <ul class="list_none content_meta">
-                                <li><i class="ti-user"></i> <a href="#" class="text_default">John Wood</a></li>
-                                <li><i class="ti-location-pin"></i><span class="text_default">New York City</span></li>
-                            </ul>
-                            <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                        </div>
-                    </div>
-                        <div class="content_box event_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-                            <div class="event_date">
-                                    <h5><span>22</span> Jun</h5>
-                                    <span class="event_time bg_default">11:00 am 4:00 pm</span>
-                                </div>
-                            <div class="content_desc bg-white">
-                                <h4 class="content_title"><a href="#">Nullam id varius nunc id varius nunc</a></h4>
-                                <ul class="list_none content_meta">
-                                    <li><i class="ti-user"></i> <a href="#" class="text_default">John Wood</a></li>
-                                    <li><i class="ti-location-pin"></i><span class="text_default">New York City</span></li>
-                                </ul>
-                                <p>If you are going to use a passage of Lorem Ipsum you need to be sure anything embarrassing hidden in the middle of text.</p>
-                            </div>
-                        </div>
-                    </div>    
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- START SECTION EVENT -->
-  
-  <!-- START SECTION INQUIRY -->
-  <section class="pb-0 background_bg bg_blue_dark" data-img-src="{{ asset('plantillas/eduglobal/assets/images/pattern_bg.png') }}">
-  <div class="container">
-      <div class="row align-items-end">
-          <div class="col-lg-6 col-md-7">
-              <div class="register_form text_white padding_eight_all animation" data-animation="fadeInLeft" data-animation-delay="0.02s">
-                    <div class="heading_s1 heading_light">
-                        <h2>Get a Free <span class="text_default">Inquiry</span></h2>
-                    </div>
-                    <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything hidden in the middle of text</p>
-                    <form method="post" name="enq" class="pt-md-2 form_transparent">
-                        <div class="row">
-                            <div class="form-group col-sm-6">
-                                <input required="required" placeholder="Enter Name *" class="form-control" name="name" type="text">
-                             </div>
-                            <div class="form-group col-sm-6">
-                                <input required="required" placeholder="Enter Email *" class="form-control" name="email" type="email">
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <input required="required" placeholder="Enter Phone No *" class="form-control" name="phone" type="tel">
-                            </div>
-                            <div class="form-group col-sm-6">
-                                <div class="custom_select">
-                                  <select class="form-control">
-                                      <option>Select Course</option>
-                                        <option>Select Course 1</option>
-                                        <option>Select Course 2</option>
-                                        <option>Select Course 3</option>
-                                        <option>Select Course 4</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group col-sm-12">
-                                <textarea required="required" placeholder="Message *" class="form-control" name="message" rows="4"></textarea>
-                            </div>
-                            <div class="col-md-12">
-                                <button type="submit" title="Submit Your Message!" class="btn btn-default rounded-0" name="submit" value="Submit">Register Now</button>
-                            </div>
-                            <div class="col-sm-12">
-                                <div id="alert-msg" class="alert-msg text-center"></div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="large_divider"></div>
-            </div>
-            <div class="col-lg-6 col-md-5">
-              <div class="text-center animation" data-animation="fadeInRight" data-animation-delay="0.03s">
-                <img src="{{ asset('plantillas/eduglobal/assets/images/girl_img.png') }}" alt="girl_img" />
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION INQUIRY -->
-  
-  <!-- START SECTION TEACHER -->
-  <section class="bg_gray">
-  <div class="container">	
-      <div class="row">
-          <div class="col-12">
-              <div class="heading_s1 text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                  <h2>Our Teachers</h2>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-3 col-sm-6">
-              <div class="team_box team_style2 box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-                  <div class="team_img">
-                      <img src="{{ asset('plantillas/eduglobal/assets/images/team_img1.jpg') }}" alt="team1">
+            @foreach ($comunicados as $item)
+
+        	<div class="col-lg-4 col-sm-6">
+            	<div class="team_box team_style2 box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
+                	<div class="team_img">
+                    	<img src="{{asset('img/comunicados/'.$item->imagen)}}" alt="{{$item->titulo}}">
                     </div>
                     <div class="team_title text-center">
-                        <h5><a href="#">Aden Smith</a></h5>
-                        <span>Head Of Department</span>
-                        <ul class="list_none social_icons">
-                            <li><a href="#" class="sc_facebook"><i class="ion-social-facebook"></i></a></li>
-                            <li><a href="#" class="sc_twitter"><i class="ion-social-twitter"></i></a></li>
-                            <li><a href="#" class="sc_gplus"><i class="ion-social-googleplus"></i></a></li>
-                            <li><a href="#" class="sc_instagram"><i class="ion-social-instagram-outline"></i></a></li>
-                        </ul>
+                        <h5><a href="{{$item->url ?? '#'}}">{{$item->titulo}}</a></h5>
+                        @if ($item->url!='' && $item->url!=null)
+                        <a target="_blank" href="{{$item->url}}" title="Ver Mas"><i class="fa fa-eye"></i></a>
+                    @endif
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-sm-6">
-              <div class="team_box team_style2 box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
-                  <div class="team_img">
-                      <img src="{{ asset('plantillas/eduglobal/assets/images/team_img2.jpg') }}" alt="team2">
-                    </div>
-                    <div class="team_title text-center">
-                        <h5><a href="#">Kally Brooks</a></h5>
-                        <span>Professor</span>
-                        <ul class="list_none social_icons">
-                            <li><a href="#" class="sc_facebook"><i class="ion-social-facebook"></i></a></li>
-                            <li><a href="#" class="sc_twitter"><i class="ion-social-twitter"></i></a></li>
-                            <li><a href="#" class="sc_gplus"><i class="ion-social-googleplus"></i></a></li>
-                            <li><a href="#" class="sc_instagram"><i class="ion-social-instagram-outline"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-              <div class="team_box team_style2 box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-                  <div class="team_img">
-                      <img src="{{ asset('plantillas/eduglobal/assets/images/team_img3.jpg') }}" alt="team3">
-                    </div>
-                    <div class="team_title text-center">
-                        <h5><a href="#">David clark</a></h5>
-                        <span>Chemistry Teacher</span>
-                        <ul class="list_none social_icons">
-                            <li><a href="#" class="sc_facebook"><i class="ion-social-facebook"></i></a></li>
-                            <li><a href="#" class="sc_twitter"><i class="ion-social-twitter"></i></a></li>
-                            <li><a href="#" class="sc_gplus"><i class="ion-social-googleplus"></i></a></li>
-                            <li><a href="#" class="sc_instagram"><i class="ion-social-instagram-outline"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-              <div class="team_box team_style2 box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.05s">
-                  <div class="team_img">
-                      <img src="{{ asset('plantillas/eduglobal/assets/images/team_img4.jpg') }}" alt="team4">
-                    </div>
-                    <div class="team_title text-center">
-                        <h5><a href="#">Rebeka Alig</a></h5>
-                        <span>English Teacher</span>
-                        <ul class="list_none social_icons">
-                            <li><a href="#" class="sc_facebook"><i class="ion-social-facebook"></i></a></li>
-                            <li><a href="#" class="sc_twitter"><i class="ion-social-twitter"></i></a></li>
-                            <li><a href="#" class="sc_gplus"><i class="ion-social-googleplus"></i></a></li>
-                            <li><a href="#" class="sc_instagram"><i class="ion-social-instagram-outline"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            @endforeach
+
         </div>
     </div>
-  </section>
-  <!-- END SECTION TEACHER -->
-  
-  <!-- START SECTION TESTIMONIAL -->
-  <section class="background_bg bg_fixed" data-img-src="{{ asset('plantillas/eduglobal/assets/images/pattern_bg3.png') }}">
-  <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-xl-6 col-lg-8">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                    <div class="heading_s1 text-center">
-                        <h2>Student Say!</h2>
-                    </div>
-                    <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                    <div class="small_divider"></div>
-                </div>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-          <div class="col-12 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-              <div class="testimonial_slider testimonial_style2 carousel_slider owl-carousel owl-theme" data-margin="30" data-loop="true" data-autoplay="true" data-dots="false" data-responsive='{"0":{"items": "1"}, "380":{"items": "1"}, "576":{"items": "2"}, "1199":{"items": "3"}}'>
-                    <div class="testimonial_box">
-                        <div class="testimonial_img">
-                            <img src="{{ asset('plantillas/eduglobal/assets/images/client_img1.jpg') }}" alt="client">
-                        </div>
-                        <div class="testi_meta">
-                          <div class="testi_user">
-                              <h6>Lissa Castro</h6>
-                              <span class="text_default">Co-Founder</span>
-                            </div>
-                            <div class="testi_desc">
-                              <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, quaeillo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial_box">
-                        <div class="testimonial_img">
-                            <img src="{{ asset('plantillas/eduglobal/assets/images/client_img2.jpg') }}" alt="client">
-                        </div>
-                        <div class="testi_meta">
-                          <div class="testi_user">
-                              <h6>Lissa Castro</h6>
-                              <span class="text_default">Co-Founder</span>
-                            </div>
-                            <div class="testi_desc">
-                              <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, quaeillo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial_box">
-                        <div class="testimonial_img">
-                            <img src="{{ asset('plantillas/eduglobal/assets/images/client_img3.jpg') }}" alt="client">
-                        </div>
-                        <div class="testi_meta">
-                          <div class="testi_user">
-                              <h6>Lissa Castro</h6>
-                              <span class="text_default">Co-Founder</span>
-                            </div>
-                            <div class="testi_desc">
-                              <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, quaeillo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION TESTIMONIAL -->
-  
-  <!-- START SECTION BLOG -->
-  <section class="bg_gray">
-  <div class="container">
-      <div class="row">
-          <div class="col-md-12">
-              <div class="heading_s1 text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                  <h2>Our Blog</h2>
-                </div>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-          <div class="col-lg-4 col-md-6">
-              <div class="blog_post box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-                  <div class="blog_img">
-                        <a href="#">
-                            <img src="{{ asset('plantillas/eduglobal/assets/images/blog_small_img1.jpg') }}" alt="blog_small_img1">
-                            <div class="link_blog">
-                              <span class="ripple"><i class="fa fa-link"></i></span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="blog_content bg-white">
-                        <h6 class="blog_title"><a href="#">Why are tickets to fly to Lagos expensive?</a></h6>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure there anything embarrassing hidden in the middle of text</p>
-                        <a href="#" class="text-capitalize">Read More</a>
-                    </div>
-                    <div class="blog_footer bg-white">
-                        <ul class="list_none blog_meta">
-                            <li><a href="#"><i class="ion-calendar"></i>15 May, 2019</a></li>
-                            <li><a href="#"><i class="ion-chatbubbles"></i>2 Comment</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <div class="blog_post box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
-                  <div class="blog_img">
-                        <a href="#">
-                            <img src="{{ asset('plantillas/eduglobal/assets/images/blog_small_img2.jpg') }}" alt="blog_small_img2">
-                            <div class="link_blog">
-                              <span class="ripple"><i class="fa fa-link"></i></span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="blog_content bg-white">
-                        <h6 class="blog_title"><a href="#">Why are tickets to fly to Lagos expensive?</a></h6>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure there anything embarrassing hidden in the middle of text</p>
-                        <a href="#" class="text-capitalize">Read More</a>
-                    </div>
-                    <div class="blog_footer bg-white">
-                        <ul class="list_none blog_meta">
-                            <li><a href="#"><i class="ion-calendar"></i>23 May, 2019</a></li>
-                            <li><a href="#"><i class="ion-chatbubbles"></i>2 Comment</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-              <div class="blog_post box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-                  <div class="blog_img">
-                        <a href="#">
-                            <img src="{{ asset('plantillas/eduglobal/assets/images/blog_small_img3.jpg')}}" alt="blog_small_img3">
-                            <div class="link_blog">
-                              <span class="ripple"><i class="fa fa-link"></i></span>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="blog_content bg-white">
-                        <h6 class="blog_title"><a href="#">Why are tickets to fly to Lagos expensive?</a></h6>
-                        <p>If you are going to use a passage of Lorem Ipsum you need to be sure there anything embarrassing hidden in the middle of text</p>
-                        <a href="#" class="text-capitalize">Read More</a>
-                    </div>
-                    <div class="blog_footer bg-white">
-                        <ul class="list_none blog_meta">
-                            <li><a href="#"><i class="ion-calendar"></i>16 May, 2019</a></li>
-                            <li><a href="#"><i class="ion-chatbubbles"></i>2 Comment</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-                  <div class="medium_divider"></div>
-                  <a href="#" class="btn btn-default rounded-0">View All Blog <i class="ion-ios-arrow-thin-right ml-1"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION BLOG -->
-  
-  <!-- START SECTION CLIENT LOGO -->
-  <section class="light_gray_bg">
-  <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-xl-6 col-lg-8">
-              <div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                    <div class="heading_s1 text-center">
-                        <h2>Our Client</h2>
-                    </div>
-                    <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text</p>
-                    <div class="small_divider"></div>
-                </div>
-            </div>
-        </div>
-      <div class="row">
-          <div class="col-md-12 animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-              <div class="cl_logo_slider carousel_slider owl-carousel owl-theme" data-margin="15" data-loop="true" data-autoplay="true" data-dots="false" data-responsive='{"0":{"items": "2"}, "380":{"items": "3"}, "600":{"items": "4"}, "1000":{"items": "5"}, "1199":{"items": "6"}}'>
-                  <div class="item">
-                    <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo1.png') }}" alt="cl_logo1"/></a>
-                    </div>
-                    <div class="item">
-                    <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo2.png') }}" alt="cl_logo2"/></a>
-                    </div>
-                    <div class="item">
-                    <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo3.png') }}" alt="cl_logo3"/></a>
-                    </div>
-                    <div class="item">
-                    <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo4.png') }}" alt="cl_logo4"/></a>
-                    </div>
-                    <div class="item">
-                    <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo5.png') }}" alt="cl_logo5"/></a>
-                    </div>
-                    <div class="item">
-                    <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo2.png') }}" alt="cl_logo2"/></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION CLIENT LOGO -->
-  
-  <!-- END SECTION CALL TO ACTION -->
-  <section class="bg_default small_pt small_pb">
-  <div class="container">
-      <div class="row align-items-center">
-          <div class="col-md-8">
-              <div class="text_white cta_section">
-                  <div class="medium_divider d-block d-md-none"></div>
-                    <div class="heading_s1 heading_light">
-                        <h2>Get The Coaching Training Today!</h2>
-                    </div>
-                    <p>If you are going to use a passage of embarrassing hidden in the middle of text</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-              <div class="text-md-right">
-                    <a href="#" class="btn btn-outline-white rounded-0">Get Started</a>
-                </div>
-                <div class="medium_divider d-block d-md-none"></div>
-            </div>
-        </div>
-    </div>
-  </section>
-  <!-- END SECTION CALL TO ACTION -->
-  
+</section>
+<!-- END SECTION COMUNICADOS -->
+
+
+
+
     </div>
     <div class="col p-0">
         <div class="m-1 mt-3">
-            <a href="http://www.regionhuanuco.gob.pe/pagina/205" target="_blank">
+            <a href="http://www.regionhuanuco.gob.pe/pagina/205" target="_blank" class="btn btn-primary p-0">
                 <img src="http://gestionportales.regionhuanuco.gob.pe/storage/seccion/hAQJ9P8dN1ngB135zJFxDUrMzYvNwYawA3Xq9pTY.jpeg" alt="User Avatar" class="img-fluid">
             </a>
         </div>
@@ -1116,24 +397,42 @@
                 <img src="http://gestionportales.regionhuanuco.gob.pe/storage/seccion/uCdLGlsxoZw8ZbB75HQc8UOBqMeJyRaT3FQdK8J0.png" alt="User Avatar" class="img-fluid">
              </a>
         </div>
-        <div class="m-2">
-            <a href="http://observatorioviolencia.regionhuanuco.gob.pe/" target="_blank" class="dropdown-item bg-danger mb-1">
-                <img src="http://gestionportales.regionhuanuco.gob.pe/storage/seccion/YetlWcWsS5xvNOvc2541wxJDSeZePVIsh9SUlmzt.png" alt="User Avatar" class="img-fluid">
-             </a>
-        </div>
-        <div class="m-2">
-            <a href="/pagina/113" target="_blank" class="dropdown-item bg-info mb-1">
-                <img src="http://gestionportales.regionhuanuco.gob.pe/storage/seccion/uEcUA2iSs7Fwh0tZxSBjSYZIMx0PHCUiuv44rLZt.svg" alt="User Avatar" class="img-fluid">
-             </a>
-        </div>
-
-
-
-
-
     </div>
 </div>
+        
 
+    
+    <!-- START SECTION CLIENT LOGO -->
+    <section class="light_gray_bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 animation" data-animation="fadeInUp" data-animation-delay="0.01s">
+                <div class="cl_logo_slider carousel_slider owl-carousel owl-theme" data-margin="15" data-loop="true" data-autoplay="true" data-dots="false" data-responsive='{"0":{"items": "2"}, "380":{"items": "3"}, "600":{"items": "4"}, "1000":{"items": "5"}, "1199":{"items": "6"}}'>
+                    <div class="item">
+                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo1.png') }}" alt="cl_logo1"/></a>
+                      </div>
+                      <div class="item">
+                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo2.png') }}" alt="cl_logo2"/></a>
+                      </div>
+                      <div class="item">
+                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo3.png') }}" alt="cl_logo3"/></a>
+                      </div>
+                      <div class="item">
+                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo4.png') }}" alt="cl_logo4"/></a>
+                      </div>
+                      <div class="item">
+                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo5.png') }}" alt="cl_logo5"/></a>
+                      </div>
+                      <div class="item">
+                      <a href="#"><img src="{{ asset('plantillas/eduglobal/assets/images/cl_logo2.png') }}" alt="cl_logo2"/></a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </section>
+    <!-- END SECTION CLIENT LOGO -->
+    
 
 
 @endsection

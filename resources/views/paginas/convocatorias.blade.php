@@ -2,7 +2,7 @@
 @section('title', 'UGEL - HUACAYBAMBA')
 @section('content')
 <main id="main">
-<section id="about" class="about" style="margin-top: 90px">
+<section id="about" class="about">
   <div class="container">
     <h2>CONVOCATORIAS</h2><br>
 

@@ -142,24 +142,24 @@
                 <li>
                     <a class="nav-link active" href="<?= URL::to('/') ?>">HOME</a>
                 </li>
-        <?php foreach($menus as $row){ ?>
-            <?php if($row->link_menu=='#'){ ?>
-                  <li class="dropdown">
-                      <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown">{{$row->nom_menu}}</a>
-                      <div class="dropdown-menu">
-                          <ul> 
-                            <?php foreach($submenus as $submenu){
-                                if($submenu->categoriamenu==$row->id){ ?>
-                              <li><a class="dropdown-item nav-link nav_item" href="{{$submenu->link_menu}}">{{$submenu->nom_menu}}</a></li> 
-                            <?php } } ?>
-                          </ul>
-                      </div>
-                  </li>
-        <?php }else{ ?>
-            <li>
-                <a class="nav-link" href="{{$row->link_menu}}">{{$row->nom_menu}}</a>
-            </li>
-        <?php } } ?>
+                <?php foreach($menus as $row){ ?>
+                    <?php if($row->link_menu=='#'){ ?>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown">{{$row->nom_menu}}</a>
+                            <div class="dropdown-menu">
+                                <ul> 
+                                    <?php foreach($submenus as $submenu){
+                                        if($submenu->categoriamenu==$row->id){ ?>
+                                    <li><a class="dropdown-item nav-link nav_item" href="{{$submenu->link_menu}}">{{$submenu->nom_menu}}</a></li> 
+                                    <?php } } ?>
+                                </ul>
+                            </div>
+                        </li>
+                <?php }else{ ?>
+                    <li>
+                        <a class="nav-link" href="{{$row->link_menu}}">{{$row->nom_menu}}</a>
+                    </li>
+                <?php } } ?>
 
 
               </ul>
@@ -180,16 +180,3 @@
   </div>
 </header>
 <!-- END HEADER --> 
-<div class="news_ticker bg-warning">
-<div class="container">
-  <marquee behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
-      <a href="#" target="_blank">Universities the winners if Labor assumes government</a> ||
-      <a href="#" target="_blank">Overseas students are driving rapid population growth</a> || 
-      <a href="#" target="_blank">Admission for Ph.D. Programme 2019-20</a> || 
-      <a href="#" target="_blank">Application form for Provisional Registration for Ph.D</a> || 
-      <a href="#" target="_blank">Graduates need second degree to become a high earner</a> ||
-      <a href="#" target="_blank">Eduglobal Portal for students seeking Education Loan</a> || 
-      <a href="#" target="_blank">Creating inclusive curricula in higher education</a>
-  </marquee>
-  </div>
-</div>

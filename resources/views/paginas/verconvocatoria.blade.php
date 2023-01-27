@@ -2,7 +2,7 @@
 @section('title', 'UGEL - HUACAYBAMBA')
 @section('content')
 <main id="main">
-<section id="about" class="about" style="margin-top: 90px">
+<section id="about" class="about">
   <div class="container">
     <h2>CONVOCATORIA</h2><br>
     <h3>{{$convocatoria->tipo.': '.$convocatoria->titulo}}</h3>

@@ -47,7 +47,7 @@ class MenuController extends Controller
         $data['menus']=$menus;
         $data['submenus']=$submenus;
         $data['paginaweb']=$pagina;
-        return view('principal/paginaweb', $data); 
+        return view('paginas/paginaweb', $data); 
     }
     public function destroy(Menu $menu){
         $menu->delete();

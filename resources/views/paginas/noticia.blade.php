@@ -3,7 +3,7 @@
 @section('content')
 
 <main id="main">
-<section id="about" class="about" style="margin-top: 90px">
+<section id="about" class="about">
   <div class="container">
     <div class="row content">
       <div class="col-lg-6">

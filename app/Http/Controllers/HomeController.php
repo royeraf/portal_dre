@@ -33,7 +33,7 @@ class HomeController extends Controller
         $data['menus']=$menus;
         $data['submenus']=$submenus;
         $data['noticia']=$noticia;
-        return view('principal/noticia', $data);
+        return view('paginas/noticia', $data);
     }
     public function directorio(){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
@@ -45,45 +45,47 @@ class HomeController extends Controller
         $data['menus']=$menus;
         $data['submenus']=$submenus;
         $data['registros']=Directorio::whereNotIn('cargo' , ['DIRECTOR', 'JEFE DE AGI', 'Jefe de AGP', 'JEFE DE AGA'])->get();
-        return view('principal/directorio', $data);
+        return view('paginas/directorio', $data);
     }
     public function nosotros(){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $submenus= Menu::whereNotNull('categoriamenu')->get();
         $data['menus']=$menus;
         $data['submenus']=$submenus;
-        return view('principal/nosotros', $data);        
+        return view('paginas/nosotros', $data);        
     }
     public function mision(){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $submenus= Menu::whereNotNull('categoriamenu')->get();
         $data['menus']=$menus;
         $data['submenus']=$submenus;
-        return view('principal/mision', $data);        
+        return view('paginas/mision', $data);        
     }
     public function vision(){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $submenus= Menu::whereNotNull('categoriamenu')->get();
         $data['menus']=$menus;
         $data['submenus']=$submenus;
-        return view('principal/vision', $data);        
+        return view('paginas/vision', $data);        
     }
     public function portafoliodet(Galeria $galeria){
-        $data['imagenes']=ImagenEvento::where('idgaleria', $galeria->id)->take(10)->get();
-        $data['galeria']=$galeria;
-        return view('principal/portafoliodet', $data);
-    }
-    public function allnoticias(){
-        $data['noticias']=Noticia::orderBy('fechapubli', 'desc')->take(6)->get();
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        return view('principal/allnoticias', $data);
+        $data['imagenes']=ImagenEvento::where('idgaleria', $galeria->id)->take(10)->get();
+        $data['galeria']=$galeria;
+        return view('paginas/portafoliodet', $data);
+    }
+    public function allnoticias(){
+        $data['noticias']=Noticia::orderBy('fechapubli', 'desc')->paginate(6);
+        $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
+        $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
+        return view('paginas/allnoticias', $data);
     }
     public function galeria(){
         $data['registrosgaleria']=Galeria::select(DB::raw('id, titulo, descripcion, fecha_publicacion,(select archivo_img from imgeventos where idgaleria=galeria.id limit 1) as img'))->paginate(10);
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        return view('principal/galeria', $data);
+        return view('paginas/galeria', $data);
     }
     public function convocatoriaweb(){
         $convocatorias=Convocatoria::where('es_activo', 1)->orderBy('id', 'desc')->paginate(10);
@@ -104,20 +106,20 @@ class HomeController extends Controller
         $data['convocatorias']=$convocatorias;
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        return view('principal/convocatorias', $data);  
+        return view('paginas/convocatorias', $data);  
     }
     public function verconvocatoria(Convocatoria $convocatoria){
         $data['convocatoria']=$convocatoria;
         $data['archivos']=ArchivoConvocatoria::where('id_convocatoria', $convocatoria->id)->orderBy('id', 'desc')->paginate(5);
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        return view('principal/verconvocatoria', $data);         
+        return view('paginas/verconvocatoria', $data);         
     }
     public function comunicadosall(){
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
         $data['comunicados']=Comunicado::orderBy('created_at', 'desc')->take(10)->get();
-        return view('principal/comunicados', $data);          
+        return view('paginas/comunicados', $data);          
     }
 
 }
