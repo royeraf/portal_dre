@@ -32,7 +32,7 @@
                 <label class="form-control-label" for="inputGroupFile1">IMAGEN: </label>
                 <div class="input-group mb-3">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile1" name="imagen">
+                        <input type="file" class="custom-file-input" id="inputGroupFile1" name="imagen" required>
                         <label class="custom-file-label" for="inputGroupFile1" aria-describedby="inputGroupFileAddon">Choose image</label>
                     </div>
                 </div>

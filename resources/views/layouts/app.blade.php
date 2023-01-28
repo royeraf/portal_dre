@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>UGEL - HUACAYBAMBA</title>
+        <title>DRE - HUANUCO</title>
         <link href="{{ asset('plantillas/bracketplus/app/lib/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
         <link href="{{asset('plantillas/bracketplus/app/lib/ionicons/css/ionicons.min.css')}}" rel="stylesheet">
         <link href="{{asset('plantillas/bracketplus/app/lib/rickshaw/rickshaw.min.css')}}" rel="stylesheet">

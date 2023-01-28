@@ -11,6 +11,8 @@ use App\Http\Controllers\DirectorioController;
 use App\Http\Controllers\ConvocatoriaController;
 use App\Http\Controllers\ImagenEventoController;
 use App\Http\Controllers\ComunicadoController;
+use App\Http\Controllers\MainrightController;
+use App\Http\Controllers\DocumentogestionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,7 +37,7 @@ Route::get('/galeriaimagenes', [HomeController::class, 'galeria'])->name('galeri
 Route::get('/convocatoriaweb', [HomeController::class, 'convocatoriaweb'])->name('convocatoriaweb');
 Route::get('/verconvocatoria/{convocatoria}', [HomeController::class, 'verconvocatoria'])->name('verconvocatoria');
 Route::get('/comunicadosall', [HomeController::class, 'comunicadosall'])->name('comunicadosall');
-
+Route::get('/documentosdegestionweb', [HomeController::class, 'documentosdegestionweb'])->name('documentosdegestionweb');
 
 Route::controller(MenuController::class)->group(function(){
     Route::get('menus', 'index')->name('menu');
@@ -127,6 +129,20 @@ Route::controller(ImagenEventoController::class)->group(function(){
     Route::get('galeria/agregarimagen/{galeria}', 'agregarimagen')->middleware(['auth', 'verified'])->name('galeria.agregarimagen');
     Route::post('galeria/storeimagen', 'storeimagen')->middleware(['auth', 'verified'])->name('galeria.storeimagen');               
 });
+Route::controller(MainrightController::class)->group(function(){
+    Route::get('mainright', 'index')->middleware(['auth', 'verified'])->name('mainright');
+    Route::post('mainright/store', 'store')->middleware(['auth', 'verified'])->name('mainright.store');
+    Route::get('mainright/{mainright}', 'destroy')->middleware(['auth', 'verified'])->name('mainright.destroy');      
+});
+Route::controller(DocumentogestionController::class)->group(function(){
+    Route::get('Documentogestion', 'index')->middleware(['auth', 'verified'])->name('Documentogestion');
+    Route::post('Documentogestion/store', 'store')->middleware(['auth', 'verified'])->name('Documentogestion.store');
+    Route::get('Documentogestion/{Documentogestion}', 'destroy')->middleware(['auth', 'verified'])->name('Documentogestion.destroy');
+    Route::get('Documentogestion/archivo/{archivoDocumentogestion}', 'destroy2')->middleware(['auth', 'verified'])->name('archivoDocumentogestion.destroy');    
+    Route::get('Documentogestion/show/{Documentogestion}', 'show')->middleware(['auth', 'verified'])->name('Documentogestion.show'); 
+    Route::post('archivoDocumentogestion/store/{Documentogestion}', 'store2')->middleware(['auth', 'verified'])->name('archivoDocumentogestion.store');    
+});
+
 Route::get('prueba', [MenuController::class, 'prueba'])->name('prueba');
 Route::get('/intranet', function () {
     return view('dashboard');

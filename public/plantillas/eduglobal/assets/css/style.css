@@ -83,6 +83,11 @@ section {
 	position:relative;
 	width: 100%;
 }
+section.breadcrumb_section {
+	padding: 30px 0;
+	position:relative;
+	width: 100%;
+}
 section.small_pt,
 .top_footer.small_pt {
 	padding-top: 50px;
@@ -2638,6 +2643,7 @@ footer p {
 	padding-left: 5px;
 }
 .links_style2 li a::before {
+	color:yellow;
 	content: "\f3d3";
 	font-family:"Ionicons";
 	font-size: 18px;

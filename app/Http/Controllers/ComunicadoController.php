@@ -19,7 +19,7 @@ class ComunicadoController extends Controller
         $comunicado->url=$request->url;
         if($request->hasFile('imagen')){
             $file = $request->file('imagen');
-            $filename = time().$file->extension();
+            $filename = time().'.'.$file->extension();
             $comunicado->imagen=$filename;
             $file->move(public_path('img/comunicados'), $filename);   
         }

@@ -2,7 +2,7 @@
 @section('title', 'UGEL - HUACAYBAMBA')
 @section('content')
 <!-- START SECTION BREADCRUMB -->
-<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="assets/images/about_bg.jpg">
+<section class="page-title-light breadcrumb_section parallax_bg overlay_bg_50" data-parallax-bg-image="{{asset('img/bc.jpeg')}}">
 	<div class="container">
     	<div class="row align-items-center">
         	<div class="col-sm-6">
@@ -25,18 +25,9 @@
 <!-- START SECTION GALLERY -->
 <section>
 	<div class="container">	
-    	<div class="row">
-            <div class="col-md-12 text-center">
-                <ul class="list_none grid_filter">
-                    <li><a href="#" class="current" data-filter="*">all</a></li>
-                    <li><a href="#" data-filter=".library">Library</a></li>
-                    <li><a href="#" data-filter=".campus">Campus</a></li>
-                    <li><a href="#" data-filter=".events">Events</a></li>
-                </ul>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12">
+                <h2>GALERIA DE IMAGENES</h2>
                 <ul class="grid_container gutter_medium grid_col4">
                     <li class="grid-sizer"></li>
                     @foreach ($registrosgaleria as $item)

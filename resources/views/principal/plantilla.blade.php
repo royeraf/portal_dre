@@ -12,7 +12,7 @@
 <!-- SITE TITLE -->
 <title>{{ config('app.name', 'DRE - HUANUCO') }}</title>
 <!-- Favicon Icon -->
-<link rel="shortcut icon" type="image/x-icon" href="{{ asset('plantillas/eduglobal/assets/images/favicon.png') }}">
+<link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/ico.png') }}">
 <!-- Animation CSS -->
 <link rel="stylesheet" href="{{ asset('plantillas/eduglobal/assets/css/animate.css') }}">	
 <!-- Latest Bootstrap min CSS -->
@@ -75,6 +75,14 @@
 <script src="{{ asset('plantillas/eduglobal/assets/js/jquery.parallax-scroll.js') }}"></script>
 <!-- scripts js --> 
 <script src="{{ asset('plantillas/eduglobal/assets/js/scripts.js') }}"></script>
+
+
+<script>
+    $(document).ready(function(){
+      $('#modalpopup').modal('show');       
+    })
+  </script>
+</script>
 
 </body>
 </html>

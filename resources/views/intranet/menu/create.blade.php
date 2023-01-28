@@ -52,7 +52,6 @@
                 <button class="btn btn-info">Guardar</button>
             </div>
         </div>
-  
     </form>
     <br>
     <div class="row">

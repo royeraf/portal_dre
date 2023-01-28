@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre', 45);
             $table->string('titulo', 45);
-            $table->string('slogan', 90);
+            $table->string('slogan');
             $table->string('direccion', 90);
             $table->string('email', 55);
             $table->string('celular', 12);

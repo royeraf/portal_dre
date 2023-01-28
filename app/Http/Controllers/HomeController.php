@@ -12,13 +12,16 @@ use App\Models\Convocatoria;
 use App\Models\ArchivoConvocatoria;
 use App\Models\Comunicado;
 use App\Models\Galeria;
-use Illuminate\Http\Request;
+use App\Models\Mainright;
+use App\Models\Documentogestion;
+use App\Models\Archivodocumentogestion;
 
 class HomeController extends Controller
 {
     public function __invoke(){
         //$data['galeria']=ImagenEvento::select(DB::raw('imgeventos.titulo, imgeventos.descripcion, MONTH(created_at) month, imgeventos.archivo_img'))->whereRaw('created_at BETWEEN DATE_SUB(CURDATE(), INTERVAL 2 MONTH) AND DATE_ADD(CURDATE(), INTERVAL 2 DAY) ORDER BY Id DESC')->get();
         //$data['visitas']=$visitas;
+        $data['mainrightitem']=Mainright::orderBy('indice', 'asc')->get();
         $data['comunicados']=Comunicado::orderBy('created_at', 'desc')->take(10)->get();
         $data['noticias']=Noticia::orderBy('fechapubli', 'desc')->take(6)->get();
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
@@ -120,6 +123,18 @@ class HomeController extends Controller
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
         $data['comunicados']=Comunicado::orderBy('created_at', 'desc')->take(10)->get();
         return view('paginas/comunicados', $data);          
+    }
+    public function documentosdegestionweb(){
+        $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
+        $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
+        $data['comunicados']=Comunicado::orderBy('created_at', 'desc')->take(10)->get();
+        $registros=Documentogestion::orderBy('id', 'asc')->get();
+        foreach($registros as $row){
+            $archivoconvocatoria = Archivodocumentogestion::where('id_documentogestion', $row->id)->get();
+            $row['archivos'] = $archivoconvocatoria;
+        }
+        $data['registros']=$registros;
+        return view('paginas/documentosdegestionweb', $data); 
     }
 
 }

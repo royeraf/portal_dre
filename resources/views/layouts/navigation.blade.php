@@ -1,5 +1,5 @@
         <!-- ########## START: LEFT PANEL ########## -->
-        <div class="br-logo"><a href=""><span>[</span>Huaca. <i>UGEL</i><span>]</span></a></div>
+        <div class="br-logo"><a href=""><span>[</span>DRE. <i>HCO</i><span>]</span></a></div>
         <div class="br-sideleft sideleft-scrollbar">
         <label class="sidebar-label pd-x-10 mg-t-20 op-3">Navigation</label>
         <ul class="br-sideleft-menu">
@@ -27,7 +27,8 @@
                 <span class="menu-item-label">Menu</span>
             </a><!-- br-menu-link -->
             <ul class="br-menu-sub">
-                <li class="sub-item"><a href="{{route('formregistro')}}" class="sub-link">Administrar</a></li>
+                <li class="sub-item"><a href="{{route('formregistro')}}" class="sub-link">Administrar Menus</a></li>
+                <li class="sub-item"><a href="{{route('mainright')}}" class="sub-link">Administrar Mainright</a></li>
             </ul>
             </li>
             <li class="br-menu-item">
@@ -98,7 +99,16 @@
                     <li class="sub-item"><a href="{{route('comunicado')}}" class="sub-link">Administrar</a></li>
                     <li class="sub-item"><a href="{{route('comunicado.create')}}" class="sub-link">Nueva</a></li>
                 </ul>
-            </li>            
+            </li>
+            <li class="br-menu-item">
+                <a href="#" class="br-menu-link with-sub">
+                  <i class="menu-item-icon icon ion-ios-list-outline tx-22"></i>
+                  <span class="menu-item-label">Documento de Gestion</span>
+                </a><!-- br-menu-link -->
+                <ul class="br-menu-sub nav flex-column">
+                    <li class="sub-item"><a href="{{route('Documentogestion')}}" class="sub-link">Administrar</a></li>
+                </ul>
+            </li>                      
         </ul><!-- br-sideleft-menu -->
         <br>
         </div><!-- br-sideleft -->
