@@ -1,5 +1,5 @@
 @extends('principal.plantilla')
-@section('title', 'UGEL - HUACAYBAMBA')
+@section('title', 'DRE - HUANUCO')
 @section('content')
 <main id="main">
 <section id="about" class="about">

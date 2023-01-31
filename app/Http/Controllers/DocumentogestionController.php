@@ -24,7 +24,7 @@ class DocumentogestionController extends Controller
         $archivodocumentogestion->id_documentogestion = $Documentogestion->id;
         $archivodocumentogestion->save();
         return redirect()->route('Documentogestion.show', $Documentogestion);
-    }    
+    }
     public function destroy(Documentogestion $Documentogestion){
         $Documentogestion->delete();
         return redirect()->route('Documentogestion');

@@ -39,10 +39,10 @@ Route::get('/verconvocatoria/{convocatoria}', [HomeController::class, 'verconvoc
 Route::get('/comunicadosall', [HomeController::class, 'comunicadosall'])->name('comunicadosall');
 Route::get('/documentosdegestionweb', [HomeController::class, 'documentosdegestionweb'])->name('documentosdegestionweb');
 
-Route::controller(MenuController::class)->group(function(){
+Route::controller(MenuController::class)->group(['middleware'=>['auth']],function(){
     Route::get('menus', 'index')->name('menu');
-    Route::get('menus/edit/{menu}', 'edit')->middleware(['auth', 'verified'])->name('menu.edit');    
-    Route::get('menus/create', 'create')->middleware(['auth', 'verified'])->name('formregistro');
+    Route::get('menus/edit/{menu}', 'edit')->name('menu.edit');
+    Route::get('menus/create', 'create')->name('formregistro');
     Route::post('menus', 'store')->name('menus.store');
     Route::get('menus/paginaweb', 'paginaweb')->name('menus.paginaweb');
     Route::put('menus/update/{menu}', 'update')->name('menus.update');
@@ -62,10 +62,10 @@ Route::controller(ArchivoController::class)->group(function(){
 });
 Route::controller(SliderController::class)->group(function(){
     Route::get('slider/create', 'create')->name('slide.create');
-    Route::post('slider/store', 'store')->name('slide.store'); 
+    Route::post('slider/store', 'store')->name('slide.store');
     Route::get('slider/edit/{slider}', 'edit')->name('slide.edit');
     Route::put('slider/update/{slider}', 'update')->name('slide.update');
-    Route::get('slider/{slider}', 'destroy')->name('slide.destroy');     
+    Route::get('slider/{slider}', 'destroy')->name('slide.destroy');
     Route::get('slider/{menu}', 'show');
 });
 Route::controller(NoticiaController::class)->group(function(){
@@ -75,12 +75,12 @@ Route::controller(NoticiaController::class)->group(function(){
     Route::get('noticias/{noticia}', 'destroy')->middleware(['auth', 'verified'])->name('noticias.destroy');
     Route::get('noticias/edit/{noticia}', 'edit')->middleware(['auth', 'verified'])->name('noticias.edit');
     Route::put('noticias/update/{noticia}', 'update')->middleware(['auth', 'verified'])->name('noticias.update');
-    Route::get('noticias/show/{noticia}', 'show')->middleware(['auth', 'verified'])->name('noticias.show'); 
+    Route::get('noticias/show/{noticia}', 'show')->middleware(['auth', 'verified'])->name('noticias.show');
 });
 
 Route::controller(PopupController::class)->group(function(){
     Route::get('popup', 'index')->middleware(['auth', 'verified'])->name('popup');
-    Route::get('popup/create', 'create')->middleware(['auth', 'verified'])->name('popup.create');    
+    Route::get('popup/create', 'create')->middleware(['auth', 'verified'])->name('popup.create');
     Route::post('popup/store', 'store')->middleware(['auth', 'verified'])->name('popup.store');
     Route::get('popup/{popup}', 'destroy')->middleware(['auth', 'verified'])->name('popup.destroy');
     Route::get('popup/edit/{popup}', 'edit')->middleware(['auth', 'verified'])->name('popup.edit');
@@ -89,7 +89,7 @@ Route::controller(PopupController::class)->group(function(){
 });
 Route::controller(ComunicadoController::class)->group(function(){
     Route::get('comunicado', 'index')->middleware(['auth', 'verified'])->name('comunicado');
-    Route::get('comunicado/create', 'create')->middleware(['auth', 'verified'])->name('comunicado.create');    
+    Route::get('comunicado/create', 'create')->middleware(['auth', 'verified'])->name('comunicado.create');
     Route::post('comunicado/store', 'store')->middleware(['auth', 'verified'])->name('comunicado.store');
     Route::get('comunicado/{comunicado}', 'destroy')->middleware(['auth', 'verified'])->name('comunicado.destroy');
     Route::get('comunicado/edit/{comunicado}', 'edit')->middleware(['auth', 'verified'])->name('comunicado.edit');
@@ -102,7 +102,7 @@ Route::controller(DirectorioController::class)->group(function(){
     Route::post('directorio/store', 'store')->middleware(['auth', 'verified'])->name('directorio.store');
     Route::get('directorio/{directorio}', 'destroy')->middleware(['auth', 'verified'])->name('directorio.destroy');
     Route::get('directorio/edit/{directorio}', 'edit')->middleware(['auth', 'verified'])->name('directorio.edit');
-    Route::put('directorio/update/{directorio}', 'update')->middleware(['auth', 'verified'])->name('directorio.update');               
+    Route::put('directorio/update/{directorio}', 'update')->middleware(['auth', 'verified'])->name('directorio.update');
 });
 Route::controller(ConvocatoriaController::class)->group(function(){
     Route::get('convocatoria', 'index')->middleware(['auth', 'verified'])->name('convocatoria');
@@ -110,9 +110,9 @@ Route::controller(ConvocatoriaController::class)->group(function(){
     Route::post('convocatoria/store', 'store')->middleware(['auth', 'verified'])->name('convocatoria.store');
     Route::get('convocatoria/{convocatoria}', 'destroy')->middleware(['auth', 'verified'])->name('convocatoria.destroy');
     Route::get('convocatoria/edit/{convocatoria}', 'edit')->middleware(['auth', 'verified'])->name('convocatoria.edit');
-    Route::put('convocatoria/update/{convocatoria}', 'update')->middleware(['auth', 'verified'])->name('convocatoria.update'); 
-    Route::get('convocatoria/show/{convocatoria}', 'show')->middleware(['auth', 'verified'])->name('convocatoria.show'); 
-    Route::get('convocatoria/archivocreate/{convocatoria}', 'archivo_convocatoriacreate')->middleware(['auth', 'verified'])->name('archivo.convocatoria.create'); 
+    Route::put('convocatoria/update/{convocatoria}', 'update')->middleware(['auth', 'verified'])->name('convocatoria.update');
+    Route::get('convocatoria/show/{convocatoria}', 'show')->middleware(['auth', 'verified'])->name('convocatoria.show');
+    Route::get('convocatoria/archivocreate/{convocatoria}', 'archivo_convocatoriacreate')->middleware(['auth', 'verified'])->name('archivo.convocatoria.create');
     Route::get('convocatoria/archivo/{archivoconvocatoria}', 'archivoconvocatoriadestroy')->middleware(['auth', 'verified'])->name('archivo.convocatoria.destroy');
     Route::get('convocatoria/editarchivo/{convocatoria}', 'archivoedit')->middleware(['auth', 'verified'])->name('archivo.convocatoria.edit');
     Route::post('convocatoria/archivo/store/{convocatoria}', 'archivocstore')->middleware(['auth', 'verified'])->name('archivo.convocatoria.store');
@@ -127,20 +127,20 @@ Route::controller(ImagenEventoController::class)->group(function(){
     Route::put('galeria/update/{galeria}', 'update')->middleware(['auth', 'verified'])->name('galeria.update');
     Route::get('galeria/show/{galeria}', 'show')->middleware(['auth', 'verified'])->name('galeria.show');
     Route::get('galeria/agregarimagen/{galeria}', 'agregarimagen')->middleware(['auth', 'verified'])->name('galeria.agregarimagen');
-    Route::post('galeria/storeimagen', 'storeimagen')->middleware(['auth', 'verified'])->name('galeria.storeimagen');               
+    Route::post('galeria/storeimagen', 'storeimagen')->middleware(['auth', 'verified'])->name('galeria.storeimagen');
 });
 Route::controller(MainrightController::class)->group(function(){
     Route::get('mainright', 'index')->middleware(['auth', 'verified'])->name('mainright');
     Route::post('mainright/store', 'store')->middleware(['auth', 'verified'])->name('mainright.store');
-    Route::get('mainright/{mainright}', 'destroy')->middleware(['auth', 'verified'])->name('mainright.destroy');      
+    Route::get('mainright/{mainright}', 'destroy')->middleware(['auth', 'verified'])->name('mainright.destroy');
 });
 Route::controller(DocumentogestionController::class)->group(function(){
     Route::get('Documentogestion', 'index')->middleware(['auth', 'verified'])->name('Documentogestion');
     Route::post('Documentogestion/store', 'store')->middleware(['auth', 'verified'])->name('Documentogestion.store');
     Route::get('Documentogestion/{Documentogestion}', 'destroy')->middleware(['auth', 'verified'])->name('Documentogestion.destroy');
-    Route::get('Documentogestion/archivo/{archivoDocumentogestion}', 'destroy2')->middleware(['auth', 'verified'])->name('archivoDocumentogestion.destroy');    
-    Route::get('Documentogestion/show/{Documentogestion}', 'show')->middleware(['auth', 'verified'])->name('Documentogestion.show'); 
-    Route::post('archivoDocumentogestion/store/{Documentogestion}', 'store2')->middleware(['auth', 'verified'])->name('archivoDocumentogestion.store');    
+    Route::get('Documentogestion/archivo/{archivoDocumentogestion}', 'destroy2')->middleware(['auth', 'verified'])->name('archivoDocumentogestion.destroy');
+    Route::get('Documentogestion/show/{Documentogestion}', 'show')->middleware(['auth', 'verified'])->name('Documentogestion.show');
+    Route::post('archivoDocumentogestion/store/{Documentogestion}', 'store2')->middleware(['auth', 'verified'])->name('archivoDocumentogestion.store');
 });
 
 Route::get('prueba', [MenuController::class, 'prueba'])->name('prueba');
