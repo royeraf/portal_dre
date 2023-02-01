@@ -14,7 +14,7 @@
             <div class="col-sm-6">
                 <nav aria-label="breadcrumb">
                   <ol class="breadcrumb justify-content-sm-end">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Directorio</li>
                   </ol>
                 </nav>
@@ -25,7 +25,7 @@
 <!-- END SECTION BANNER -->
 <!-- START SECTION GALLERY -->
 <section>
-	<div class="container">	
+	<div class="container">
         <div class="row">
             <div class="col-md-12">
                 <h2>GALERIA DE IMAGENES</h2>
@@ -45,7 +45,7 @@
                               </div>
                             </div>
                           </div>
-                      </div> 
+                      </div>
                   </div>
                   <div class="col">
                       <div class="card mb-3 text-dark bg-light" style="max-width: 540px;">
@@ -62,7 +62,7 @@
                               </div>
                             </div>
                           </div>
-                      </div> 
+                      </div>
                   </div>
               </div>
               <div class="row">
@@ -81,7 +81,7 @@
                             </div>
                           </div>
                         </div>
-                    </div> 
+                    </div>
                 </div>
                 <div class="col">
                     <div class="card mb-3 text-dark bg-light" style="max-width: 540px;">
@@ -98,7 +98,7 @@
                             </div>
                           </div>
                         </div>
-                    </div> 
+                    </div>
                 </div>
               </div>
               <div class="row">
@@ -124,7 +124,7 @@
                               <td class="border border-slate-500">{{ $item->apenom }}</td>
                               <td class="border border-slate-500">
                                   <?php
-                                  $image_path = public_path('img/fotos/').$item->foto; 
+                                  $image_path = public_path('img/fotos/').$item->foto;
                                   if (file_exists($image_path)){  ?>
                                   <div class="col">
                                       <img src="{{asset('img/fotos/'.$item->foto)}}" class="img-fluid img-thumbnail" width="100" />
@@ -135,11 +135,11 @@
                               <td class="border border-slate-500">{{ $item->area }}</td>
                               <td class="border border-slate-500">{{ $item->cargo }}</td>
                               <td class="border border-slate-500">{{ $item->email }}</td>
-                              <td class="border border-slate-500">{{ $item->celular }}</td>                                                          
+                              <td class="border border-slate-500">{{ $item->celular }}</td>
                           </tr>
                           </tbody>
                           @endforeach
-                      </table>            
+                      </table>
                   </div>
               </div>
             </div>

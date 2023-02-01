@@ -31,33 +31,33 @@
             <div class="col">
                 <div class="form-group">
                     <label class="form-control-label" for="fecha_inicio">Fecha Inicio: <span class="tx-danger">*</span></label>
-                    <input type="date" name="fecha_inicio" value="{{$convocatoria->fecha_inicio}}" class="form-control">                
+                    <input type="date" name="fecha_inicio" value="{{$convocatoria->fecha_inicio}}" class="form-control">
                 </div>
             </div>
             <div class="col">
                 <div class="form-group">
                     <label class="form-control-label" for="fecha_inicio">Fecha Termino: <span class="tx-danger">*</span></label>
-                    <input type="date" name="fecha_termino" value="{{$convocatoria->fecha_termino}}" class="form-control">                
+                    <input type="date" name="fecha_termino" value="{{$convocatoria->fecha_termino}}" class="form-control">
                 </div>
             </div>
             <div class="col">
 
-            </div>            
+            </div>
         </div><!-- row -->
         <div class="row">
-            <div class="col">
+            <div class="col-6">
                 <div class="form-group">
-                    <label class="form-control-label" for="descripcion">Descripcion: <span class="tx-danger">*</span></label>
-                    <textarea name="descripcion" id="descripcion" class="form-control">{{$convocatoria->descripcion}}</textarea>
-                </div>                
+                    <label class="form-control-label">Descripcion: </label>
+                    <textarea rows="8" class="form-control is-valid mg-t-20" name="descripcion" id="mysummernote" placeholder="Textarea (success state)">{{$convocatoria->descripcion}}</textarea>
+                </div>
             </div>
-            <div class="col">
+            <div class="col-4">
                 <div class="form-group">
                     <label class="form-control-label" for="estado">Estado : <span class="tx-danger">*</span></label>
-                    <input type="text" name="estado" id="estado" value="{{$convocatoria->estado}}" class="form-control">                
-                </div> 
-            </div>   
-            <div class="col">
+                    <input type="text" name="estado" id="estado" value="{{$convocatoria->estado}}" class="form-control">
+                </div>
+            </div>
+            <div class="col-2">
                 <label class="form-control-label">Activo: <span class="tx-danger">*</span></label>
                 <br>
                 <div id="br-toggle4" class="br-toggle br-toggle-rounded br-toggle-success {{ $convocatoria->es_activo=='1' ? 'on' : '' }}">
@@ -71,6 +71,6 @@
                 <button class="btn btn-info">Guardar</button>
             </div>
         </div>
-  
+
     </form>
 </x-app-layout>

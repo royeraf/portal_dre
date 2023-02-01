@@ -18,7 +18,7 @@
         <div class="carousel-inner">
           <?php $estado=false; ?>
           @foreach($sliders as $row)
-            <div class="carousel-item {{ $estado==false ? 'active' : '' }} background_bg overlay_bg_50" data-img-src="{{ asset('img/slider/'.$row->img_slider) }}">
+            <div class="carousel-item {{ $estado==false ? 'active' : '' }} background_bg overlay_bg_10" data-img-src="{{ asset('img/slider/'.$row->img_slider) }}">
                 <div class="banner_slide_content">
                     <div class="container"><!-- STRART CONTAINER -->
                     <div class="row justify-content-center">
@@ -27,9 +27,9 @@
                                 <h2 class="font-weight-bold animation text-uppercase" data-animation="zoomIn" data-animation-delay="1s">{{$row->titulo}}</h2>
                                 <p class="animation" data-animation="zoomIn" data-animation-delay="1.5s">{{Str::lower($row->descripcioncorta)}}</p>
                                 @if ($row->link!=null && $row->link!='')
-                                <a class="btn btn-primary animation rounded-0" href="{{$row->link}}" data-animation="zoomIn" data-animation-delay="1.8s">IR</a>                 
+                                <a class="btn btn-warning btn-sm animation rounded-0" href="{{$row->link}}" data-animation="zoomIn" data-animation-delay="1.8s">Leer Mas</a>
                                 @endif
-                                
+
                             </div>
                         </div>
                     </div>
@@ -55,8 +55,8 @@
 
 
 <div class="row">
-    <div class="col-10">
-        <section class="pb-0">
+    <div class="col-9">
+        <section class="pb-0 ps-2">
             <div class="container">
                 <div class="row">
                     <div class="col">
@@ -180,10 +180,10 @@
                     </div>
                 </div>
                 <div class="row justify-content-center">
-    
+
                     <div class="col-12 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
                         <div class="testimonial_slider testimonial_style2 carousel_slider owl-carousel owl-theme" data-margin="30" data-loop="true" data-autoplay="true" data-dots="false" data-responsive='{"0":{"items": "1"}, "380":{"items": "1"}, "576":{"items": "2"}, "1199":{"items": "3"}}'>
-                              
+
                             @foreach ($noticias as $item)
                             <div class="testimonial_box mt-4">
                                 <div class="content_box box_shadow1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
@@ -208,19 +208,19 @@
                                 </div>
                             </div>
                             @endforeach
-                          </div>
-                      </div>
+                        </div>
+                    </div>
                   </div>
           </div>
         </section>
     </div>
-    <div class="col p-0">
+    <div class="col p-0 pt-1 me-2" style="margin-right: 40px">
         @foreach ($mainrightitem as $item)
-        <div class="m-1 me-2 p-0">
+        <div class="mb-2 p-0">
             <a href="{{$item->url}}" target="_blank" class="btn btn-primary p-0" title="{{$item->nombre}}">
                 <img src="{{asset('img/mainright/'.$item->imagen)}}" alt="{{$item->nombre}}" class="img-fluid">
             </a>
-        </div>    
+        </div>
         @endforeach
     </div>
 </div>
@@ -279,7 +279,7 @@
         <!-- END SECTION COUNTER -->
         <!-- START SECTION COMUNICADOS -->
         <section class="bg_gray">
-            <div class="container">	
+            <div class="container">
                 <div class="row">
                     <div class="col-12">
                         <div class="heading_s1 text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
@@ -307,7 +307,7 @@
             </div>
         </section>
         <!-- END SECTION COMUNICADOS -->
-    
+
     <!-- START SECTION CLIENT LOGO -->
     <section class="light_gray_bg">
     <div class="container">
@@ -338,9 +338,7 @@
       </div>
     </section>
     <!-- END SECTION CLIENT LOGO -->
-    
     <?php if(isset($popup->titulopopup)){ ?>
-
         <div class="modal fade show" id="modalpopup" tabindex="-1" aria-labelledby="modalpopupTitle" style="display: block; padding-right: 17px;" aria-modal="true" role="dialog">
             <div class="modal-dialog">
               <div class="modal-content p-0">
@@ -348,15 +346,30 @@
                     <button type="button" class="btn btn-warning btn-sm p-1" data-dismiss="modal">X</button>
                 </div>
                 <div class="modal-body p-0" title="{{$popup->titulo}}">
-                    <img alt="{{$popup->titulo}}" src="{{asset('img/popup/'.$popup->imagen)}}" class="img-fluid img-thumbnail" />
+                    <div id="carouselExampleControls2" class="banner_content_wrap carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                          <?php $estado=false; ?>
+                          @foreach($imagenes as $row)
+                            <div class="carousel-item {{ $estado==false ? 'active' : '' }} p-0" data-img-src="">
+                                <a target="_blank" href="{{$popup->enlace_popup}}">
+                                    <img src="{{ asset('img/popup/'.$row->imagen) }}" class="w-fluid" width="" alt="">
+                                </a>
+                            </div>
+                          <?php $estado = true ?>
+                          @endforeach
+                        </div>
+                        <div class="carousel-nav">
+                            <a class="carousel-control-prev" href="#carouselExampleControls2" role="button" data-slide="prev">
+                                <i class="ion-chevron-left"></i>
+                            </a>
+                            <a class="carousel-control-next" href="#carouselExampleControls2" role="button" data-slide="next">
+                                <i class="ion-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-
               </div>
             </div>
           </div>
-
-
-
         <?php }  ?>
-
 @endsection

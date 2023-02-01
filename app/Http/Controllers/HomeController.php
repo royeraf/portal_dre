@@ -15,6 +15,7 @@ use App\Models\Galeria;
 use App\Models\Mainright;
 use App\Models\Documentogestion;
 use App\Models\Archivodocumentogestion;
+use App\Models\ImagenPopup;
 
 class HomeController extends Controller
 {
@@ -26,13 +27,16 @@ class HomeController extends Controller
         $data['noticias']=Noticia::orderBy('fechapubli', 'desc')->take(6)->get();
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        $data['popup']=Popup::where('estado', 1)->orderBy('created_at', 'desc')->first();
+        $popup=Popup::where('estado', 1)->orderBy('created_at', 'desc')->first();
+        $data['popup']=$popup;
+        $data['imagenes']=ImagenPopup::where('idpopup', $popup->id)->get();
         $data['sliders']=Slider::where('activo_slider', 1)->get();
         return view('home', $data);
     }
     public function noticia(Noticia $noticia){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $submenus= Menu::whereNotNull('categoriamenu')->get();
+        $data['noticias']=Noticia::whereNotIn('id', [$noticia->id])->orderBy('fechapubli', 'desc')->take(6)->get();
         $data['menus']=$menus;
         $data['submenus']=$submenus;
         $data['noticia']=$noticia;
@@ -55,21 +59,21 @@ class HomeController extends Controller
         $submenus= Menu::whereNotNull('categoriamenu')->get();
         $data['menus']=$menus;
         $data['submenus']=$submenus;
-        return view('paginas/nosotros', $data);        
+        return view('paginas/nosotros', $data);
     }
     public function mision(){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $submenus= Menu::whereNotNull('categoriamenu')->get();
         $data['menus']=$menus;
         $data['submenus']=$submenus;
-        return view('paginas/mision', $data);        
+        return view('paginas/mision', $data);
     }
     public function vision(){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $submenus= Menu::whereNotNull('categoriamenu')->get();
         $data['menus']=$menus;
         $data['submenus']=$submenus;
-        return view('paginas/vision', $data);        
+        return view('paginas/vision', $data);
     }
     public function portafoliodet(Galeria $galeria){
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
@@ -109,20 +113,20 @@ class HomeController extends Controller
         $data['convocatorias']=$convocatorias;
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        return view('paginas/convocatorias', $data);  
+        return view('paginas/convocatorias', $data);
     }
     public function verconvocatoria(Convocatoria $convocatoria){
         $data['convocatoria']=$convocatoria;
         $data['archivos']=ArchivoConvocatoria::where('id_convocatoria', $convocatoria->id)->orderBy('id', 'desc')->paginate(5);
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        return view('paginas/verconvocatoria', $data);         
+        return view('paginas/verconvocatoria', $data);
     }
     public function comunicadosall(){
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
         $data['comunicados']=Comunicado::orderBy('created_at', 'desc')->take(10)->get();
-        return view('paginas/comunicados', $data);          
+        return view('paginas/comunicados', $data);
     }
     public function documentosdegestionweb(){
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
@@ -134,7 +138,7 @@ class HomeController extends Controller
             $row['archivos'] = $archivoconvocatoria;
         }
         $data['registros']=$registros;
-        return view('paginas/documentosdegestionweb', $data); 
+        return view('paginas/documentosdegestionweb', $data);
     }
 
 }

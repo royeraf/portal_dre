@@ -39,7 +39,7 @@ Route::get('/verconvocatoria/{convocatoria}', [HomeController::class, 'verconvoc
 Route::get('/comunicadosall', [HomeController::class, 'comunicadosall'])->name('comunicadosall');
 Route::get('/documentosdegestionweb', [HomeController::class, 'documentosdegestionweb'])->name('documentosdegestionweb');
 
-Route::controller(MenuController::class)->group(['middleware'=>['auth']],function(){
+Route::controller(MenuController::class)->group(function(){
     Route::get('menus', 'index')->name('menu');
     Route::get('menus/edit/{menu}', 'edit')->name('menu.edit');
     Route::get('menus/create', 'create')->name('formregistro');
@@ -82,7 +82,9 @@ Route::controller(PopupController::class)->group(function(){
     Route::get('popup', 'index')->middleware(['auth', 'verified'])->name('popup');
     Route::get('popup/create', 'create')->middleware(['auth', 'verified'])->name('popup.create');
     Route::post('popup/store', 'store')->middleware(['auth', 'verified'])->name('popup.store');
+    Route::post('popup/imagen/store/{popup}', 'store2')->middleware(['auth', 'verified'])->name('popup.imagen.store');
     Route::get('popup/{popup}', 'destroy')->middleware(['auth', 'verified'])->name('popup.destroy');
+    Route::get('popup/imagen/{imagenpopup}', 'destroy2')->middleware(['auth', 'verified'])->name('popup.imagen.destroy');
     Route::get('popup/edit/{popup}', 'edit')->middleware(['auth', 'verified'])->name('popup.edit');
     Route::put('popup/update/{popup}', 'update')->middleware(['auth', 'verified'])->name('popup.update');
     Route::get('popup/show/{popup}', 'show')->middleware(['auth', 'verified'])->name('show');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Popup;
+use App\Models\ImagenPopup;
 use Illuminate\Http\Request;
 
 class PopupController extends Controller
@@ -17,51 +18,52 @@ class PopupController extends Controller
         $popup = new Popup();
         $popup->titulopopup = $request->titulopopup;
         $popup->enlace_popup = $request->enlace_popup;
-        $popup->contenido = $request->contenido;
+        $popup->save();
+        return redirect()->route('popup.edit', $popup);
+    }
+    public function store2(Request $request, Popup $popup){
+        $imagenpopup=new ImagenPopup();
         if($request->hasFile('imagen')){
             $file = $request->file('imagen');
             $filename = time().'.'.$file->extension();
-            $popup->imagen=$filename;
-            $file->move(public_path('img/popup'), $filename);   
+            $imagenpopup->imagen=$filename;
+            $file->move(public_path('img/popup'), $filename);
         }
-        $popup->save();
-        return redirect()->route('popup');
+        $imagenpopup->idpopup=$popup->id;
+        $imagenpopup->save();
+        return redirect()->route('popup.edit', $popup);
     }
     public function destroy(Popup $popup){
-        if($popup->imagen!=null && $popup->imagen!=''){
-            $image_path = public_path('img/popup/').$popup->imagen;        
+        $popup->delete();
+        return redirect()->route('popup');
+    }
+    public function destroy2(ImagenPopup $imagenpopup){
+        $idpopup=$imagenpopup->idpopup;
+        if($imagenpopup->imagen!=null && $imagenpopup->imagen!=''){
+            $image_path = public_path('img/popup/').$imagenpopup->imagen;
             if (file_exists($image_path)){
                 unlink($image_path);
             }
         }
-        $popup->delete();
-        return redirect()->route('popup');
+        $imagenpopup->delete();
+        return redirect()->route('popup.edit', $idpopup);
     }
     public function edit(Popup $popup){
+        $data['imagenes']=ImagenPopup::where('idpopup', $popup->id)->get();
         $data['popup']=$popup;
         return view('intranet/popup/edit', $data);
     }
     public function update(Popup $popup, Request $request){
         $popup->titulopopup = $request->titulopopup;
-        $popup->contenido = $request->contenido;
         $popup->enlace_popup=$request->enlace_popup;
-        $popup->estado=$request->estado;        
-        if($request->hasFile('imagen')){
-            $file = $request->file('imagen');
-            $image_path = public_path('img/popup/').$popup->imagen; 
-            $filename = substr($popup->imagen, 0, -4).'.'.$file->extension();
-            $popup->imagen=$filename;
-            if ($popup->imagen!=null && file_exists($image_path)){
-                unlink($image_path);
-            }
-            $file->move(public_path('img/popup'), $filename); 
-        }
+        $popup->estado=$request->estado;
         $popup->save();
-        return redirect()->route('popup.edit', $popup);
+        return redirect()->route('popup');
     }
     public function show(Popup $popup){
+        $data['imagenes']=ImagenPopup::where('idpopup', $popup->id)->get();
         $data['popup']=$popup;
         return view('intranet/popup/modal/show', $data);
     }
-    
+
 }

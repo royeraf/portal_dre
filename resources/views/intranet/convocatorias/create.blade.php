@@ -30,36 +30,30 @@
             <div class="col">
                 <div class="form-group">
                     <label class="form-control-label" for="fecha_inicio">Fecha Inicio: <span class="tx-danger">*</span></label>
-                    <input type="date" name="fecha_inicio" value="{{date('Y-m-d')}}" class="form-control">                
+                    <input type="date" name="fecha_inicio" value="{{date('Y-m-d')}}" class="form-control">
                 </div>
             </div>
             <div class="col">
                 <div class="form-group">
                     <label class="form-control-label" for="fecha_inicio">Fecha Termino: <span class="tx-danger">*</span></label>
-                    <input type="date" name="fecha_termino" value="{{date('Y-m-d')}}" class="form-control">                
+                    <input type="date" name="fecha_termino" value="{{date('Y-m-d')}}" class="form-control">
                 </div>
             </div>
             <div class="col">
 
-            </div>            
+            </div>
         </div><!-- row -->
         <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label class="form-control-label" for="descripcion">Descripcion: <span class="tx-danger">*</span></label>
-                    <textarea name="descripcion" id="descripcion" class="form-control"></textarea>
-                </div>                
+            <div class="col-md-12" id="contenidopagina">
+                <label class="form-control-label">Descripcion: </label>
+                <textarea rows="8" class="form-control is-valid mg-t-20" name="descripcion" id="mysummernote" placeholder="Textarea (success state)"></textarea>
             </div>
-            <div class="col">
-
-            </div>   
-
-        </div>
+        </div><br>
         <div class="row">
             <div class="col">
                 <button class="btn btn-info">Guardar</button>
             </div>
         </div>
-  
+
     </form>
 </x-app-layout>

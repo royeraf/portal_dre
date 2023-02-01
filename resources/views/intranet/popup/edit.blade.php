@@ -19,7 +19,7 @@
                     <label class="form-control-label" for="enlace_popup">Enlace:</label>
                     <input class="form-control" type="text" name="enlace_popup" id="enlace_popup" value="{{$popup->enlace_popup}}" placeholder="http://">
                     <x-input-error :messages="$errors->get('enlace_popup')" class="mt-2" />
-                </div>                
+                </div>
             </div>
             <div class="col">
                 <label class="form-control-label">Activo: <span class="tx-danger">*</span></label>
@@ -31,31 +31,57 @@
             </div>
         </div><!-- row -->
         <div class="row">
-            <div class="col-lg-12">
-                <label class="form-control-label" for="contenido">CONTENIDO: <span class="tx-danger">*</span></label>
-                <textarea rows="16" class="form-control is-valid mg-t-20" name="contenido" id="mysummernote">
-                    <?= $popup->contenido ?>
-                </textarea>
-            </div><!-- col-4 -->            
-        </div>
-        <div class="row">
-            <div class="col">
-                <label class="form-control-label" for="inputGroupFile1">IMAGEN: </label>
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile1" name="imagen">
-                        <label class="custom-file-label" for="inputGroupFile1" aria-describedby="inputGroupFileAddon">Choose image</label>
-                    </div>
-                </div>
-                <div class="border rounded-lg text-center p-3">
-                    <img src="{{asset('img/popup/'.$popup->imagen)}}" class="img-fluid" id="preview1" />
-                </div>
-            </div>
-        </div>
-        <div class="row">
             <div class="col">
                 <button class="btn btn-info">Guardar</button>
             </div>
         </div>
     </form><br>
+    <form action="{{ route('popup.imagen.store', $popup) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="row">
+            <div class="col-md-5">
+                <label class="form-control-label" for="inputGroupFile">IMAGEN: </label>
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile" name="imagen" required>
+                        <label class="custom-file-label" for="inputGroupFile" aria-describedby="inputGroupFileAddon">Elige imagen</label>
+                    </div>
+                    <button title="Agregar Imagen" class="btn btn-info"><i class="fa fa-plus"></i></button>
+                </div>
+                <div class="border rounded-lg text-center p-3">
+                    <img src="//placehold.it/140?text=IMAGE" class="img-fluid" id="preview" />
+                </div>
+                <br><br>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <table class="table table-hover small">
+            <tr>
+                <th class="border border-slate-500">ID</th>
+                <th class="border border-slate-500">IMAGEN</th>
+                <th class="border border-slate-500">FECHA SUBIDA</th>
+                <th class="border border-slate-500">ACCION</th>
+            </tr>
+            @foreach ($imagenes as $item)
+            @php
+                $image_path = public_path('img/popup/').$item->imagen;
+            @endphp
+            <tr>
+                <td class="border border-slate-500">{{$item->id}}</td>
+                <td class="border border-slate-500">
+                    <?php if (file_exists($image_path)){  ?>
+                        <img src="{{asset('img/popup/'.$item->imagen)}}" class="img-fluid img-thumbnail" width="90px" />
+                    <?php } ?>
+                </td>
+                <td class="border border-slate-500">{{$item->created_at}}</td>
+                <td class="border border-slate-500">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="{{ route('popup.imagen.destroy', $item) }}" class="btn btn-danger btn-sm eliminar" title="Eliminar"><i class="fas fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            @endforeach
+        </table>
+    </div>
 </x-app-layout>

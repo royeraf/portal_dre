@@ -14,11 +14,11 @@
 <!-- Favicon Icon -->
 <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/ico.png') }}">
 <!-- Animation CSS -->
-<link rel="stylesheet" href="{{ asset('plantillas/eduglobal/assets/css/animate.css') }}">	
+<link rel="stylesheet" href="{{ asset('plantillas/eduglobal/assets/css/animate.css') }}">
 <!-- Latest Bootstrap min CSS -->
 <link rel="stylesheet" href="{{ asset('plantillas/eduglobal/assets/bootstrap/css/bootstrap.min.css') }}">
 <!-- Google Font -->
-<link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i" rel="stylesheet">
 <!-- Icon Font CSS -->
 <link rel="stylesheet" href="{{ asset('plantillas/eduglobal/assets/css/ionicons.min.css') }}">
@@ -47,40 +47,46 @@
 
 
 
-<!-- Latest jQuery --> 
-<script src="{{ asset('plantillas/eduglobal/assets/js/jquery-1.12.4.min.js') }}"></script> 
-<!-- jquery-ui --> 
+<!-- Latest jQuery -->
+<script src="{{ asset('plantillas/eduglobal/assets/js/jquery-1.12.4.min.js') }}"></script>
+<!-- jquery-ui -->
 <script src="{{ asset('plantillas/eduglobal/assets/js/jquery-ui.js') }}"></script>
-<!-- popper min js --> 
+<!-- popper min js -->
 <script src="{{ asset('plantillas/eduglobal/assets/js/popper.min.js') }}"></script>
-<!-- Latest compiled and minified Bootstrap --> 
-<script src="{{ asset('plantillas/eduglobal/assets/bootstrap/js/bootstrap.min.js') }}"></script> 
-<!-- owl-carousel min js  --> 
-<script src="{{ asset('plantillas/eduglobal/assets/owlcarousel/js/owl.carousel.min.js') }}"></script> 
-<!-- magnific-popup min js  --> 
-<script src="{{ asset('plantillas/eduglobal/assets/js/magnific-popup.min.js') }}"></script> 
-<!-- waypoints min js  --> 
-<script src="{{ asset('plantillas/eduglobal/assets/js/waypoints.min.js') }}"></script> 
-<!-- parallax js  --> 
-<script src="{{ asset('plantillas/eduglobal/assets/js/parallax.js') }}"></script> 
-<!-- countdown js  --> 
-<script src="{{ asset('plantillas/eduglobal/assets/js/jquery.countdown.min.js') }}"></script> 
-<!-- jquery.counterup.min js --> 
+<!-- Latest compiled and minified Bootstrap -->
+<script src="{{ asset('plantillas/eduglobal/assets/bootstrap/js/bootstrap.min.js') }}"></script>
+<!-- owl-carousel min js  -->
+<script src="{{ asset('plantillas/eduglobal/assets/owlcarousel/js/owl.carousel.min.js') }}"></script>
+<!-- magnific-popup min js  -->
+<script src="{{ asset('plantillas/eduglobal/assets/js/magnific-popup.min.js') }}"></script>
+<!-- waypoints min js  -->
+<script src="{{ asset('plantillas/eduglobal/assets/js/waypoints.min.js') }}"></script>
+<!-- parallax js  -->
+<script src="{{ asset('plantillas/eduglobal/assets/js/parallax.js') }}"></script>
+<!-- countdown js  -->
+<script src="{{ asset('plantillas/eduglobal/assets/js/jquery.countdown.min.js') }}"></script>
+<!-- jquery.counterup.min js -->
 <script src="{{ asset('plantillas/eduglobal/assets/js/jquery.counterup.min.js') }}"></script>
-<!-- imagesloaded js --> 
+<!-- imagesloaded js -->
 <script src="{{ asset('plantillas/eduglobal/assets/js/imagesloaded.pkgd.min.js') }}"></script>
-<!-- isotope min js --> 
+<!-- isotope min js -->
 <script src="{{ asset('plantillas/eduglobal/assets/js/isotope.min.js') }}"></script>
 <!-- jquery.parallax-scroll js -->
 <script src="{{ asset('plantillas/eduglobal/assets/js/jquery.parallax-scroll.js') }}"></script>
-<!-- scripts js --> 
+<!-- scripts js -->
 <script src="{{ asset('plantillas/eduglobal/assets/js/scripts.js') }}"></script>
 
 
 <script>
     $(document).ready(function(){
-      $('#modalpopup').modal('show');       
+      $('#modalpopup').modal('show');
     })
+
+
+    $('#carouselExampleControls2').carousel({
+  interval: 3000
+});
+
   </script>
 </script>
 
