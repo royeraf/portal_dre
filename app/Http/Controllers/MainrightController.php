@@ -15,12 +15,12 @@ class MainrightController extends Controller
         $mainright = New Mainright();
         $mainright->nombre= $request->nombre;
         $mainright->url=$request->url;
-        $mainright->indice=$request->indice;        
+        $mainright->indice=$request->indice;
         if($request->hasFile('imagen')){
             $file = $request->file('imagen');
             $filename = time().'.'.$file->extension();
             $mainright->imagen=$filename;
-            $file->move(public_path('img/mainright'), $filename);   
+            $file->move(public_path('../../public_html/img/mainright'), $filename);
         }
         $mainright->save();
         return redirect()->route('mainright');

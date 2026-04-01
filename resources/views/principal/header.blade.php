@@ -1,136 +1,222 @@
-
-<!-- LOADER -->
-<div id="preloader">
-  <span class="spinner"></span>
-  <div class="loader-section section-left"></div>
-  <div class="loader-section section-right"></div>
+{{-- ── LOGIN MODAL ──────────────────────────────────────────── --}}
+<div x-data="{ open: false }" x-cloak
+     @open-login.window="open = true">
+    <template x-teleport="body">
+        <div x-show="open" x-transition.opacity
+             class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4"
+             @click.self="open = false">
+            <div x-show="open" x-transition.scale.90
+                 class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+                <div class="bg-dre-primary p-6 text-white text-center">
+                    <h3 class="text-xl font-bold">INTRANET</h3>
+                    <p class="text-sm text-blue-200 mt-1">DRE Huánuco</p>
+                </div>
+                <form method="POST" action="{{ route('login') }}" class="p-6 space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="text" name="email" required autofocus
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-dre-accent focus:border-dre-accent outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                        <input type="password" name="password" required
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-dre-accent focus:border-dre-accent outline-none">
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-dre-primary text-white font-bold py-2.5 rounded-lg hover:bg-dre-accent transition-colors">
+                        Ingresar
+                    </button>
+                </form>
+                <button @click="open = false"
+                        class="absolute top-3 right-3 text-white/70 hover:text-white text-xl">&times;</button>
+            </div>
+        </div>
+    </template>
 </div>
-<!-- END LOADER --> 
 
-<div class="modal fade lr_popup" id="Login" tabindex="-1" role="dialog" aria-hidden="true">
-<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content border-0">
-      <div class="modal-body">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-              <div class="row no-gutters">
-                <div class="col-lg-5">
-                    <div class="h-100 background_bg radius_ltlb_5" data-img-src="assets/images/login_img.jpg"></div>
-                  </div>
-                <div class="col-lg-7">	
-                    <div class="padding_eight_all">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="login-tab1" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="login" role="tabpanel">
-                                <div class="heading_s1 mb-3">
-                                    <h4>Login</h4>
-                                </div>
-                                <form method="post" class="login form_style2">
-                                    <div class="form-group">
-                                        <input type="text" required="" class="form-control" name="email" placeholder="Email" autofocus>
-                                    </div>
-                                    <div class="form-group">
-                                        <input class="form-control" required="" type="password" name="password" placeholder="Password">
-                                    </div>
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-default btn-block rounded-0" name="login">Log in</button>
-                                    </div>
-                                </form>
+{{-- ── HEADER ──────────────────────────────────────────────── --}}
+<header class="w-full z-40 relative" x-data="{ mobileOpen: false }">
+
+    {{-- Top bar --}}
+    <div class="bg-dre-dark text-white text-xs">
+        <div class="max-w-screen-xl mx-auto px-4 flex items-center justify-between py-1.5 sm:py-2 gap-2">
+
+            {{-- Horario --}}
+            <div class="flex items-center gap-1.5 min-w-0">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-yellow-400 shrink-0"></i>
+                {{-- Texto completo en sm+, abreviado en móvil --}}
+                <span class="hidden sm:inline truncate">HORARIO DE ATENCIÓN: Lunes - Viernes: 8:30 am - 5:30 pm</span>
+                <span class="sm:hidden text-[11px]">L-V: 8:30 am – 5:30 pm</span>
+            </div>
+
+            {{-- Acciones --}}
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <a href="{{ route('intranet') }}"
+                   @if(Auth::user() == null) @click.prevent="$dispatch('open-login')" @endif
+                   class="hover:text-yellow-400 transition-colors flex items-center gap-1">
+                    <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Intranet</span>
+                </a>
+                <span class="text-white/30 hidden sm:inline">|</span>
+                <a href="https://auladre.drehuanuco.gob.pe/login/index.php"
+                   class="bg-yellow-500 text-black font-bold px-2 sm:px-3 py-1 rounded hover:bg-yellow-400 transition-colors flex items-center gap-1">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 shrink-0"></i>
+                    <span class="hidden sm:inline">Aula Virtual</span>
+                </a>
+                <a target="_blank" href="https://www.transparencia.gob.pe/enlaces/pte_transparencia_enlaces.aspx?id_entidad=14163#.Y9SgbXbMLrd">
+                    <img src="{{ asset('img/portal.png') }}" class="h-6 sm:h-8" alt="Portal de Transparencia">
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    {{-- Main navbar --}}
+    <div class="bg-white shadow-sm">
+        <div class="max-w-screen-xl mx-auto px-4 flex items-center justify-between py-2">
+
+            {{-- Logo left --}}
+            <a href="/" class="shrink-0">
+                <img src="{{ asset('img/logonuevo.png') }}" alt="DRE Huánuco" class="h-14 md:h-16 w-auto">
+            </a>
+
+            {{-- Desktop nav --}}
+            <nav class="hidden lg:flex items-center gap-1 text-sm font-semibold uppercase tracking-wide">
+                <a href="{{ URL::to('/') }}"
+                   class="px-3 py-2 rounded-md text-dre-primary hover:bg-dre-50 transition-colors">HOME</a>
+
+                @foreach($menus as $row)
+                    @if($row->link_menu == '#')
+                        {{-- Dropdown --}}
+                        <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative">
+                            <button @click="open = !open"
+                                    class="px-3 py-2 rounded-md text-gray-700 hover:bg-dre-50 hover:text-dre-primary transition-colors flex items-center gap-1">
+                                {{ $row->nom_menu }}
+                                <svg class="w-3.5 h-3.5 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            <div x-show="open" x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 -translate-y-1"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 -translate-y-1"
+                                 class="absolute left-0 top-full mt-0.5 w-64 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50"
+                                 x-cloak>
+                                @foreach($submenus as $submenu)
+                                    @if($submenu->categoriamenu == $row->id)
+                                        <a href="{{ $submenu->link_menu }}"
+                                           class="block px-4 py-2 text-sm text-gray-600 hover:bg-dre-50 hover:text-dre-primary transition-colors normal-case tracking-normal font-normal">
+                                            {{ $submenu->nom_menu }}
+                                        </a>
+                                    @endif
+                                @endforeach
                             </div>
                         </div>
-                    </div>
-                </div>
-              </div>
-            </form>
+                    @else
+                        <a href="{{ $row->link_menu }}"
+                           class="px-3 py-2 rounded-md text-gray-700 hover:bg-dre-50 hover:text-dre-primary transition-colors">
+                            {{ $row->nom_menu }}
+                        </a>
+                    @endif
+                @endforeach
+            </nav>
+
+            <div class="flex items-center gap-3">
+                {{-- Logo right (gob) --}}
+                <a href="https://www.gob.pe/regionhuanuco-dre" class="shrink-0 hidden md:block">
+                    <img src="{{ asset('img/logogob.png') }}" alt="Gobierno" class="h-10 w-auto">
+                </a>
+
+                {{-- Mobile menu button --}}
+                <button @click="mobileOpen = !mobileOpen" class="lg:hidden p-2 text-gray-700 hover:text-dre-primary">
+                    <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg x-show="mobileOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
         </div>
-      </div>
-  </div>
-</div>
 
-<!-- START HEADER -->
-<header class="header_wrap dark_skin">
-<div class="top-header bg_blue_dark2 light_skin">
-      <div class="container">
-          <div class="row align-items-center">
-              <div class="col-md-6">
-                  <ul class="contact_detail list_none text-center text-md-left">
-                      <li><a href="#"><i class="ti-mobile"></i>+51 948998291</a></li>
-                      <li><a href="#"><i class="ti-email"></i>rcoronel@drehco.gob.pe</a></li>
-                  </ul>
-              </div>
-              <div class="col-md-6">
-                <div class="d-flex flex-wrap align-items-center justify-content-md-end justify-content-center mt-2 mt-md-0">
-                    <ul class="list_none social_icons social_white text-center text-md-right">
-                          <li><a href="#"><i class="ion-social-facebook"></i></a></li>
-                          <li><a href="#"><i class="ion-social-twitter"></i></a></li>
-                          <li><a href="#"><i class="ion-social-googleplus"></i></a></li>
-                          <li><a href="#"><i class="ion-social-youtube-outline"></i></a></li>
-                          <li><a href="#"><i class="ion-social-instagram-outline"></i></a></li>
-                      </ul>
-                      <ul class="list_none header_list border_list ml-1">
-                          <li><a href="{{ route('intranet') }}" data-toggle="{{ Auth::user()==null ? 'modal' : '' }}" data-target="#Login">Intranet</a></li>
-                          <li><a href="#" class="btn btn-default btn-sm rounded-0">Aula Virutal</a></li>
-                          <li><a target="_blank" href="https://www.transparencia.gob.pe/enlaces/pte_transparencia_enlaces.aspx?id_entidad=14163#.Y9SgbXbMLrd" class=""><img src="{{asset('img/portal.png')}}" height="40px" alt=""></a></li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-  <div class="container">
-      <nav class="navbar navbar-expand-lg"> 
-          <a class="navbar-brand" href="/">
-              <img class="logo_dark" src="{{ asset('img/logo.png') }}" alt="logo" />
-          </a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="ion-android-menu"></span> </button>
-          <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-              
-            <ul class="navbar-nav">
-                <li>
-                    <a class="nav-link active" href="<?= URL::to('/') ?>">HOME</a>
-                </li>
-                <?php foreach($menus as $row){ ?>
-                    <?php if($row->link_menu=='#'){ ?>
-                        <li class="dropdown">
-                            <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown">{{$row->nom_menu}}</a>
-                            <div class="dropdown-menu">
-                                <ul> 
-                                    <?php foreach($submenus as $submenu){
-                                        if($submenu->categoriamenu==$row->id){ ?>
-                                    <li><a class="dropdown-item nav-link nav_item" href="{{$submenu->link_menu}}">{{$submenu->nom_menu}}</a></li> 
-                                    <?php } } ?>
-                                </ul>
+        {{-- Mobile nav --}}
+        <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2"
+             class="lg:hidden border-t border-gray-100 bg-white max-h-[80vh] overflow-y-auto"
+             x-cloak>
+            <div class="px-4 py-3 space-y-1">
+                <a href="{{ URL::to('/') }}"
+                   class="block px-3 py-2 rounded-md text-dre-primary font-semibold hover:bg-dre-50">HOME</a>
+
+                @foreach($menus as $row)
+                    @if($row->link_menu == '#')
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open"
+                                    class="w-full flex items-center justify-between px-3 py-2 rounded-md text-gray-700 hover:bg-dre-50 font-semibold">
+                                <span>{{ $row->nom_menu }}</span>
+                                <svg class="w-4 h-4 transition-transform" :class="open && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            <div x-show="open" x-collapse x-cloak class="pl-4">
+                                @foreach($submenus as $submenu)
+                                    @if($submenu->categoriamenu == $row->id)
+                                        <a href="{{ $submenu->link_menu }}"
+                                           class="block px-3 py-2 text-sm text-gray-600 hover:text-dre-primary hover:bg-dre-50 rounded-md">
+                                            {{ $submenu->nom_menu }}
+                                        </a>
+                                    @endif
+                                @endforeach
                             </div>
-                        </li>
-                <?php }else{ ?>
-                    <li>
-                        <a class="nav-link" href="{{$row->link_menu}}">{{$row->nom_menu}}</a>
-                    </li>
-                <?php } } ?>
+                        </div>
+                    @else
+                        <a href="{{ $row->link_menu }}"
+                           class="block px-3 py-2 rounded-md text-gray-700 hover:bg-dre-50 font-semibold">
+                            {{ $row->nom_menu }}
+                        </a>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+    </div>
 
+    {{-- Quick access bar --}}
+    <div class="bg-dre-primary">
+        <div class="max-w-screen-xl mx-auto px-4">
+            <nav class="flex">
+                <a class="flex-1 text-center text-white text-[10px] sm:text-[11px] font-bold py-2 sm:py-2.5 hover:bg-white/10 transition-colors flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 border-r border-white/10"
+                   href="http://digital.regionhuanuco.gob.pe/login">
+                    <i data-lucide="monitor" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden sm:inline">SGD DRE</span>
+                    <span class="sm:hidden text-[9px] leading-tight text-center">SGD<br>DRE</span>
+                </a>
+                <a class="flex-1 text-center text-white text-[10px] sm:text-[11px] font-bold py-2 sm:py-2.5 hover:bg-white/10 transition-colors flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 border-r border-white/10"
+                   href="http://digital.regionhuanuco.gob.pe/registro/mesa-partes-virtual/57">
+                    <i data-lucide="inbox" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden sm:inline">MESA DE PARTES DRE</span>
+                    <span class="sm:hidden text-[9px] leading-tight text-center">PARTES<br>DRE</span>
+                </a>
+                <a class="flex-1 text-center text-white text-[10px] sm:text-[11px] font-bold py-2 sm:py-2.5 hover:bg-white/10 transition-colors flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 border-r border-white/10"
+                   href="{{ route('menus.showpaginaweb', 39) }}">
+                    <i data-lucide="file-text" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden sm:inline">MESA DE PARTES UGELES</span>
+                    <span class="sm:hidden text-[9px] leading-tight text-center">PARTES<br>UGELES</span>
+                </a>
+                <a class="flex-1 text-center text-white text-[10px] sm:text-[11px] font-bold py-2 sm:py-2.5 hover:bg-white/10 transition-colors flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5"
+                   href="https://accounts.google.com/">
+                    <i data-lucide="mail" class="w-4 h-4 shrink-0"></i>
+                    <span class="hidden sm:inline">CORREO INSTITUCIONAL</span>
+                    <span class="sm:hidden text-[9px] leading-tight text-center">CORREO<br>INST.</span>
+                </a>
+            </nav>
+        </div>
+    </div>
 
-              </ul>
-          </div>
-          <ul class="navbar-nav attr-nav align-items-center">
-              <li><a href="javascript:void(0);" class="nav-link search_trigger"><i class="ion-ios-search-strong"></i></a>
-                  <div class="search-overlay">
-                      <div class="search_wrap">
-                          <form>
-                              <input type="text" placeholder="Search" class="form-control" id="search_input">
-                              <button type="submit" class="search_icon"><i class="ion-ios-search-strong"></i></button>
-                          </form>
-                      </div>
-                  </div>
-              </li>
-          </ul>
-      </nav>
-  </div>
 </header>
-<!-- END HEADER --> 

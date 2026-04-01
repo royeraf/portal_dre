@@ -27,8 +27,9 @@ class PopupController extends Controller
             $file = $request->file('imagen');
             $filename = time().'.'.$file->extension();
             $imagenpopup->imagen=$filename;
-            $file->move(public_path('img/popup'), $filename);
+            $file->move(public_path('../../public_html/img/popup/'), $filename);
         }
+        $imagenpopup->enlace=$request->enlace;
         $imagenpopup->idpopup=$popup->id;
         $imagenpopup->save();
         return redirect()->route('popup.edit', $popup);
@@ -40,7 +41,7 @@ class PopupController extends Controller
     public function destroy2(ImagenPopup $imagenpopup){
         $idpopup=$imagenpopup->idpopup;
         if($imagenpopup->imagen!=null && $imagenpopup->imagen!=''){
-            $image_path = public_path('img/popup/').$imagenpopup->imagen;
+            $image_path = public_path('../../public_html/img/popup/').$imagenpopup->imagen;
             if (file_exists($image_path)){
                 unlink($image_path);
             }

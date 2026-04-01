@@ -26,7 +26,7 @@
                 <div class="form-group mg-b-10-force">
                 <label class="form-control-label" for="categoriamenu">Categoria: <span class="tx-danger">*</span></label>
                 <select class="form-control select2" id="categoriamenu" name="categoriamenu" data-placeholder="Elige Categoria">
-                    <option value="" {{($menu->categoriamenu=='' || $menu->categoriamenu==null) ? 'selected="selected"' : ''}}>NINGUNO</option>                    
+                    <option value="" {{($menu->categoriamenu=='' || $menu->categoriamenu==null) ? 'selected="selected"' : ''}}>NINGUNO</option>
                     @foreach ($menusdd as $item)
                         <option value="{{$item->id}}" {{$menu->categoriamenu==$item->id ? 'selected="selected"' : ''}}>{{$item->nom_menu}}</option>
                     @endforeach
@@ -48,30 +48,30 @@
                     <label class="form-control-label" for="link_menu">Link: <span class="tx-danger">*</span></label>
                     <input class="form-control" type="text" name="link_menu" id="link_menu" value="<?= $menu->link_menu ?>" placeholder="Link Menu">
                     <x-input-error :messages="$errors->get('link_menu')" class="mt-2" />
-                
-                </div>                 
+
+                </div>
             </div>
         </div>
         <div class="row">
-            <?php if($menu->link_menu!='#'){ ?>
+            <?php if($menu->idpagina>1){ ?>
             <div class="col-md-12" id="contenidopagina">
                 <input type="hidden" name="idpagina" value="{{$pagina->id}}">
                 <label class="form-control-label">Nombre Pagina: </label>
                 <input class="form-control" type="text" name="nom_pagina" id="nom_pagina" value="{{ $pagina->nom_pagina }}" placeholder="">
                 <label class="form-control-label">Contenido: </label>
                 <textarea rows="8" class="form-control is-valid mg-t-20" name="cont_pagina" id="mysummernote">{{$pagina->cont_pagina}}</textarea>
-            </div>                
-            <?php }else{ ?> 
+            </div>
+            <?php }else{ ?>
             <div class="col-md-12 d-none" id="contenidopagina">
                 <input type="hidden" name="idpagina" value="">
                 <label class="form-control-label">Nombre Pagina: </label>
                 <input class="form-control" type="text" name="nom_pagina" id="nom_pagina" :value="old('nom_pagina')" placeholder="">
                 <label class="form-control-label">Contenido: </label>
                 <textarea rows="8" class="form-control is-valid mg-t-20" name="cont_pagina" id="mysummernote" placeholder="Textarea (success state)"></textarea>
-            </div> 
+            </div>
             <?php } ?>
             <div class="col-md-4 d-none">
-                   
+
             </div>
         </div><br>
         <div class="row">

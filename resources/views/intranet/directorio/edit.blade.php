@@ -19,10 +19,10 @@
                     <label class="form-control-label" for="area">Area:</label>
                     <select name="area" id="area" class="form-control">
                         @foreach ($areas as $item)
-                           <option value="{{$item->nombre}}" <?= $item->nombre==$directorio->area ? 'selected="selected"' : '' ?>>{{$item->nombre}}</option> 
+                           <option value="{{$item->nombre}}" <?= $item->nombre==$directorio->area ? 'selected="selected"' : '' ?>>{{$item->nombre}}</option>
                         @endforeach
                     </select>
-                </div>                
+                </div>
             </div>
             <div class="col-lg-3">
                 <div class="form-group">
@@ -37,7 +37,7 @@
                     <label class="form-control-label" for="dni">DNI:</label>
                     <input type="text" class="form-control" name="dni" value="{{$directorio->dni}}" required>
                 </div>
-            </div>            
+            </div>
             <div class="col-lg-3">
                 <div class="form-group">
                     <label class="form-control-label" for="Email">Email:</label>
@@ -48,26 +48,22 @@
                 <div class="form-group">
                     <label class="form-control-label" for="celular">Celular:</label>
                     <input type="text" class="form-control" name="celular" value="{{$directorio->celular}}">
-                </div>                
+                </div>
             </div>
             <div class="col-lg-4">
                 <label class="form-control-label" for="inputGroupFile1">Foto: </label>
                 <div class="input-group mb-3">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile1" name="foto">
+                        <input type="file" class="custom-file-input" id="inputGroupFile1" name="foto" accept="image/*">
                         <label class="custom-file-label" for="inputGroupFile1" aria-describedby="inputGroupFileAddon">Choose image</label>
                     </div>
                 </div>
                 <div class="border rounded-lg text-center p-3">
-                    <?php
-                    $image_path = public_path('img/fotos/').$directorio->foto; 
-                        if (file_exists($image_path)){  ?>    
-                        <div class="col">
-                            <img src="{{asset('img/fotos/'.$directorio->foto)}}" class="img-fluid img-thumbnail" id="preview1" />
-                        </div>
-                        <?php } ?>
+                    <div class="col">
+                        <img src="{{asset('img/fotos/'.$directorio->foto)}}" class="img-fluid img-thumbnail" id="preview1" />
+                    </div>
                 </div>
-            </div>      
+            </div>
         </div>
         <div class="row">
             <div class="col">

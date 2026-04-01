@@ -15,7 +15,10 @@
                         <option value="CAP">CAP</option>
                         <option value="DOCENTE">DOCENTE</option>
                         <option value="DIRECTIVO">DIRECTIVO</option>
+                        <option value="LOCACION DE SERVICIO">LOCACION DE SERVICIO</option>
                         <option value="REASIGNACION">REASIGNACION</option>
+                        <option value="ROTACION">ROTACION</option>
+                        <option value="276">276</option>
                     </select>
                     <x-input-error :messages="$errors->get('tipo')" class="mt-2" />
                 </div>

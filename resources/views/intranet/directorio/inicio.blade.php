@@ -24,19 +24,15 @@
                     <td class="border border-slate-500">{{ $item->id }}</td>
                     <td class="border border-slate-500">{{ $item->apenom }}</td>
                     <td class="border border-slate-500 p-0">
-                        <?php
-                        $image_path = public_path('img/fotos/').$item->foto; 
-                        if (file_exists($image_path)){  ?>
                         <div class="col">
                             <img src="{{asset('img/fotos/'.$item->foto)}}" class="img-fluid" width="150" />
                         </div>
-                        <?php } ?>
                     </td>
                     <td class="border border-slate-500">{{ $item->dni }}</td>
                     <td class="border border-slate-500">{{ $item->area }}</td>
                     <td class="border border-slate-500">{{ $item->cargo }}</td>
                     <td class="border border-slate-500">{{ $item->email }}</td>
-                    <td class="border border-slate-500">{{ $item->celular }}</td>                                                          
+                    <td class="border border-slate-500">{{ $item->celular }}</td>
                     <td class="border border-slate-500">
                         <div class="btn-group" role="group" aria-label="Basic example">
                             <a href="{{ route('directorio.destroy', $item->id) }}" class="btn btn-danger btn-sm eliminar" title="Eliminar"><i class="fas fa-trash"></i></a>

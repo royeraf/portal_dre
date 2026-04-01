@@ -21,7 +21,7 @@
                     <td class="border border-slate-500">{{ $item->id }}</td>
                     <td class="border border-slate-500">{{ $item->titulo }}</td>
                     <td class="border border-slate-500">{{ $item->descripcion }}</td>
-                    <td class="border border-slate-500 text-center"><img width="300" class="img-fluid img-thumbnail mx-auto" src="{{asset('img/imageneventos/'.$item->img)}}" alt=""></td>
+                    <td class="border border-slate-500 text-center"><img width="300" class="img-fluid img-thumbnail mx-auto" src="{{asset('/img/imageneventos/'.$item->img)}}" alt=""></td>
                     <td class="border border-slate-500">{{ $item->fecha_publicacion }}</td>
                     <td class="border border-slate-500">
                         <div class="btn-group">

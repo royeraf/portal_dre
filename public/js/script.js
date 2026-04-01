@@ -1,4 +1,4 @@
-var link = "http://127.0.0.1:8000";
+var link = "https://drehuanuco.gob.pe";
 $(".eliminar").click(function (){
     var url=$(this).attr("href");
     if(window.confirm("ESTA SEGURO DE ELIMINAR?")==true){

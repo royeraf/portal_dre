@@ -14,10 +14,12 @@
         <!-- summernote -->
         <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+        @stack('styles')
     </head>
     <body>
         @include('layouts.navigation')
-        <div class="br-mainpanel">      
+        <div class="br-mainpanel">
             <div class="br-pagetitle">
               @if (isset($header))
                 {{ $header }}
@@ -30,6 +32,8 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Scripts base -->
         <script src="{{asset('plantillas/bracketplus/app/lib/jquery/jquery.min.js')}}"></script>
         <script src="{{asset('plantillas/bracketplus/app/lib/jquery-ui/ui/widgets/datepicker.js')}}"></script>
         <script src="{{asset('plantillas/bracketplus/app/lib/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
@@ -42,6 +46,8 @@
         <script src="{{asset('js/script.js')}}"></script>
         <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+        
+        <!-- jQuery scripts -->
         <script>
             $(function(){
                 $("#mysummernote").summernote({
@@ -58,11 +64,11 @@
               $('#select2-a, #select2-b').select2({
                 minimumResultsForSearch: Infinity
               });
-        
+
               $('#select2-a').on('select2:opening', function (e) {
                 $(this).closest('.form-group').addClass('form-group-active');
               });
-        
+
               $('#select2-a').on('select2:closing', function (e) {
                 $(this).closest('.form-group').removeClass('form-group-active');
               });
@@ -70,14 +76,12 @@
             $('#br-toggle1').on('click', function(e){
                 e.preventDefault();
                 if($('#link_menu').val()=='#'){
-                    //$('.select2').attr('disabled', false);
-                    $('#contenidopagina').removeClass('d-none'); 
-                    $('#link_menu').val(''); 
+                    $('#contenidopagina').removeClass('d-none');
+                    $('#link_menu').val('');
                     $('#nom_pagina').val($('input[name=nom_menu]').val());
                 }else{
-                    //$('.select2').attr('disabled', true);
-                    $('#link_menu').val('#'); 
-                    $('#contenidopagina').addClass('d-none'); 
+                    $('#link_menu').val('#');
+                    $('#contenidopagina').addClass('d-none');
                     $('#nom_pagina').val('');
                 }
                 $(this).toggleClass('on');
@@ -85,33 +89,33 @@
             $('#br-toggle2').on('click', function(e){
                 e.preventDefault();
                 if($('input[name=activo_menu]').val()=='1'){
-                    $('input[name=activo_menu]').val('0'); 
+                    $('input[name=activo_menu]').val('0');
                 }else{
-                    $('input[name=activo_menu]').val('1'); 
+                    $('input[name=activo_menu]').val('1');
                 }
                 $(this).toggleClass('on');
-            })  
+            })
             $('#br-toggle3').on('click', function(e){
                 e.preventDefault();
                 if($('input[name=estado]').val()=='1'){
-                    $('input[name=estado]').val('0'); 
+                    $('input[name=estado]').val('0');
                 }else{
-                    $('input[name=estado]').val('1'); 
+                    $('input[name=estado]').val('1');
                 }
                 $(this).toggleClass('on');
-            })         
+            })
             $('#br-toggle4').on('click', function(e){
                 e.preventDefault();
                 if($('input[name=es_activo]').val()=='1'){
-                    $('input[name=es_activo]').val('0'); 
+                    $('input[name=es_activo]').val('0');
                 }else{
-                    $('input[name=es_activo]').val('1'); 
+                    $('input[name=es_activo]').val('1');
                 }
                 $(this).toggleClass('on');
-            })                
+            })
             });
-            
-          </script>
+        </script>
+        
         <script>
             $(document).ready(function(){
                 // input plugin
@@ -156,10 +160,11 @@
                     }
                     reader.readAsDataURL(input.files[0]);
                 }
-                })          
+                })
             })
         </script>
 
-      
+        <!-- Stack para scripts personalizados de cada vista -->
+        @stack('scripts')
     </body>
 </html>

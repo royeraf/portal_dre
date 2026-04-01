@@ -9,7 +9,7 @@ class ImagenEventoController extends Controller
 {
     public function index(){
         $data['registros']=Galeria::select(DB::raw('id, titulo, descripcion, fecha_publicacion,(select archivo_img from imgeventos where idgaleria=galeria.id limit 1) as img'))->paginate(10);
-        return view('intranet/imgeventos/inicio', $data);
+        return view('intranet/imgeventos/Inicio', $data);
     }
     public function create(){//galeria
         return view('intranet/imgeventos/create');
@@ -18,28 +18,39 @@ class ImagenEventoController extends Controller
         $galeria = new Galeria();
         $galeria->titulo = $request->titulo;
         $galeria->descripcion = $request->descripcion;
-        $galeria->fecha_publicacion = $request->fecha_publicacion;        
+        $galeria->fecha_publicacion = $request->fecha_publicacion;
         $galeria->save();
         return redirect()->route('galeria');
     }
-    public function storeimagen(Request $request){
-        $imagenevento = new ImagenEvento();
-        if($request->hasFile('archivo_img')){
-            $file = $request->file('archivo_img');
-            $filename = time().'.'.$file->extension();
-            $imagenevento->archivo_img=$filename;
-            $file->move(public_path('img/imageneventos'), $filename);            
-        }
-        $imagenevento->idgaleria=$request->idgaleria;
-        $imagenevento->save();
-        return redirect()->route('galeria.show', $imagenevento->idgaleria);        
+    public function storeimagen(Request $request)
+{
+    // Validar que se haya enviado una imagen y el idgaleria
+    $request->validate([
+        'archivo_img' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:4096',
+        'idgaleria' => 'required|exists:galeria,id'
+    ]);
+
+    $imagenevento = new ImagenEvento();
+
+    if ($request->hasFile('archivo_img')) {
+        $file = $request->file('archivo_img');
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('../../public_html/img/imageneventos'), $filename);
+        $imagenevento->archivo_img = $filename;
     }
+
+    $imagenevento->idgaleria = $request->idgaleria;
+    $imagenevento->save();
+
+    return redirect()->route('galeria.show', $imagenevento->idgaleria)
+        ->with('success', 'Imagen subida correctamente');
+}
     public function destroy(Galeria $galeria){
         $galeria->delete();
         return redirect()->route('galeria');
     }
     public function destroyarchivo(ImagenEvento $imagenevento){
-        $image_path = public_path('img/imageneventos/').$imagenevento->archivo_img;        
+        $image_path = public_path('../../public_html/img/imageneventos').$imagenevento->archivo_img;
         if ($imagenevento->archivo_img!=null && file_exists($image_path)){
             unlink($image_path);
         }
@@ -53,7 +64,7 @@ class ImagenEventoController extends Controller
     public function update(Galeria $galeria, Request $request){
         $galeria->titulo=$request->titulo;
         $galeria->descripcion=$request->descripcion;
-        $galeria->fecha_publicacion=$request->fecha_publicacion;        
+        $galeria->fecha_publicacion=$request->fecha_publicacion;
         $galeria->save();
         return redirect()->route('galeria');
     }
@@ -62,13 +73,13 @@ class ImagenEventoController extends Controller
         $imagenevento->descripcion=$request->descripcion;
         if($request->hasFile('archivo_img')){
             $file = $request->file('archivo_img');
-            $image_path = public_path('img/imageneventos/').$imagenevento->archivo_img;              
+            $image_path = public_path('../../public_html/img/imageneventos').$imagenevento->archivo_img;
             $filename = substr($imagenevento->archivo_img, 0, -4).'.'.$file->extension();
             $imagenevento->archivo_img=$filename;
             if (file_exists($image_path)){
                 unlink($image_path);
             }
-            $file->move(public_path('img/imageneventos'), $filename); 
+            $file->move(public_path('../../public_html/img/imageneventos'), $filename);
         }
         $imagenevento->save();
         return redirect()->route('imagenevento');

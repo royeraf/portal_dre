@@ -32,7 +32,7 @@
                 <div class="carousel-inner">
                   <?php $estado=false; ?>
                   @foreach($imagenes as $row)
-                    <div class="carousel-item {{ $estado==false ? 'active' : '' }} background_bg overlay_bg_50" data-img-src="{{asset('img/imageneventos/'.$row->archivo_img)}}">
+                    <div class="h-100 carousel-item {{ $estado==false ? 'active' : '' }} background_bg " data-img-src="{{asset('img/imageneventos/'.$row->archivo_img)}}">
                     </div>
                   <?php $estado = true ?>
                   @endforeach
@@ -55,5 +55,7 @@
       </div>
     </div>
   </section><!-- End Portfolio Details Section -->
+
+  
   <!-- END SECTION FAQ -->
 @endsection

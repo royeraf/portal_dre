@@ -39,7 +39,14 @@
     <form action="{{ route('popup.imagen.store', $popup) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label class="form-control-label" for="enlace">Enlace:</label>
+                    <input class="form-control" type="text" name="enlace" id="enlace" value="{{$popup->enlace}}" placeholder="http://">
+                    <x-input-error :messages="$errors->get('enlace')" class="mt-2" />
+                </div>
+            </div>
+            <div class="col-md-3">
                 <label class="form-control-label" for="inputGroupFile">IMAGEN: </label>
                 <div class="input-group mb-3">
                     <div class="custom-file">
@@ -60,12 +67,13 @@
             <tr>
                 <th class="border border-slate-500">ID</th>
                 <th class="border border-slate-500">IMAGEN</th>
+                <th class="border border-slate-500">ENLACE</th>
                 <th class="border border-slate-500">FECHA SUBIDA</th>
                 <th class="border border-slate-500">ACCION</th>
             </tr>
             @foreach ($imagenes as $item)
             @php
-                $image_path = public_path('img/popup/').$item->imagen;
+                $image_path = public_path('../../public_html/img/popup/').$item->imagen;
             @endphp
             <tr>
                 <td class="border border-slate-500">{{$item->id}}</td>
@@ -74,6 +82,7 @@
                         <img src="{{asset('img/popup/'.$item->imagen)}}" class="img-fluid img-thumbnail" width="90px" />
                     <?php } ?>
                 </td>
+                <td class="border border-slate-500">{{$item->enlace}}</td>
                 <td class="border border-slate-500">{{$item->created_at}}</td>
                 <td class="border border-slate-500">
                     <div class="btn-group" role="group" aria-label="Basic example">

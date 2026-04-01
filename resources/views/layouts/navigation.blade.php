@@ -1,4 +1,5 @@
-        <!-- ########## START: LEFT PANEL ########## -->
+
+<!-- ########## START: LEFT PANEL ########## -->
         <div class="br-logo"><a href=""><span>[</span>DRE. <i>HCO</i><span>]</span></a></div>
         <div class="br-sideleft sideleft-scrollbar">
         <label class="sidebar-label pd-x-10 mg-t-20 op-3">Navigation</label>
@@ -60,6 +61,32 @@
                 <li class="sub-item"><a href="{{route('directorio')}}" class="sub-link">Administrar</a></li>
             </ul>
             </li><!-- br-menu-item -->
+
+            <!-- NUEVO MÓDULO: DIRECCIONES -->
+            <li class="br-menu-item">
+            <a href="#" class="br-menu-link with-sub">
+                <i class="menu-item-icon icon ion-ios-filing-outline tx-22"></i>
+                <span class="menu-item-label">Direcciones</span>
+            </a><!-- br-menu-link -->
+            <ul class="br-menu-sub nav flex-column">
+                <li class="sub-item"><a href="{{route('admin.direcciones')}}" class="sub-link">Administrar</a></li>
+                <li class="sub-item"><a href="{{route('admin.direcciones.create')}}" class="sub-link">Nueva Dirección</a></li>
+            </ul>
+            </li><!-- br-menu-item -->
+
+            <!-- NUEVO MÓDULO: SIAGIE -->
+            <li class="br-menu-item">
+            <a href="#" class="br-menu-link with-sub">
+                <i class="menu-item-icon icon ion-ios-school-outline tx-22"></i>
+                <span class="menu-item-label">SIAGIE</span>
+            </a><!-- br-menu-link -->
+            <ul class="br-menu-sub nav flex-column">
+                <li class="sub-item"><a href="{{route('admin.siagie.reports.index')}}" class="sub-link">Panel Principal</a></li>
+                <li class="sub-item"><a href="{{route('admin.siagie.reports.create')}}" class="sub-link">Nuevo Reporte</a></li>
+                <li class="sub-item"><a href="{{route('siagie.index')}}" target="_blank" class="sub-link">Ver Página Pública</a></li>
+            </ul>
+            </li><!-- br-menu-item -->
+            
             <li class="br-menu-item">
             <a href="#" class="br-menu-link with-sub">
                 <i class="menu-item-icon icon ion-ios-paper-outline tx-22"></i>
@@ -108,7 +135,28 @@
                 <ul class="br-menu-sub nav flex-column">
                     <li class="sub-item"><a href="{{route('Documentogestion')}}" class="sub-link">Administrar</a></li>
                 </ul>
-            </li>                      
+            </li>
+            <li class="br-menu-item">
+                <a href="#" class="br-menu-link with-sub">
+                  <i class="menu-item-icon icon ion-ios-filing-outline tx-24"></i>
+                  <span class="menu-item-label">Infraestructura</span>
+                </a><!-- br-menu-link -->
+                <ul class="br-menu-sub">
+                    <li class="sub-item"><a href="{{route('Infraestructura')}}" class="sub-link">Administrar</a></li>
+                </ul>
+            </li>
+            <li class="br-menu-item">
+                <a href="{{route('paginawebadmin')}}" class="br-menu-link">
+                  <i class="menu-item-icon icon ion-ios-list-outline tx-22"></i>
+                  <span class="menu-item-label">Paginas Web</span>
+                </a><!-- br-menu-link -->
+            </li>
+            <li class="br-menu-item">
+                <a href="{{route('videoembevido')}}" class="br-menu-link">
+                  <i class="menu-item-icon icon ion-easel tx-22"></i>
+                  <span class="menu-item-label">Videos</span>
+                </a><!-- br-menu-link -->
+            </li>
         </ul><!-- br-sideleft-menu -->
         <br>
         </div><!-- br-sideleft -->
@@ -137,7 +185,7 @@
                             @csrf
                             <a href="{{route('logout')}}" onclick="event.preventDefault();
                             this.closest('form').submit();"><i class="icon ion-power"></i> {{ __('Cerrar Session') }}</a>
-                        </form>                    
+                        </form>
                     </li>
 
                 </ul>

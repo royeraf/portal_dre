@@ -21,6 +21,7 @@
                     <td class="border border-slate-500 p-0">
                         <?php
                         $image_path = public_path('img/comunicados/').$item->imagen; 
+                        echo $image_path;
                         if (file_exists($image_path)){  ?>
                         <div class="col">
                             <img src="{{asset('img/comunicados/'.$item->imagen)}}" class="img-fluid" width="150" />

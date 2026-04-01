@@ -18,9 +18,9 @@
                 <div class="form-group">
                     <label class="form-control-label" for="nom_archivo">Archivo: <span class="tx-danger">*</span></label>
                     <div class="custom-file">
-                        <input type="file" id="file" name="file" class="custom-file-input">
+                        <input type="file" id="file" name="file" class="custom-file-input" required>
                         <label class="custom-file-label"></label>
-                    </div>                    
+                    </div>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -40,7 +40,7 @@
                 <button class="btn btn-info">Guardar</button>
             </div>
         </div>
-  
+
     </form><br>
     <div class="row">
         <div class="col">

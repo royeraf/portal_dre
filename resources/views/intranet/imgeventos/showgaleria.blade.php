@@ -24,7 +24,7 @@
                 </tr>
                 @foreach ($imagenes as $item)
                 @php
-                    $image_path = public_path('img/imageneventos/').$item->archivo_img; 
+                    $image_path = public_path('../../public_html/img/imageneventos').$item->archivo_img; 
                 @endphp
                 <tr>
                     <td class="border border-slate-500">{{$item->id}}</td>

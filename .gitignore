@@ -1,9 +1,14 @@
+# Dependencias
 /node_modules
+/vendor
+
+# Build
 /public/build
 /public/hot
+
+# Laravel
 /public/storage
 /storage/*.key
-/vendor
 .env
 .env.backup
 .env.production
@@ -11,8 +16,29 @@
 Homestead.json
 Homestead.yaml
 auth.json
+
+# Logs
 npm-debug.log
 yarn-error.log
+*.log
+
+# IDEs y herramientas locales
 /.fleet
 /.idea
 /.vscode
+/.claude
+/.agents
+
+# Archivos subidos por usuarios (contenido dinámico)
+/public/img/noticias/*
+/public/img/slider/*
+/public/img/popup/*
+/public/img/imageneventos/*
+/public/img/fotos/*
+/public/img/mainright/*
+/public/img/comunicados/*
+/public/img/eventoimagenes/*
+
+# Archivos temporales / empaquetados
+public.zip
+*.zip

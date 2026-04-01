@@ -11,12 +11,16 @@
             <div class="col">
                 <div class="form-group">
                     <label class="form-control-label" for="tipo">TIPO: <span class="tx-danger">*</span></label>
-                    <select name="tipo" id="tipo" class="form-control">
+                    <label class="form-control-label" for="tipo">TIPO: <span class="tx-danger">*</span></label>
+                  <select name="tipo" id="tipo" class="form-control">
                         <option value="CAS" {{$convocatoria->tipo=='CAS' ? 'selected' : ''}}>CAS</option>
                         <option value="CAP" {{$convocatoria->tipo=='CAP' ? 'selected' : ''}}>CAP</option>
                         <option value="DOCENTE" {{$convocatoria->tipo=='DOCENTE' ? 'selected' : ''}}>DOCENTE</option>
                         <option value="DIRECTIVO" {{$convocatoria->tipo=='DIRECTIVO' ? 'selected' : ''}}>DIRECTIVO</option>
                         <option value="REASIGNACION" {{$convocatoria->tipo=='REASIGNACION' ? 'selected' : ''}}>REASIGNACION</option>
+                        <option value="LOCACION DE SERVICIOS" {{$convocatoria->tipo=='LOCACION DE SERVICIOS' ? 'selected' : ''}}>LOCACION DE SERVICIOS</option>
+                        <option value="275" {{$convocatoria->tipo=='ROTACION' ? 'selected' : ''}}>ROTACION</option>
+                        <option value="275" {{$convocatoria->tipo=='276' ? 'selected' : ''}}>276</option>
                     </select>
                     <x-input-error :messages="$errors->get('tipo')" class="mt-2" />
                 </div>
@@ -74,3 +78,8 @@
 
     </form>
 </x-app-layout>
+
+.tipo-select {
+    color: blue; /* Color general para el texto seleccionado */
+}
+

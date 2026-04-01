@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Alpine.js x-cloak — must be outside @layer so it loads immediately ── */
+[x-cloak] { display: none !important; }
+
+/* ── Skeleton shimmer ─────────────────────────────────────── */
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+.skeleton {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── Base layer overrides ──────────────────────────── */
+@layer base {
+    body {
+        @apply font-sans text-gray-700 bg-white antialiased;
+    }
+    a {
+        @apply transition-colors duration-300;
+    }
+}
+
+/* ── Component layer ───────────────────────────────── */
+@layer components {
+    /* Scrollbar hide utility for news ticker */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+}
