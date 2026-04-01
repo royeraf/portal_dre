@@ -39,6 +39,10 @@ yarn-error.log
 /public/img/comunicados/*
 /public/img/eventoimagenes/*
 
+# Plantillas no utilizadas / con datos sensibles
+/public/plantillas/bracketplus/
+/public/pdf/
+
 # Archivos temporales / empaquetados
 public.zip
 *.zip
