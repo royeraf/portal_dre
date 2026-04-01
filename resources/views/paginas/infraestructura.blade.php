@@ -43,7 +43,7 @@
         {{-- ── GALERÍA DE IMÁGENES ─────────────────────────────── --}}
         @if(count($registros) > 0)
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-8"
-             x-data="{ slide: 0, total: {{ count($registros) }} }">
+             x-data="{ slide: 0, total: {{ count($registros) }}, modal: false }">
 
             {{-- Slider principal --}}
             <div class="relative overflow-hidden bg-dre-dark"
@@ -84,10 +84,18 @@
                 </button>
                 @endif
 
-                {{-- Contador --}}
-                <div class="absolute bottom-4 right-4 z-10 bg-black/40 backdrop-blur-sm
-                            text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/20">
-                    <span x-text="slide + 1"></span> / {{ count($registros) }}
+                {{-- Contador + botón de zoom --}}
+                <div class="absolute bottom-4 right-4 z-10 flex items-center gap-2">
+                    <button @click="modal = true"
+                            class="flex items-center gap-1.5 bg-black/40 backdrop-blur-sm text-white
+                                   text-xs font-bold px-3 py-1.5 rounded-full border border-white/20
+                                   hover:bg-dre-accent hover:border-dre-accent transition-all duration-200">
+                        <i data-lucide="expand" class="w-3.5 h-3.5 shrink-0"></i>
+                        Ver imagen
+                    </button>
+                    <div class="bg-black/40 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/20">
+                        <span x-text="slide + 1"></span> / {{ count($registros) }}
+                    </div>
                 </div>
             </div>
 
@@ -101,6 +109,72 @@
                 @endforeach
             </div>
             @endif
+
+            {{-- ── MODAL LIGHTBOX ──────────────────────────────── --}}
+            <div x-show="modal"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 @click.self="modal = false"
+                 @keydown.escape.window="modal = false"
+                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
+                 style="display: none;">
+
+                {{-- Cerrar --}}
+                <button @click="modal = false"
+                        class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full
+                               bg-white/10 border border-white/20 text-white
+                               flex items-center justify-center
+                               hover:bg-white/25 transition-colors duration-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+
+                {{-- Contador en modal --}}
+                <div class="absolute top-4 left-1/2 -translate-x-1/2 z-10
+                            bg-black/50 backdrop-blur-sm text-white text-xs font-bold
+                            px-3 py-1.5 rounded-full border border-white/20">
+                    <span x-text="slide + 1"></span> / {{ count($registros) }}
+                </div>
+
+                {{-- Imagen --}}
+                <div class="relative w-full max-w-5xl">
+                    <div class="overflow-hidden rounded-xl shadow-2xl">
+                        <div class="flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                             :style="`transform: translateX(-${slide * 100}%)`">
+                            @foreach($registros as $row)
+                            <div class="w-full shrink-0">
+                                <img src="{{ asset('img/infraestructura/'.$row->imagen) }}"
+                                     alt="Infraestructura DRE Huánuco"
+                                     class="w-full max-h-[82vh] object-contain bg-black">
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Nav del modal --}}
+                    @if(count($registros) > 1)
+                    <button @click="slide = (slide - 1 + total) % total"
+                            class="absolute left-3 top-1/2 -translate-y-1/2
+                                   w-11 h-11 rounded-full bg-dre-dark text-white shadow-xl
+                                   border-2 border-dre-accent/60
+                                   flex items-center justify-center
+                                   hover:bg-dre-accent hover:border-dre-accent transition-all duration-200">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button @click="slide = (slide + 1) % total"
+                            class="absolute right-3 top-1/2 -translate-y-1/2
+                                   w-11 h-11 rounded-full bg-dre-dark text-white shadow-xl
+                                   border-2 border-dre-accent/60
+                                   flex items-center justify-center
+                                   hover:bg-dre-accent hover:border-dre-accent transition-all duration-200">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                    @endif
+                </div>
+            </div>
 
         </div>
         @endif
