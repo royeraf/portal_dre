@@ -108,16 +108,9 @@
                 {{-- Image Gallery Slider (Reemplazo moderno del Carousel Bootstrap) --}}
                 @php
                     $images = [];
-                    // Only add if file actually exists on the server to prevent broken layout
-                    if(!empty($noticia->img1) && $noticia->img1 != 'default.jpg' && file_exists(public_path('img/noticias/'.$noticia->img1))) {
-                        $images[] = $noticia->img1;
-                    }
-                    if(!empty($noticia->img2) && file_exists(public_path('img/noticias/'.$noticia->img2))) {
-                        $images[] = $noticia->img2;
-                    }
-                    if(!empty($noticia->img3) && file_exists(public_path('img/noticias/'.$noticia->img3))) {
-                        $images[] = $noticia->img3;
-                    }
+                    if(!empty($noticia->img1) && $noticia->img1 != 'default.jpg') $images[] = $noticia->img1;
+                    if(!empty($noticia->img2)) $images[] = $noticia->img2;
+                    if(!empty($noticia->img3)) $images[] = $noticia->img3;
                 @endphp
                 
                 @if(count($images) > 0)
