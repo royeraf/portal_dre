@@ -1,97 +1,187 @@
 @extends('principal.plantilla')
-@section('title', 'DRE - HUANUCO')
+@section('title', 'Infraestructura — DRE Huánuco')
 @section('content')
-<main id="main">
-<section id="about" class="about pt-2">
-  <div class="container">
-  <div class="row justify-content-center">
-        	<div class="col-xl-6 col-lg-8">
-            	<div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                    <div class="heading_s1 text-center">
-                    <span class="sub_heading">DRE HUÁNUCO</span> 
-                    <h2>Dirección de Gestión Institucional</h2>
-                        <h4>Área de Infraestructura</h4>
-                    </div>
-                    </div>
+
+{{-- ── BREADCRUMB HERO ──────────────────────────────────────── --}}
+<div class="relative h-36 sm:h-52 bg-cover bg-center overflow-hidden"
+     style="background-image: url('{{ asset('img/bc.jpeg') }}')">
+    <div class="absolute inset-0 bg-dre-dark/80"></div>
+    <div class="relative h-full max-w-screen-xl mx-auto px-4 md:px-8 flex flex-col justify-center">
+        <h1 class="font-display text-white text-3xl sm:text-4xl font-extrabold uppercase tracking-widest drop-shadow-lg">
+            Infraestructura
+        </h1>
+        <nav class="flex items-center gap-1.5 text-xs text-white/60 mt-2">
+            <a href="/" class="hover:text-yellow-400 transition-colors">Home</a>
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span class="text-white/90">Área de Infraestructura</span>
+        </nav>
+    </div>
+</div>
+
+{{-- ── CONTENIDO ─────────────────────────────────────────────── --}}
+<section class="py-10 bg-gray-50 min-h-screen">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-8">
+
+        {{-- ── ENCABEZADO ─────────────────────────────────────── --}}
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-12 h-12 rounded-xl bg-dre-primary flex items-center justify-center shrink-0 shadow-md">
+                <i data-lucide="building-2" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+                <p class="text-[11px] font-bold text-dre-accent uppercase tracking-[0.2em]">Dirección de Gestión Institucional</p>
+                <h2 class="font-display font-extrabold text-dre-dark text-xl sm:text-2xl leading-tight">
+                    Área de Infraestructura
+                </h2>
+            </div>
+            <div class="ml-auto hidden sm:flex items-center gap-2">
+                <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">DRE Huánuco</span>
+                <div class="w-1 h-1 rounded-full bg-dre-accent"></div>
+                <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ date('Y') }}</span>
             </div>
         </div>
-  <div class="row m-0">
-        <div class="col">
-          <div class="banner_section m-0 p-4 full_screen">
-            <div id="carouselExampleControls" class="banner_content_wrap carousel slide m-4" data-ride="carousel">
-                <div class="carousel-inner" style="">
-                  <?php $estado=false; ?>
-                  @foreach($registros as $row)
-                    <div class="carousel-item {{ $estado==false ? 'active' : '' }} background_bg" data-img-src="{{asset('img/infraestructura/'.$row->imagen)}}">
+
+        {{-- ── GALERÍA DE IMÁGENES ─────────────────────────────── --}}
+        @if(count($registros) > 0)
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-8"
+             x-data="{ slide: 0, total: {{ count($registros) }} }">
+
+            {{-- Slider principal --}}
+            <div class="relative overflow-hidden bg-dre-dark"
+                 style="height: clamp(220px, 45vw, 520px);">
+
+                <div class="flex h-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                     :style="`transform: translateX(-${slide * 100}%)`">
+                    @foreach($registros as $row)
+                    <div class="w-full h-full shrink-0">
+                        <img src="{{ asset('img/infraestructura/'.$row->imagen) }}"
+                             alt="Infraestructura DRE Huánuco"
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'">
                     </div>
-                  <?php $estado = true ?>
-                  @endforeach
+                    @endforeach
                 </div>
-                <div class="carousel-nav">
-                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                        <i class="ion-chevron-left"></i>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                        <i class="ion-chevron-right"></i>
-                    </a>
+
+                {{-- Overlay degradado --}}
+                <div class="absolute inset-0 bg-gradient-to-t from-dre-dark/50 via-transparent to-transparent pointer-events-none"></div>
+
+                {{-- Controles --}}
+                @if(count($registros) > 1)
+                <button @click="slide = (slide - 1 + total) % total"
+                        class="absolute left-3 top-1/2 -translate-y-1/2 z-10
+                               w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm border border-white/30
+                               flex items-center justify-center text-white
+                               hover:bg-white/40 transition-all duration-200">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+                <button @click="slide = (slide + 1) % total"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 z-10
+                               w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm border border-white/30
+                               flex items-center justify-center text-white
+                               hover:bg-white/40 transition-all duration-200">
+                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+                @endif
+
+                {{-- Contador --}}
+                <div class="absolute bottom-4 right-4 z-10 bg-black/40 backdrop-blur-sm
+                            text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/20">
+                    <span x-text="slide + 1"></span> / {{ count($registros) }}
                 </div>
             </div>
-          </div>
+
+            {{-- Dots --}}
+            @if(count($registros) > 1)
+            <div class="flex items-center justify-center gap-1.5 py-3 px-4 bg-gray-50 border-t border-gray-100">
+                @foreach($registros as $i => $row)
+                <button @click="slide = {{ $i }}"
+                        :class="slide === {{ $i }} ? 'w-6 bg-dre-primary' : 'w-2 bg-gray-300 hover:bg-gray-400'"
+                        class="h-2 rounded-full transition-all duration-300"></button>
+                @endforeach
+            </div>
+            @endif
+
         </div>
-        <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="icon_box icon_box_style1 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-                	<div class="box_icon mb-3">
-                		<i class="fa fa-book text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>Normas Legales</h5>
-                        <p>LEY Nº 31318, Ley que regula el saneamiento físico-legal de los bienes inmuebles del sector educación destinados a instituciones educativas públicas</p>
-                    </div>
+        @endif
+
+        {{-- ── TARJETAS DE INFORMACIÓN ─────────────────────────── --}}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
+             x-data="{ shown: false }" x-intersect.once="shown = true">
+
+            {{-- Card 1 --}}
+            <div :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
+                 style="transition: all 0.5s ease; transition-delay: 0ms;"
+                 class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-6
+                        hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+                <span class="absolute top-4 right-4 font-display text-6xl font-black text-gray-100 leading-none select-none">01</span>
+                <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mb-4
+                            group-hover:bg-dre-primary group-hover:shadow-md transition-all duration-300">
+                    <i data-lucide="book-open" class="w-5 h-5 text-blue-600 group-hover:text-white transition-colors"></i>
                 </div>
+                <h4 class="font-display font-bold text-gray-900 text-base mb-2 group-hover:text-dre-accent transition-colors">
+                    Normas Legales
+                </h4>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                    LEY N° 31318 — Regula el saneamiento físico-legal de bienes inmuebles del sector educación destinados a instituciones educativas públicas.
+                </p>
             </div>
-            <div class="col-lg-4 col-md-6">
-            	<div class="icon_box icon_box_style1 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
-                	<div class="box_icon mb-3">
-                		<i class="fa fa-globe text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>Pautas para la publicación</h5>
-                        <p>Aqui encontraras los requisitos para la publicacion de los predios que están en proceso de saneamiento</p>
-                    </div>
+
+            {{-- Card 2 --}}
+            <div :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
+                 style="transition: all 0.5s ease; transition-delay: 100ms;"
+                 class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-6
+                        hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+                <span class="absolute top-4 right-4 font-display text-6xl font-black text-gray-100 leading-none select-none">02</span>
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-4
+                            group-hover:bg-emerald-600 group-hover:shadow-md transition-all duration-300">
+                    <i data-lucide="file-check" class="w-5 h-5 text-emerald-600 group-hover:text-white transition-colors"></i>
                 </div>
+                <h4 class="font-display font-bold text-gray-900 text-base mb-2 group-hover:text-dre-accent transition-colors">
+                    Pautas para la Publicación
+                </h4>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                    Aquí encontrarás los requisitos para la publicación de predios que están en proceso de saneamiento.
+                </p>
             </div>
-            <div class="col-lg-4 col-md-6">
-            	<div class="icon_box icon_box_style1 animation"  data-animation="fadeInUp" data-animation-delay="0.05s">
-                	<div class="box_icon mb-3">
-                        <i class="fa fa-child text_default"></i>
-                    </div>
-                    <div class="intro_desc">
-                        <h5>II.EE. Saneadas al 2024</h5>
-                        <p>Aquí encontraras cantidad de Instituciones Educativas que fueron saneadas a la fecha</p>
-                    </div>
+
+            {{-- Card 3 --}}
+            <div :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
+                 style="transition: all 0.5s ease; transition-delay: 200ms;"
+                 class="group bg-white rounded-2xl border border-gray-100 shadow-sm p-6
+                        hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+                <span class="absolute top-4 right-4 font-display text-6xl font-black text-gray-100 leading-none select-none">03</span>
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mb-4
+                            group-hover:bg-amber-500 group-hover:shadow-md transition-all duration-300">
+                    <i data-lucide="landmark" class="w-5 h-5 text-amber-600 group-hover:text-white transition-colors"></i>
                 </div>
-            </div> 
+                <h4 class="font-display font-bold text-gray-900 text-base mb-2 group-hover:text-dre-accent transition-colors">
+                    II.EE. Saneadas al {{ date('Y') }}
+                </h4>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                    Aquí encontrarás la cantidad de Instituciones Educativas que fueron saneadas a la fecha.
+                </p>
+            </div>
 
+        </div>
 
-
+        {{-- ── RESPONSABLE ─────────────────────────────────────── --}}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5
+                    flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-dre-50 border-2 border-dre-accent/30
+                        flex items-center justify-center shrink-0">
+                <i data-lucide="user-check" class="w-5 h-5 text-dre-accent"></i>
+            </div>
+            <div>
+                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Responsable del Área</p>
+                <p class="font-display font-bold text-gray-900 text-base">Ing. Miguel A. Cruz Venancio</p>
+                <p class="text-xs text-dre-accent font-semibold">Ingeniero II — Área de Infraestructura</p>
+            </div>
+            <div class="ml-auto hidden sm:flex items-center gap-1.5 text-xs text-gray-400">
+                <i data-lucide="building" class="w-3.5 h-3.5 text-dre-accent shrink-0"></i>
+                <span>DGI · DRE Huánuco</span>
+            </div>
+        </div>
 
     </div>
-  </div>
-</section><!-- End About Section -->
+</section>
 
-<div class="row justify-content-center">
-        	<div class="col-xl-6 col-lg-8">
-            	<div class="text-center animation" data-animation="fadeInUp" data-animation-delay="0.01s">
-                    <div class="heading_s1 text-center">
-                    <div class="heading_s1 text-center">
-                    <span class="sub_heading">Responsable del Área</span> 
-                    <h5>Ing. Miguel A. Cruz Venancio</h5>
-                        <h4>Ingeniero II</h4>
-                    </div>
-                    </div>
-            </div>
-        </div>
-
-</main>
 @endsection
