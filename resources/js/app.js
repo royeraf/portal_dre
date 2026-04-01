@@ -33,6 +33,8 @@ import {
     Phone,
     // Convocatorias
     SlidersHorizontal, Filter, Paperclip,
+    // Infraestructura slider
+    Expand,
 } from 'lucide';
 
 const icons = {
@@ -48,6 +50,7 @@ const icons = {
     Video, Play,
     Phone,
     SlidersHorizontal, Filter, Paperclip,
+    Expand,
 };
 
 createIcons({ icons, attrs: { 'stroke-width': 1.75 } });
