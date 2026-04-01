@@ -68,16 +68,18 @@
                 @if(count($registros) > 1)
                 <button @click="slide = (slide - 1 + total) % total"
                         class="absolute left-3 top-1/2 -translate-y-1/2 z-10
-                               w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm border border-white/30
-                               flex items-center justify-center text-white
-                               hover:bg-white/40 transition-all duration-200">
+                               w-10 h-10 rounded-full bg-dre-dark text-white shadow-lg
+                               border-2 border-dre-accent/60
+                               flex items-center justify-center
+                               hover:bg-dre-accent hover:border-dre-accent transition-all duration-200">
                     <i data-lucide="chevron-left" class="w-5 h-5"></i>
                 </button>
                 <button @click="slide = (slide + 1) % total"
                         class="absolute right-3 top-1/2 -translate-y-1/2 z-10
-                               w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm border border-white/30
-                               flex items-center justify-center text-white
-                               hover:bg-white/40 transition-all duration-200">
+                               w-10 h-10 rounded-full bg-dre-dark text-white shadow-lg
+                               border-2 border-dre-accent/60
+                               flex items-center justify-center
+                               hover:bg-dre-accent hover:border-dre-accent transition-all duration-200">
                     <i data-lucide="chevron-right" class="w-5 h-5"></i>
                 </button>
                 @endif
@@ -120,9 +122,16 @@
                 <h4 class="font-display font-bold text-gray-900 text-base mb-2 group-hover:text-dre-accent transition-colors">
                     Normas Legales
                 </h4>
-                <p class="text-sm text-gray-500 leading-relaxed">
+                <p class="text-sm text-gray-500 leading-relaxed mb-4">
                     LEY N° 31318 — Regula el saneamiento físico-legal de bienes inmuebles del sector educación destinados a instituciones educativas públicas.
                 </p>
+                <a href="#" target="_blank"
+                   class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600
+                          border border-blue-200 px-3 py-1.5 rounded-lg
+                          hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-200">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 shrink-0"></i>
+                    Ver documento
+                </a>
             </div>
 
             {{-- Card 2 --}}
@@ -138,9 +147,16 @@
                 <h4 class="font-display font-bold text-gray-900 text-base mb-2 group-hover:text-dre-accent transition-colors">
                     Pautas para la Publicación
                 </h4>
-                <p class="text-sm text-gray-500 leading-relaxed">
+                <p class="text-sm text-gray-500 leading-relaxed mb-4">
                     Aquí encontrarás los requisitos para la publicación de predios que están en proceso de saneamiento.
                 </p>
+                <a href="#" target="_blank"
+                   class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700
+                          border border-emerald-200 px-3 py-1.5 rounded-lg
+                          hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-200">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 shrink-0"></i>
+                    Ver pautas
+                </a>
             </div>
 
             {{-- Card 3 --}}
@@ -156,9 +172,16 @@
                 <h4 class="font-display font-bold text-gray-900 text-base mb-2 group-hover:text-dre-accent transition-colors">
                     II.EE. Saneadas al {{ date('Y') }}
                 </h4>
-                <p class="text-sm text-gray-500 leading-relaxed">
+                <p class="text-sm text-gray-500 leading-relaxed mb-4">
                     Aquí encontrarás la cantidad de Instituciones Educativas que fueron saneadas a la fecha.
                 </p>
+                <a href="#" target="_blank"
+                   class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700
+                          border border-amber-200 px-3 py-1.5 rounded-lg
+                          hover:bg-amber-500 hover:text-white hover:border-amber-500 transition-all duration-200">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 shrink-0"></i>
+                    Ver listado
+                </a>
             </div>
 
         </div>
