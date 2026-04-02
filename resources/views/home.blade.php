@@ -527,10 +527,7 @@
                 max-h-[88dvh] sm:max-h-[88vh] overflow-hidden">
 
         {{-- Barra superior --}}
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
-            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                {{ $popup->titulopopup ?? 'Comunicado' }}
-            </span>
+        <div class="flex items-center justify-end px-4 py-3 border-b border-gray-100 shrink-0">
             <button @click="open = false" type="button"
                     class="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
