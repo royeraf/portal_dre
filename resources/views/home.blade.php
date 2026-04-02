@@ -119,8 +119,8 @@
                      'ibg' => 'bg-amber-100',   'ico' => 'text-amber-600',   'bar' => 'bg-amber-500',   'hbg' => 'group-hover:bg-amber-50/50'],
                     ['url' => route('galerias'),                 'icon' => 'camera',         'label' => 'Galería de Imágenes',      'target' => '_blank',
                      'ibg' => 'bg-rose-100',    'ico' => 'text-rose-500',    'bar' => 'bg-rose-500',    'hbg' => 'group-hover:bg-rose-50/50'],
-                    ['url' => '#',                               'icon' => 'heart',          'label' => 'Integridad',               'target' => null,
-                     'ibg' => 'bg-emerald-100', 'ico' => 'text-emerald-600', 'bar' => 'bg-emerald-500', 'hbg' => 'group-hover:bg-emerald-50/50'],
+                    // ['url' => '#',                               'icon' => 'heart',          'label' => 'Integridad',               'target' => null,
+                    //  'ibg' => 'bg-emerald-100', 'ico' => 'text-emerald-600', 'bar' => 'bg-emerald-500', 'hbg' => 'group-hover:bg-emerald-50/50'],
                     ['url' => '/siagie',                         'icon' => 'pie-chart',      'label' => 'SIAGIE',                   'target' => null,
                      'ibg' => 'bg-cyan-100',    'ico' => 'text-cyan-600',    'bar' => 'bg-cyan-500',    'hbg' => 'group-hover:bg-cyan-50/50'],
                     ['url' => 'https://www.transparencia.gob.pe/reportes_directos/pte_transparencia_info_finan.aspx?id_entidad=14163&id_tema=19&ver=',
@@ -129,8 +129,8 @@
                     ['url' => 'https://www.transparencia.gob.pe/reportes_directos/pte_transparencia_reg_visitas.aspx?id_entidad=14163&ver=&id_tema=500',
                                                                  'icon' => 'clipboard-list', 'label' => 'Registro de Visitas',      'target' => '_blank',
                      'ibg' => 'bg-orange-100',  'ico' => 'text-orange-500',  'bar' => 'bg-orange-500',  'hbg' => 'group-hover:bg-orange-50/50'],
-                    ['url' => '#',                               'icon' => 'book-open',      'label' => 'Aprende Huánuco',          'target' => null,
-                     'ibg' => 'bg-purple-100',  'ico' => 'text-purple-600',  'bar' => 'bg-purple-500',  'hbg' => 'group-hover:bg-purple-50/50'],
+                    // ['url' => '#',                               'icon' => 'book-open',      'label' => 'Aprende Huánuco',          'target' => null,
+                    //  'ibg' => 'bg-purple-100',  'ico' => 'text-purple-600',  'bar' => 'bg-purple-500',  'hbg' => 'group-hover:bg-purple-50/50'],
                     ['url' => route('convivenciasinviolencia'),   'icon' => 'newspaper',      'label' => 'Boletín Informativo',      'target' => null,
                      'ibg' => 'bg-red-100',     'ico' => 'text-red-500',     'bar' => 'bg-red-500',     'hbg' => 'group-hover:bg-red-50/50'],
                     ['url' => 'https://drive.google.com/file/d/1HggIH8vWMyCGRxHbyK6-33la7yHcBjcY/view?usp=sharing',
@@ -513,48 +513,85 @@
     $popupLinks = $imagenes->pluck('enlace')->toArray();
 @endphp
 <div x-data="{ open: true }" x-show="open" x-transition.opacity x-cloak
-     class="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 p-2 sm:p-4"
+     class="fixed inset-0 z-[9998] flex items-end sm:items-center justify-center bg-black/60 p-4 sm:p-6"
      @click.self="open = false">
-    <div x-show="open" x-transition.scale.90
-         class="bg-white rounded-lg sm:rounded-xl shadow-2xl w-full max-w-[95vw] sm:max-w-lg relative max-h-[90vh] flex flex-col">
-        {{-- Botón cerrar --}}
-        <button @click="open = false"
-                class="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 z-30 bg-yellow-400 text-black text-[10px] sm:text-xs font-bold px-2 py-1 sm:px-3 sm:py-1.5 hover:bg-yellow-300 active:bg-yellow-500 transition-colors rounded-full shadow-lg">
-            ✕ Cerrar
-        </button>
+
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+         class="bg-white w-full sm:max-w-lg rounded-2xl shadow-2xl flex flex-col
+                max-h-[88dvh] sm:max-h-[88vh] overflow-hidden">
+
+        {{-- Barra superior --}}
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
+            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                {{ $popup->titulopopup ?? 'Comunicado' }}
+            </span>
+            <button @click="open = false" type="button"
+                    class="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                Cerrar
+            </button>
+        </div>
+
         <div x-data="{ slide: 0, total: {{ count($imagenes) }}, links: {{ json_encode($popupLinks) }} }"
-             class="relative flex flex-col">
-            {{-- Slider de imágenes --}}
-            <div class="overflow-hidden rounded-t-lg sm:rounded-t-xl">
+             class="flex flex-col flex-1 min-h-0">
+
+            {{-- Imagen --}}
+            <div class="relative flex-1 min-h-0 overflow-hidden bg-gray-50">
                 @foreach($imagenes as $ri => $row)
-                    <div x-show="slide === {{ $ri }}" x-transition.opacity>
+                    <div x-show="slide === {{ $ri }}" x-transition.opacity class="h-full">
                         <img src="{{ asset('img/popup/'.$row->imagen) }}"
-                             class="w-full block max-h-[70vh] object-contain cursor-pointer"
+                             class="w-full h-full object-contain cursor-pointer"
                              alt="{{ $popup->titulopopup ?? '' }}"
                              @click="if(links[slide]) window.open(links[slide], '_blank')">
                     </div>
                 @endforeach
+
+                {{-- Flechas de navegación --}}
+                <button x-show="total > 1" @click="slide = (slide - 1 + total) % total" type="button"
+                        class="absolute left-2 top-1/2 -translate-y-1/2 z-20
+                               bg-black/40 hover:bg-black/60 active:bg-black/70
+                               text-white w-10 h-10 rounded-full
+                               flex items-center justify-center transition-colors shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button x-show="total > 1" @click="slide = (slide + 1) % total" type="button"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 z-20
+                               bg-black/40 hover:bg-black/60 active:bg-black/70
+                               text-white w-10 h-10 rounded-full
+                               flex items-center justify-center transition-colors shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+
+                {{-- Indicadores de slide --}}
+                <div x-show="total > 1" class="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-20">
+                    @foreach($imagenes as $ri => $row)
+                        <button @click="slide = {{ $ri }}" type="button"
+                                class="w-2 h-2 rounded-full transition-all"
+                                :class="slide === {{ $ri }} ? 'bg-white scale-125' : 'bg-white/50'">
+                        </button>
+                    @endforeach
+                </div>
             </div>
-            {{-- Botones de navegación (fuera del overflow-hidden) --}}
-            <button x-show="total > 1" @click="slide = (slide - 1 + total) % total"
-                    class="absolute left-1.5 sm:left-2 top-1/2 -translate-y-1/2 z-20 bg-blue-600/90 text-white w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 transition-colors shadow-lg"
-                    type="button">
-                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            <button x-show="total > 1" @click="slide = (slide + 1) % total"
-                    class="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 z-20 bg-blue-600/90 text-white w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 transition-colors shadow-lg"
-                    type="button">
-                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </button>
-            {{-- Botón ver comunicado completo --}}
+
+            {{-- Botón CTA --}}
             <div x-show="links[slide] && links[slide].length > 0"
-                 class="px-3 py-2.5 sm:px-4 sm:py-3 bg-gray-50 rounded-b-lg sm:rounded-b-xl border-t border-gray-200">
+                 class="px-4 py-3 bg-white border-t border-gray-100 shrink-0">
                 <a :href="links[slide]" target="_blank"
-                   class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-xs sm:text-sm py-2 sm:py-2.5 px-4 rounded-lg transition-colors shadow-sm">
+                   class="flex items-center justify-center gap-2 w-full
+                          bg-dre-primary hover:bg-dre-accent active:bg-dre-primary
+                          text-white font-semibold text-sm py-3 px-4 rounded-xl
+                          transition-colors shadow-sm">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                     Ver Comunicado Completo
                 </a>
             </div>
+
         </div>
     </div>
 </div>

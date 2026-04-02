@@ -9,7 +9,7 @@
     <meta name="keywords" content="todo respecto a DRE Huanuco">
 
     <title>@yield('title', 'DIRECCION REGIONAL DE EDUCACION - HUANUCO')</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/ico.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('img/log33.png') }}">
 
     {{-- Google Fonts — non-blocking (preload trick) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">

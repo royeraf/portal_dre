@@ -14,7 +14,7 @@ Alpine.start();
 import { createIcons } from 'lucide';
 import {
     // Header / General
-    Clock, MapPin, LogIn, GraduationCap, Globe, Mail, Menu, X,
+    Clock, MapPin, LogIn, GraduationCap, Globe, Mail, Menu, X, Home, Layers,
     ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Search,
     FileText, Monitor, Inbox,
     // Quick access grid
@@ -35,10 +35,12 @@ import {
     SlidersHorizontal, Filter, Paperclip,
     // Infraestructura slider
     Expand,
+    // Direcciones / show
+    Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,
 } from 'lucide';
 
 const icons = {
-    Clock, MapPin, LogIn, GraduationCap, Globe, Mail, Menu, X,
+    Clock, MapPin, LogIn, GraduationCap, Globe, Mail, Menu, X, Home, Layers,
     ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Search,
     FileText, Monitor, Inbox,
     Users, BarChart3, FolderOpen, Camera, Heart, PieChart, DollarSign,
@@ -51,6 +53,7 @@ const icons = {
     Phone,
     SlidersHorizontal, Filter, Paperclip,
     Expand,
+    Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,
 };
 
 createIcons({ icons, attrs: { 'stroke-width': 1.75 } });

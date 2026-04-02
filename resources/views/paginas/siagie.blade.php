@@ -1,164 +1,149 @@
 @extends('principal.plantilla')
 
 @section('content')
-<div class="siagie-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center py-5">
-                <h1 class="display-4 fw-bold mb-0 text-dark">
-                    <i class="fas fa-chart-line me-2 text-primary"></i>Reportes SIAGIE
-                </h1>
-                </div>
+
+{{-- ── HERO ──────────────────────────────────────────────────── --}}
+<div class="bg-dre-primary relative overflow-hidden">
+    {{-- Patrón decorativo --}}
+    <div class="absolute inset-0 opacity-5"
+         style="background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%); background-size: 20px 20px;"></div>
+    <div class="relative max-w-screen-xl mx-auto px-4 py-10 md:py-14">
+        <div class="flex items-center gap-3 mb-3">
+            <span class="flex items-center justify-center bg-white/10 rounded-lg p-2">
+                <i data-lucide="pie-chart" class="w-6 h-6 text-yellow-400"></i>
+            </span>
+            <span class="text-yellow-400 text-xs font-bold uppercase tracking-widest">Sistema de Información</span>
         </div>
+        <h1 class="text-white font-black text-3xl md:text-4xl leading-tight mb-2">
+            Reportes SIAGIE
+        </h1>
+        <p class="text-blue-200 text-sm md:text-base max-w-xl">
+            Consulta los reportes estadísticos del Sistema de Información de Apoyo a la Gestión de la Institución Educativa.
+        </p>
     </div>
 </div>
 
-<div class="container mt-0 mb-5">
-    @if($reports->count() > 0)
-        <div class="row mb-5">
-            <div class="col-lg-8 mx-auto">
-                {{-- Tarjeta de Búsqueda --}}
-                <div class="card shadow-sm border-0 rounded-3">
-                    <div class="card-body p-3">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-0">
-                                <i class="fas fa-search text-muted"></i>
-                            </span>
-                            <input type="text" 
-                                class="form-control border-0 shadow-none" 
-                                id="searchReports" 
-                                placeholder="Buscar reportes por título o descripción...">
-                        </div>
-                    </div>
+{{-- ── CONTENIDO ────────────────────────────────────────────── --}}
+<div class="bg-gray-50 min-h-screen">
+    <div class="max-w-screen-xl mx-auto px-4 py-8">
+
+        @if($reports->count() > 0)
+
+            {{-- Buscador --}}
+            <div class="max-w-xl mx-auto mb-8">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                    <input type="text"
+                           id="searchReports"
+                           placeholder="Buscar reportes por título o descripción…"
+                           class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm text-sm
+                                  focus:outline-none focus:ring-2 focus:ring-dre-accent focus:border-transparent
+                                  placeholder:text-gray-400 transition">
                 </div>
             </div>
-        </div>
 
-        <div class="row g-4 justify-content-center" id="reportsGrid">
-            @foreach($reports as $report)
-                <div class="col-lg-4 col-md-6 report-card" 
-                    data-title="{{ strtolower($report->title) }}" 
-                    data-description="{{ strtolower($report->description ?? '') }}">
-                    {{-- Tarjeta de Reporte: borde y estilo minimalista --}}
-                    <div class="card h-100 border rounded-0 p-3 report-card-custom">
-                        <div class="card-body d-flex flex-column p-0">
-                            
-                            {{-- Categoría (gris oscuro) --}}
-                            <small class="text-uppercase text-secondary fw-bold mb-1" style="font-size: 0.75rem;">
-                                {{ $report->description ?? 'REPORTE' }}
-                            </small>
-                            
-                            {{-- Título (negro) --}}
-                            <h5 class="card-title text-dark fw-normal mb-4" style="font-size: 1rem;">
+            {{-- Contador --}}
+            <p class="text-xs text-gray-400 text-center mb-6">
+                <span id="visibleCount">{{ $reports->count() }}</span> reporte(s) disponibles
+            </p>
+
+            {{-- Grid de reportes --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="reportsGrid">
+                @foreach($reports as $i => $report)
+                    <div class="report-card group bg-white rounded-xl border border-gray-100 shadow-sm
+                                hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden"
+                         data-title="{{ strtolower($report->title) }}"
+                         data-description="{{ strtolower($report->description ?? '') }}">
+
+                        {{-- Barra superior de color --}}
+                        <div class="h-1 bg-dre-accent w-full"></div>
+
+                        <div class="flex flex-col flex-1 p-5">
+                            {{-- Categoría --}}
+                            @if($report->description)
+                                <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-dre-accent mb-2">
+                                    <i data-lucide="tag" class="w-3 h-3"></i>
+                                    {{ $report->description }}
+                                </span>
+                            @endif
+
+                            {{-- Título --}}
+                            <h3 class="text-gray-800 font-semibold text-sm leading-snug mb-4 flex-1">
                                 {{ $report->title }}
-                            </h5>
+                            </h3>
 
-                            {{-- Fecha de Publicación (gris claro) --}}
-                            <div class="text-muted mb-1" style="font-size: 0.85rem;">
-                                <i class="far fa-calendar-alt me-2"></i>
-                                {{ $report->published_at ? $report->published_at->format('d/m/Y') : $report->created_at->format('d/m/Y') }}
+                            {{-- Fecha --}}
+                            <div class="flex items-center gap-1.5 text-gray-400 text-xs mb-4">
+                                <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0"></i>
+                                <span>
+                                    {{ ($report->published_at ?? $report->created_at)->format('d/m/Y') }}
+                                </span>
                             </div>
 
-                            {{-- Enlace 'Ver Reporte Completo' (APLICANDO TAMAÑO MÁS PEQUEÑO Y COLOR) --}}
-                            <div class="mt-auto text-center bg-primary text-white">
-                                <a href="{{ route('siagie.show', $report->slug) }}" 
-                                    class="text-white text-decoration-none fw-bold link-hover-primary">
-                                    <i class="fas fa-eye" style="font-size: 1rem;"></i>
-                                    <span class="d-block mt-1" style="font-size: 1rem;">Ver Reporte<br>Completo</span>
-                                </a>
-                            </div>
+                            {{-- CTA --}}
+                            <a href="{{ route('siagie.show', $report->slug) }}"
+                               class="flex items-center justify-center gap-2 w-full
+                                      bg-dre-primary hover:bg-dre-accent text-white
+                                      text-xs font-bold uppercase tracking-wide
+                                      py-2.5 rounded-lg transition-colors">
+                                <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0"></i>
+                                Ver Reporte
+                            </a>
                         </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
+                @endforeach
+            </div>
 
-        <div id="noResults" class="text-center py-5 d-none">
-            <div class="mb-4">
-                <i class="fas fa-search fa-4x text-muted opacity-50"></i>
-            </div>
-            <h4 class="text-muted">No se encontraron reportes</h4>
-            <p class="text-muted">Intenta con otros términos de búsqueda</p>
-        </div>
-    @else
-        <div class="row">
-            <div class="col-lg-6 mx-auto">
-                <div class="card border-0 shadow-lg">
-                    <div class="card-body text-center py-5">
-                        <div class="mb-4">
-                            <i class="fas fa-folder-open fa-5x text-muted opacity-50"></i>
-                        </div>
-                        <h3 class="mb-3">No hay reportes publicados</h3>
-                        <p class="text-muted mb-0">Los reportes estarán disponibles próximamente</p>
-                    </div>
+            {{-- Sin resultados --}}
+            <div id="noResults" class="hidden text-center py-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                    <i data-lucide="search-x" class="w-8 h-8 text-gray-400"></i>
                 </div>
+                <h4 class="text-gray-600 font-semibold mb-1">Sin resultados</h4>
+                <p class="text-gray-400 text-sm">Prueba con otros términos de búsqueda</p>
             </div>
-        </div>
-    @endif
+
+        @else
+
+            {{-- Estado vacío --}}
+            <div class="max-w-sm mx-auto text-center py-20">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-dre-primary/5 rounded-2xl mb-5">
+                    <i data-lucide="folder-open" class="w-10 h-10 text-dre-primary/40"></i>
+                </div>
+                <h3 class="text-gray-700 font-bold text-lg mb-2">No hay reportes publicados</h3>
+                <p class="text-gray-400 text-sm">Los reportes estarán disponibles próximamente.</p>
+            </div>
+
+        @endif
+
+    </div>
 </div>
-
-@push('styles')
-<style>
-    /* 1. Efecto Hover de la Tarjeta */
-    .report-card-custom {
-        /* Quita la sombra por defecto de Bootstrap y prepara la transición */
-        box-shadow: none !important;
-        border-color: #ddd; /* Borde inicial gris claro */
-        transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    }
-    .report-card-custom:hover {
-        /* Sombra sutil y BORDE PRINCIPAL (AZUL) al hacer hover */
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05) !important;
-        border-color: var(--bs-primary) !important; 
-    }
-
-    /* 2. Estilo del Enlace de Ver Reporte */
-    .link-hover-primary:hover {
-        /* Oscurece ligeramente el color primario al pasar el ratón */
-        color: #0056b3 !important; /* Un tono de azul más oscuro */
-    }
-    .link-hover-primary:hover i {
-        color: #0056b3 !important;
-    }
-    
-    /* Ocultar elementos no deseados de la versión original */
-    .badge.bg-success {
-        display: none !important;
-    }
-</style>
-@endpush
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchReports');
-    const reportCards = document.querySelectorAll('.report-card');
-    const noResults = document.getElementById('noResults');
+document.addEventListener('DOMContentLoaded', function () {
+    const input       = document.getElementById('searchReports');
+    const cards       = document.querySelectorAll('.report-card');
+    const noResults   = document.getElementById('noResults');
+    const countEl     = document.getElementById('visibleCount');
 
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
-            let visibleCount = 0;
+    if (!input) return;
 
-            reportCards.forEach(card => {
-                const title = card.dataset.title;
-                const description = card.dataset.description;
-                const matches = title.includes(searchTerm) || description.includes(searchTerm);
-                
-                if (matches) {
-                    card.style.display = '';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+    input.addEventListener('input', function () {
+        const term = this.value.toLowerCase().trim();
+        let visible = 0;
 
-            if (noResults) {
-                noResults.classList.toggle('d-none', visibleCount > 0);
-            }
+        cards.forEach(card => {
+            const matches = card.dataset.title.includes(term) || card.dataset.description.includes(term);
+            card.style.display = matches ? '' : 'none';
+            if (matches) visible++;
         });
-    }
+
+        if (countEl) countEl.textContent = visible;
+        if (noResults) noResults.classList.toggle('hidden', visible > 0);
+    });
 });
 </script>
 @endpush
+
 @endsection

@@ -10,22 +10,39 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
 
                 {{-- Col 1 — Brand --}}
-                <div>
-                    <a href="/" class="inline-block mb-5">
-                        <img src="{{ asset('img/logonuevo.png') }}" alt="DRE Huánuco" class="h-14 brightness-0 invert">
+                <div class="flex flex-col items-center sm:items-start text-center sm:text-left">
+                    <a href="/" class="flex items-center justify-center sm:justify-start gap-3 mb-5 w-full group">
+                        {{-- Badge con fondo para el logo --}}
+                        <span class="flex items-center justify-center shrink-0
+                                     bg-dre-primary
+                                     rounded-xl p-2.5 shadow-lg shadow-black/40
+                                     border border-white/10
+                                     group-hover:border-white/25 transition-colors">
+                            <img src="{{ asset('img/log33.png') }}" alt="DRE Huánuco"
+                                 class="h-12 w-12 object-contain brightness-0 invert">
+                        </span>
+                        {{-- Texto institucional --}}
+                        <span class="flex flex-col text-left">
+                            <span class="text-white font-extrabold text-[13px] uppercase tracking-[0.06em] leading-tight">Dirección Regional de Educación</span>
+                            <span class="flex items-center gap-1.5 mt-1.5">
+                                <span class="h-px w-4 bg-yellow-400/50"></span>
+                                <span class="text-[9px] uppercase tracking-[0.18em] text-yellow-400 font-bold">Huánuco</span>
+                                <span class="h-px w-4 bg-yellow-400/50"></span>
+                            </span>
+                        </span>
                     </a>
-                    <div class="space-y-2 text-sm mb-5">
+                    <div class="space-y-2 text-sm mb-5 w-full">
                         <p><span class="text-gray-400 text-[10px] uppercase tracking-widest block">RUC</span><span class="text-white font-medium">20182362141</span></p>
                         <p><span class="text-gray-400 text-[10px] uppercase tracking-widest block">Director Regional</span><span class="text-white font-medium">Dr. Kelvin Álvarez Matos</span></p>
                         <p><span class="text-gray-400 text-[10px] uppercase tracking-widest block">Administrador</span><span class="text-white font-medium">DR. Jim C. Atencia Arbi</span></p>
-                        <div class="flex items-start gap-2 pt-1">
+                        <div class="flex items-start gap-2 pt-1 justify-center sm:justify-start">
                             <i data-lucide="map-pin" class="w-4 h-4 text-yellow-400 mt-0.5 shrink-0"></i>
-                            <span class="text-gray-200">Jr. Progreso #462 — frente al parque Amarilis</span>
+                            <span class="text-gray-200 text-left">Jr. Progreso #462 — frente al parque Amarilis</span>
                         </div>
                     </div>
 
                     {{-- Mini mapa --}}
-                    <div class="rounded-lg overflow-hidden mb-5 border border-white/10">
+                    <div class="rounded-lg overflow-hidden mb-5 border border-white/10 w-full">
                         <iframe
                             src="https://maps.google.com/maps?q=-9.9256909,-76.2390337&hl=es&z=17&output=embed"
                             class="w-full h-28 sm:h-36 block border-0"
@@ -35,7 +52,7 @@
                         </iframe>
                     </div>
                     {{-- Social icons --}}
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 justify-center sm:justify-start">
                         <a href="https://www.facebook.com/direccionregionaldeeducacion/?locale=es_LA" target="_blank"
                            class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-gray-300 hover:bg-[#3b5998] hover:text-white transition-all duration-200" title="Facebook">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
