@@ -205,34 +205,37 @@
                     gap-px bg-gray-200 border border-gray-200">
             @foreach ($mainrightitem as $item)
                 <a href="{{ $item->url }}" title="{{ $item->nombre }}"
-                   class="group relative block overflow-hidden bg-white">
+                   class="platform-card group relative block overflow-hidden bg-white">
 
                     {{-- Imagen --}}
                     <img src="{{ asset('img/mainright/'.$item->imagen) }}"
                          alt="{{ $item->nombre }}"
                          loading="lazy"
-                         class="w-full h-28 sm:h-32 md:h-36 object-cover
+                         crossorigin="anonymous"
+                         class="platform-img w-full h-28 sm:h-32 md:h-36 object-cover
                                 transition-opacity duration-200 ease-out
                                 group-hover:opacity-50">
 
-                    {{-- Overlay oscuro al hover --}}
+                    {{-- Overlay al hover --}}
                     <div class="absolute inset-0
-                                bg-gray-950/0 group-hover:bg-gray-950/75
+                                bg-gray-950/0 group-hover:bg-gray-950/30
                                 transition-colors duration-200 ease-out
-                                flex items-end p-2.5 pointer-events-none">
-                        <span class="font-mono text-[9px] uppercase tracking-[0.12em]
-                                     font-bold leading-tight text-white
+                                flex items-end p-2 pointer-events-none">
+                        <span class="platform-label
+                                     font-mono text-[9px] uppercase tracking-[0.12em]
+                                     font-bold leading-tight px-2 py-1
                                      opacity-0 group-hover:opacity-100
-                                     transition-opacity duration-150 ease-out">
+                                     transition-opacity duration-150 ease-out"
+                              style="background-color:#111827; color:#ffffff;">
                             {{ $item->nombre }}
                         </span>
                     </div>
 
-                    {{-- Accent bar: único momento de color --}}
-                    <div class="absolute bottom-0 left-0 right-0 h-[2px]
-                                bg-red-700
+                    {{-- Accent bar: color extraído de la imagen --}}
+                    <div class="platform-bar absolute bottom-0 left-0 right-0 h-[3px]
                                 origin-left scale-x-0 group-hover:scale-x-100
-                                transition-transform duration-200 ease-out"></div>
+                                transition-transform duration-200 ease-out"
+                         style="background-color:#111827;"></div>
 
                 </a>
             @endforeach
@@ -240,6 +243,84 @@
 
     </div>
 </section>
+
+<script>
+(function () {
+    function luminance(r, g, b) {
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    }
+
+    function extractVibrant(img) {
+        try {
+            const c = document.createElement('canvas');
+            c.width = 50; c.height = 50;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0, 50, 50);
+            const d = ctx.getImageData(0, 0, 50, 50).data;
+
+            // 12 cubetas de tono (30° cada una), ponderadas por saturación y brillo
+            const buckets = Array.from({length: 12}, () => ({w: 0, r: 0, g: 0, b: 0}));
+
+            for (let i = 0; i < d.length; i += 4) {
+                const r = d[i] / 255, g = d[i+1] / 255, b = d[i+2] / 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b), dlt = max - min;
+
+                // Descartar grises, negros y blancos
+                if (dlt < 0.15 || max < 0.12 || max > 0.95) continue;
+
+                let h = max === r ? ((g - b) / dlt) % 6
+                      : max === g ? (b - r) / dlt + 2
+                      :             (r - g) / dlt + 4;
+                h = ((h * 60) + 360) % 360;
+
+                const sat = dlt / max;
+                const lgt = (max + min) / 2;
+                // Peso: favorece saturación alta y brillo medio
+                const w = sat * (1 - Math.abs(lgt - 0.45) * 1.8);
+                const bi = Math.floor(h / 30) % 12;
+
+                buckets[bi].w += w;
+                buckets[bi].r += d[i]   * w;
+                buckets[bi].g += d[i+1] * w;
+                buckets[bi].b += d[i+2] * w;
+            }
+
+            const best = buckets.reduce((a, b) => b.w > a.w ? b : a);
+            if (best.w < 0.5) return null;
+
+            return {
+                r: Math.round(best.r / best.w),
+                g: Math.round(best.g / best.w),
+                b: Math.round(best.b / best.w),
+            };
+        } catch (e) {
+            return null; // CORS u otro error
+        }
+    }
+
+    function applyColor(card) {
+        const img   = card.querySelector('.platform-img');
+        const label = card.querySelector('.platform-label');
+        const bar   = card.querySelector('.platform-bar');
+        if (!img || !label) return;
+
+        const run = () => {
+            const col = extractVibrant(img);
+            if (!col) return;
+            const bg  = `rgb(${col.r},${col.g},${col.b})`;
+            const txt = luminance(col.r, col.g, col.b) > 0.45 ? '#000000' : '#ffffff';
+            label.style.backgroundColor = bg;
+            label.style.color           = txt;
+            if (bar) bar.style.backgroundColor = bg;
+        };
+
+        if (img.complete && img.naturalWidth) run();
+        else img.addEventListener('load', run);
+    }
+
+    document.querySelectorAll('.platform-card').forEach(applyColor);
+})();
+</script>
 
 {{-- ── NOTICIAS ─────────────────────────────────────────────── --}}
 <section class="bg-gray-50 border-y border-gray-200 py-5">
