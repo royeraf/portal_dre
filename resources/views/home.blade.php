@@ -322,6 +322,72 @@
 })();
 </script>
 
+{{-- ── COMUNICADOS ──────────────────────────────────────────── --}}
+<section class="py-5">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-12"
+         x-data="{ page: 0, pages: {{ ceil(count($comunicados) / 3) }} }">
+
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-2 mb-4">
+            <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">Comunicados</span>
+            <div class="hidden sm:block flex-1 h-px bg-blue-200"></div>
+            <div class="ml-auto flex items-center gap-1.5">
+                <button @click="page = (page - 1 + pages) % pages"
+                        class="w-8 h-8 rounded-full border-2 border-dre-accent text-dre-accent flex items-center justify-center hover:bg-dre-accent hover:text-white transition-all duration-200">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <span class="text-xs text-gray-400 font-medium tabular-nums w-7 text-center select-none">
+                    <span x-text="page + 1"></span>/<span x-text="pages"></span>
+                </span>
+                <button @click="page = (page + 1) % pages"
+                        class="w-8 h-8 rounded-full border-2 border-dre-accent text-dre-accent flex items-center justify-center hover:bg-dre-accent hover:text-white transition-all duration-200">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid [&>div]:col-start-1 [&>div]:row-start-1">
+        @foreach($comunicados->chunk(3) as $ci => $chunk)
+            <div x-show="page === {{ $ci }}" x-transition.opacity
+                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                @foreach ($chunk as $item)
+                    <div class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 flex flex-col">
+                        {{-- Imagen con overlay --}}
+                        <div class="relative h-48 sm:h-52 overflow-hidden shrink-0 skeleton img-wrap">
+                            <img src="{{ asset('img/comunicados/'.$item->imagen) }}"
+                                 alt="{{ $item->titulo }}"
+                                 loading="lazy"
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                            <span class="absolute top-3 left-3 bg-dre-primary text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+                                Comunicado
+                            </span>
+                        </div>
+                        {{-- Contenido --}}
+                        <div class="p-4 flex flex-col flex-1">
+                            <h3 class="font-display text-gray-900 text-base font-bold leading-snug mb-4 group-hover:text-dre-accent transition-colors duration-200">
+                                {{ $item->titulo }}
+                            </h3>
+                            <div class="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
+                                <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">DRE Huánuco</span>
+                                @if($item->url != '' && $item->url != null)
+                                    <a href="{{ $item->url }}" target="_blank"
+                                       class="flex items-center gap-1 text-dre-accent text-xs font-bold group-hover:gap-2 transition-all duration-200">
+                                        Ver Más <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                        {{-- Barra de acento --}}
+                        <div class="h-0.5 bg-dre-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left shrink-0"></div>
+                    </div>
+                @endforeach
+            </div>
+        @endforeach
+        </div>
+
+    </div>
+</section>
+
 {{-- ── NOTICIAS ─────────────────────────────────────────────── --}}
 <section class="bg-gray-50 border-y border-gray-200 py-5">
     <div class="max-w-screen-xl mx-auto px-4 md:px-12"
@@ -462,72 +528,6 @@
             </div>
 
         </div>
-    </div>
-</section>
-
-{{-- ── COMUNICADOS ──────────────────────────────────────────── --}}
-<section class="py-5">
-    <div class="max-w-screen-xl mx-auto px-4 md:px-12"
-         x-data="{ page: 0, pages: {{ ceil(count($comunicados) / 3) }} }">
-
-        <div class="flex flex-wrap items-center gap-x-2 gap-y-2 mb-4">
-            <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">Comunicados</span>
-            <div class="hidden sm:block flex-1 h-px bg-blue-200"></div>
-            <div class="ml-auto flex items-center gap-1.5">
-                <button @click="page = (page - 1 + pages) % pages"
-                        class="w-8 h-8 rounded-full border-2 border-dre-accent text-dre-accent flex items-center justify-center hover:bg-dre-accent hover:text-white transition-all duration-200">
-                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                </button>
-                <span class="text-xs text-gray-400 font-medium tabular-nums w-7 text-center select-none">
-                    <span x-text="page + 1"></span>/<span x-text="pages"></span>
-                </span>
-                <button @click="page = (page + 1) % pages"
-                        class="w-8 h-8 rounded-full border-2 border-dre-accent text-dre-accent flex items-center justify-center hover:bg-dre-accent hover:text-white transition-all duration-200">
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="grid [&>div]:col-start-1 [&>div]:row-start-1">
-        @foreach($comunicados->chunk(3) as $ci => $chunk)
-            <div x-show="page === {{ $ci }}" x-transition.opacity
-                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                @foreach ($chunk as $item)
-                    <div class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 flex flex-col">
-                        {{-- Imagen con overlay --}}
-                        <div class="relative h-48 sm:h-52 overflow-hidden shrink-0 skeleton img-wrap">
-                            <img src="{{ asset('img/comunicados/'.$item->imagen) }}"
-                                 alt="{{ $item->titulo }}"
-                                 loading="lazy"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                            <span class="absolute top-3 left-3 bg-dre-primary text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
-                                Comunicado
-                            </span>
-                        </div>
-                        {{-- Contenido --}}
-                        <div class="p-4 flex flex-col flex-1">
-                            <h3 class="font-display text-gray-900 text-base font-bold leading-snug mb-4 group-hover:text-dre-accent transition-colors duration-200">
-                                {{ $item->titulo }}
-                            </h3>
-                            <div class="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
-                                <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">DRE Huánuco</span>
-                                @if($item->url != '' && $item->url != null)
-                                    <a href="{{ $item->url }}" target="_blank"
-                                       class="flex items-center gap-1 text-dre-accent text-xs font-bold group-hover:gap-2 transition-all duration-200">
-                                        Ver Más <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                        {{-- Barra de acento --}}
-                        <div class="h-0.5 bg-dre-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left shrink-0"></div>
-                    </div>
-                @endforeach
-            </div>
-        @endforeach
-        </div>
-
     </div>
 </section>
 
