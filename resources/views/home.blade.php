@@ -111,13 +111,13 @@
 
                 @php
                 $quickLinks = [
-                    ['url' => route('directorioweb'),           'icon' => 'users',          'label' => 'Directorio Institucional', 'target' => '_blank',
+                    ['url' => route('directorioweb'),           'icon' => 'users',          'label' => 'Directorio Institucional', 'target' => null,
                      'ibg' => 'bg-blue-100',    'ico' => 'text-blue-600',    'bar' => 'bg-blue-500',    'hbg' => 'group-hover:bg-blue-50/50'],
-                    ['url' => '/resoluciones',                   'icon' => 'bar-chart-3',    'label' => 'Resoluciones',             'target' => '_blank',
+                    ['url' => '/resoluciones',                   'icon' => 'bar-chart-3',    'label' => 'Resoluciones',             'target' => null,
                      'ibg' => 'bg-indigo-100',  'ico' => 'text-indigo-600',  'bar' => 'bg-indigo-500',  'hbg' => 'group-hover:bg-indigo-50/50'],
-                    ['url' => route('documentosdegestionweb'),   'icon' => 'folder-open',    'label' => 'Gestión de Documentos',    'target' => '_blank',
+                    ['url' => route('documentosdegestionweb'),   'icon' => 'folder-open',    'label' => 'Gestión de Documentos',    'target' => null,
                      'ibg' => 'bg-amber-100',   'ico' => 'text-amber-600',   'bar' => 'bg-amber-500',   'hbg' => 'group-hover:bg-amber-50/50'],
-                    ['url' => route('galerias'),                 'icon' => 'camera',         'label' => 'Galería de Imágenes',      'target' => '_blank',
+                    ['url' => route('galerias'),                 'icon' => 'camera',         'label' => 'Galería de Imágenes',      'target' => null,
                      'ibg' => 'bg-rose-100',    'ico' => 'text-rose-500',    'bar' => 'bg-rose-500',    'hbg' => 'group-hover:bg-rose-50/50'],
                     // ['url' => '#',                               'icon' => 'heart',          'label' => 'Integridad',               'target' => null,
                     //  'ibg' => 'bg-emerald-100', 'ico' => 'text-emerald-600', 'bar' => 'bg-emerald-500', 'hbg' => 'group-hover:bg-emerald-50/50'],
@@ -180,6 +180,62 @@
                     </div>
                 </div>
             </a>
+        </div>
+
+    </div>
+</section>
+
+{{-- ── PLATAFORMAS INSTITUCIONALES ──────────────────────────── --}}
+<section class="border-y border-gray-200">
+    <div class="max-w-screen-xl mx-auto px-4 md:px-12 py-5">
+
+        {{-- Header: etiqueta instrument-panel --}}
+        <div class="flex items-center gap-3 mb-4">
+            <span class="font-mono text-[10px] font-bold tracking-[0.14em] uppercase text-gray-400 shrink-0 select-none">
+                Plataformas Institucionales
+            </span>
+            <div class="flex-1 h-px bg-gray-200"></div>
+            <span class="font-mono text-[9px] tracking-[0.08em] uppercase text-gray-300 shrink-0 select-none hidden sm:inline">
+                {{ count($mainrightitem) }} PLATAFORMAS
+            </span>
+        </div>
+
+        {{-- Bento-grid: gap-px sobre fondo gris = bordes 1px entre celdas --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-{{ min(count($mainrightitem), 6) }}
+                    gap-px bg-gray-200 border border-gray-200">
+            @foreach ($mainrightitem as $item)
+                <a href="{{ $item->url }}" title="{{ $item->nombre }}"
+                   class="group relative block overflow-hidden bg-white">
+
+                    {{-- Imagen --}}
+                    <img src="{{ asset('img/mainright/'.$item->imagen) }}"
+                         alt="{{ $item->nombre }}"
+                         loading="lazy"
+                         class="w-full h-28 sm:h-32 md:h-36 object-cover
+                                transition-opacity duration-200 ease-out
+                                group-hover:opacity-50">
+
+                    {{-- Overlay oscuro al hover --}}
+                    <div class="absolute inset-0
+                                bg-gray-950/0 group-hover:bg-gray-950/75
+                                transition-colors duration-200 ease-out
+                                flex items-end p-2.5 pointer-events-none">
+                        <span class="font-mono text-[9px] uppercase tracking-[0.12em]
+                                     font-bold leading-tight text-white
+                                     opacity-0 group-hover:opacity-100
+                                     transition-opacity duration-150 ease-out">
+                            {{ $item->nombre }}
+                        </span>
+                    </div>
+
+                    {{-- Accent bar: único momento de color --}}
+                    <div class="absolute bottom-0 left-0 right-0 h-[2px]
+                                bg-red-700
+                                origin-left scale-x-0 group-hover:scale-x-100
+                                transition-transform duration-200 ease-out"></div>
+
+                </a>
+            @endforeach
         </div>
 
     </div>
@@ -258,23 +314,6 @@
         @endforeach
         </div>
 
-    </div>
-</section>
-
-{{-- ── ENLACES EXTERNOS ────────────────────────────────────── --}}
-<section class="py-5">
-    <div class="max-w-screen-xl mx-auto px-4 md:px-12">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            @foreach ($mainrightitem as $item)
-                <a href="{{ $item->url }}" title="{{ $item->nombre }}"
-                   class="block rounded-xl overflow-hidden shadow hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
-                    <img src="{{ asset('img/mainright/'.$item->imagen) }}"
-                         alt="{{ $item->nombre }}"
-                         loading="lazy"
-                         class="w-full object-cover max-h-32 sm:max-h-48 md:max-h-[200px]">
-                </a>
-            @endforeach
-        </div>
     </div>
 </section>
 
