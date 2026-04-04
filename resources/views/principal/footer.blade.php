@@ -201,7 +201,7 @@
     <div class="bg-dre-darker border-t border-white/5 py-4">
         <div class="max-w-screen-xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-2">
             <p class="text-gray-500 text-xs text-center md:text-left">
-                © 2021 - 2025 Todos los derechos Reservados —
+                © 2021 - {{ date('Y') }} Todos los derechos Reservados —
                 <span class="text-gray-400">DRE Huánuco</span>
             </p>
             <div class="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-1 text-xs">
