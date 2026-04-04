@@ -101,7 +101,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="https://www.drehuanuco.gob.pe/allnoticias" target="_blank"
+                            <a href="{{ route('allnoticias') }}"
                                class="text-gray-400 hover:text-yellow-400 text-sm transition-colors flex items-center gap-2 py-1.5 group">
                                 <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-dre-accent group-hover:text-yellow-400 shrink-0 transition-colors"></i>
                                 Nota de Prensa
