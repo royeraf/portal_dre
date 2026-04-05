@@ -32,7 +32,7 @@ cd "$WEB" && php artisan view:clear && php artisan config:clear && php artisan r
     || fail "artisan cache clear falló"
 
 echo "▸ Resetting OPcache..."
-APP_URL=$(grep '^APP_URL=' "$WEB/.env" 2>/dev/null | cut -d= -f2- | tr -d '"' | tr -d "'" | tr -d ' ')
+APP_URL=$(grep '^APP_URL=' "$WEB/.env" "$REPO/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'" | tr -d ' ')
 if [ -n "$APP_URL" ]; then
     TOKEN=$(head -c 16 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
     SCRIPT="$WEB/opc_${TOKEN}.php"
