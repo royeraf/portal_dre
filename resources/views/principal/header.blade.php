@@ -269,11 +269,12 @@
                             @foreach($submenus as $submenu)
                                 @if($submenu->categoriamenu == $row->id)
                                     @php
-                                        $appUrl  = rtrim(config('app.url'), '/');
-                                        $href    = $submenu->link_menu;
-                                        $isExt   = Str::startsWith($href, 'http') && !Str::startsWith($href, $appUrl);
-                                        if (!$isExt && Str::startsWith($href, $appUrl)) {
-                                            $href = Str::after($href, $appUrl) ?: '/';
+                                        $siteDomain = env('APP_DOMAIN', 'drehuanuco.gob.pe');
+                                        $href       = $submenu->link_menu;
+                                        $linkHost   = Str::startsWith($href, 'http') ? parse_url($href, PHP_URL_HOST) : null;
+                                        $isExt      = $linkHost && $linkHost !== $siteDomain && $linkHost !== request()->getHost();
+                                        if (!$isExt && $linkHost) {
+                                            $href = parse_url($href, PHP_URL_PATH) ?: '/';
                                         }
                                     @endphp
                                     <a href="{{ $href }}" @click="closeDrawer()"
