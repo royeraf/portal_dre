@@ -256,4 +256,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('reports/{report}/toggle-publish', [SiagieController::class, 'togglePublish'])->name('reports.toggle-publish');
         Route::delete('reports/{report}', [SiagieController::class, 'destroyReport'])->name('reports.destroy');
     });
+// OPcache reset — protegido con hash del APP_KEY, solo para deploy
+Route::get('/_flush/{token}', function (string $token) {
+    if (!hash_equals(hash('sha256', config('app.key')), $token)) abort(404);
+    if (function_exists('opcache_reset')) opcache_reset();
+    return 'OK';
+});
+
 require __DIR__.'/auth.php';

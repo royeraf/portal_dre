@@ -23,15 +23,13 @@ cd "$REPO" && php artisan view:clear && php artisan config:clear && php artisan 
 
 echo "▸ Resetting OPcache..."
 APP_URL=$(grep '^APP_URL=' "$REPO/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'" | tr -d ' ')
-if [ -n "$APP_URL" ]; then
-    TOKEN=$(openssl rand -hex 8)
-    SCRIPT="$WEB/opc_${TOKEN}.php"
-    echo "<?php opcache_reset(); echo 'OK'; @unlink(__FILE__);" > "$SCRIPT"
-    RESULT=$(curl -s --max-time 10 "${APP_URL}/opc_${TOKEN}.php")
-    rm -f "$SCRIPT" 2>/dev/null
+APP_KEY=$(grep '^APP_KEY=' "$REPO/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'" | tr -d ' ')
+if [ -n "$APP_URL" ] && [ -n "$APP_KEY" ]; then
+    TOKEN=$(echo -n "$APP_KEY" | sha256sum | cut -d' ' -f1)
+    RESULT=$(curl -s --max-time 10 "${APP_URL}/_flush/${TOKEN}")
     [ "$RESULT" = "OK" ] && echo "  OPcache reset OK" || echo "  OPcache reset falló (respuesta: $RESULT)"
 else
-    echo "  APP_URL no encontrado en $REPO/.env"
+    echo "  APP_URL o APP_KEY no encontrado en $REPO/.env"
 fi
 
 echo ""
