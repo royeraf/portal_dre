@@ -196,7 +196,8 @@
                                 </div>
                                 @endif
                                 @if($detail)
-                                <button @click="openModal({{ json_encode($mdata) }})"
+                                <button data-modal="{{ e(json_encode($mdata)) }}"
+                                        @click="openModal(JSON.parse($el.dataset.modal))"
                                         class="ml-auto flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200
                                                {{ $abierto ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200' : 'bg-dre-primary text-white hover:bg-dre-accent shadow-blue-200' }}">
                                     <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0"></i>
@@ -226,7 +227,8 @@
                                     @endif
                                 </div>
                                 @if($detail)
-                                <button @click="openModal({{ json_encode($mdata) }})"
+                                <button data-modal="{{ e(json_encode($mdata)) }}"
+                                        @click="openModal(JSON.parse($el.dataset.modal))"
                                         class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200
                                                {{ $abierto ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200' : 'bg-dre-primary text-white hover:bg-dre-accent shadow-blue-200' }}">
                                     <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0"></i>
