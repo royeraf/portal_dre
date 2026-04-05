@@ -132,7 +132,7 @@
                                             $siteDomain = env('APP_DOMAIN', 'drehuanuco.gob.pe');
                                             $href       = $submenu->link_menu;
                                             $linkHost   = Str::startsWith($href, 'http') ? parse_url($href, PHP_URL_HOST) : null;
-                                            $isExt      = $linkHost && $linkHost !== $siteDomain && $linkHost !== request()->getHost();
+                                            $isExt      = $linkHost && $linkHost !== $siteDomain && $linkHost !== 'www.'.$siteDomain && $linkHost !== request()->getHost();
                                             if (!$isExt && $linkHost) {
                                                 $href = parse_url($href, PHP_URL_PATH) ?: '/';
                                             }
