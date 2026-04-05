@@ -129,11 +129,12 @@
                                 @foreach($submenus as $submenu)
                                     @if($submenu->categoriamenu == $row->id)
                                         @php
-                                            $appUrl  = rtrim(config('app.url'), '/');
-                                            $href    = $submenu->link_menu;
-                                            $isExt   = Str::startsWith($href, 'http') && !Str::startsWith($href, $appUrl);
-                                            if (!$isExt && Str::startsWith($href, $appUrl)) {
-                                                $href = Str::after($href, $appUrl) ?: '/';
+                                            $siteDomain = env('APP_DOMAIN', parse_url(config('app.url'), PHP_URL_HOST));
+                                            $href       = $submenu->link_menu;
+                                            $linkHost   = Str::startsWith($href, 'http') ? parse_url($href, PHP_URL_HOST) : null;
+                                            $isExt      = $linkHost && $linkHost !== $siteDomain && $linkHost !== request()->getHost();
+                                            if (!$isExt && $linkHost) {
+                                                $href = parse_url($href, PHP_URL_PATH) ?: '/';
                                             }
                                         @endphp
                                         <a href="{{ $href }}"
@@ -147,11 +148,12 @@
                         </div>
                     @else
                         @php
-                            $appUrl  = rtrim(config('app.url'), '/');
-                            $href    = $row->link_menu;
-                            $isExt   = Str::startsWith($href, 'http') && !Str::startsWith($href, $appUrl);
-                            if (!$isExt && Str::startsWith($href, $appUrl)) {
-                                $href = Str::after($href, $appUrl) ?: '/';
+                            $siteDomain = env('APP_DOMAIN', parse_url(config('app.url'), PHP_URL_HOST));
+                            $href       = $row->link_menu;
+                            $linkHost   = Str::startsWith($href, 'http') ? parse_url($href, PHP_URL_HOST) : null;
+                            $isExt      = $linkHost && $linkHost !== $siteDomain && $linkHost !== request()->getHost();
+                            if (!$isExt && $linkHost) {
+                                $href = parse_url($href, PHP_URL_PATH) ?: '/';
                             }
                         @endphp
                         <a href="{{ $href }}"
