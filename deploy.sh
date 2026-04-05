@@ -14,7 +14,6 @@ cd "$REPO" && git pull || fail "git pull falló"
 
 echo "▸ Building assets..."
 cd "$REPO" && bun run build || fail "bun build falló"
-# Nota: Vite escribe directamente a ~/public_html/build/ via VITE_PUBLIC_DIR
 
 echo "▸ Syncing app code..."
 rsync -a --delete "$REPO/app/"        "$WEB/app/"
@@ -25,9 +24,25 @@ rsync -a --delete "$REPO/resources/"  "$WEB/resources/"
 rsync -a --delete "$REPO/routes/"     "$WEB/routes/"
 [ -d "$REPO/lang/" ] && rsync -a --delete "$REPO/lang/" "$WEB/lang/"
 
-echo "▸ Clearing caches..."
+echo "▸ Syncing public assets (htaccess, etc.)..."
+rsync -a --exclude="index.php" "$REPO/public/" "$WEB/"
+
+echo "▸ Clearing Laravel caches..."
 cd "$WEB" && php artisan view:clear && php artisan config:clear && php artisan route:clear \
     || fail "artisan cache clear falló"
+
+echo "▸ Resetting OPcache..."
+APP_URL=$(grep '^APP_URL=' "$WEB/.env" 2>/dev/null | cut -d= -f2- | tr -d '"' | tr -d "'" | tr -d ' ')
+if [ -n "$APP_URL" ]; then
+    TOKEN=$(head -c 16 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
+    SCRIPT="$WEB/opc_${TOKEN}.php"
+    echo "<?php opcache_reset(); echo 'OK'; @unlink(__FILE__);" > "$SCRIPT"
+    RESULT=$(curl -s --max-time 10 "${APP_URL}/opc_${TOKEN}.php")
+    rm -f "$SCRIPT" 2>/dev/null
+    [ "$RESULT" = "OK" ] && echo "  OPcache reset OK" || echo "  OPcache reset no disponible (continuando)"
+else
+    echo "  APP_URL no encontrado en .env, saltando OPcache reset"
+fi
 
 echo ""
 echo "✔  Deploy completado."
