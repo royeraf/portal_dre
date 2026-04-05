@@ -128,7 +128,16 @@
                                  x-cloak>
                                 @foreach($submenus as $submenu)
                                     @if($submenu->categoriamenu == $row->id)
-                                        <a href="{{ $submenu->link_menu }}"
+                                        @php
+                                            $appUrl  = rtrim(config('app.url'), '/');
+                                            $href    = $submenu->link_menu;
+                                            $isExt   = Str::startsWith($href, 'http') && !Str::startsWith($href, $appUrl);
+                                            if (!$isExt && Str::startsWith($href, $appUrl)) {
+                                                $href = Str::after($href, $appUrl) ?: '/';
+                                            }
+                                        @endphp
+                                        <a href="{{ $href }}"
+                                           @if($isExt) target="_blank" rel="noopener noreferrer" @endif
                                            class="block px-4 py-2 text-sm text-gray-600 hover:bg-dre-50 hover:text-dre-primary transition-colors normal-case tracking-normal font-normal">
                                             {{ $submenu->nom_menu }}
                                         </a>
@@ -137,7 +146,16 @@
                             </div>
                         </div>
                     @else
-                        <a href="{{ $row->link_menu }}"
+                        @php
+                            $appUrl  = rtrim(config('app.url'), '/');
+                            $href    = $row->link_menu;
+                            $isExt   = Str::startsWith($href, 'http') && !Str::startsWith($href, $appUrl);
+                            if (!$isExt && Str::startsWith($href, $appUrl)) {
+                                $href = Str::after($href, $appUrl) ?: '/';
+                            }
+                        @endphp
+                        <a href="{{ $href }}"
+                           @if($isExt) target="_blank" rel="noopener noreferrer" @endif
                            class="px-3 py-2 rounded-md text-gray-700 hover:bg-dre-50 hover:text-dre-primary transition-colors">
                             {{ $row->nom_menu }}
                         </a>
@@ -248,7 +266,16 @@
                         <div x-show="open" x-collapse x-cloak class="bg-gray-50 border-l-[3px] border-dre-accent">
                             @foreach($submenus as $submenu)
                                 @if($submenu->categoriamenu == $row->id)
-                                    <a href="{{ $submenu->link_menu }}" @click="closeDrawer()" target="_blank"
+                                    @php
+                                        $appUrl  = rtrim(config('app.url'), '/');
+                                        $href    = $submenu->link_menu;
+                                        $isExt   = Str::startsWith($href, 'http') && !Str::startsWith($href, $appUrl);
+                                        if (!$isExt && Str::startsWith($href, $appUrl)) {
+                                            $href = Str::after($href, $appUrl) ?: '/';
+                                        }
+                                    @endphp
+                                    <a href="{{ $href }}" @click="closeDrawer()"
+                                       @if($isExt) target="_blank" rel="noopener noreferrer" @endif
                                        class="flex items-center gap-2 px-5 py-3 pl-14
                                               text-sm text-gray-600 normal-case tracking-normal font-normal
                                               hover:bg-dre-50 hover:text-dre-primary transition-colors
