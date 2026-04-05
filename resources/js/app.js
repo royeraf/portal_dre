@@ -69,11 +69,14 @@ document.querySelectorAll('.img-wrap').forEach(wrap => {
 
 // Re-create icons when Alpine.js updates the DOM — debounced to avoid thrashing
 document.addEventListener('alpine:initialized', () => {
+    // Pass inicial: Alpine ya renderizó x-if/x-show durante la init
+    setTimeout(() => createIcons({ icons, attrs: { 'stroke-width': 1.75 } }), 100);
+
     let iconTimer;
     const observer = new MutationObserver(() => {
         clearTimeout(iconTimer);
         iconTimer = setTimeout(() => {
-            createIcons({ icons, attrs: { 'stroke-width': 1.75 }, nameAttr: 'data-lucide' });
+            createIcons({ icons, attrs: { 'stroke-width': 1.75 } });
         }, 50);
     });
     observer.observe(document.body, { childList: true, subtree: true });

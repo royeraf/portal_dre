@@ -200,7 +200,7 @@
                                         @click="openModal(JSON.parse($el.dataset.modal))"
                                         class="ml-auto flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200
                                                {{ $abierto ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200' : 'bg-dre-primary text-white hover:bg-dre-accent shadow-blue-200' }}">
-                                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0 pointer-events-none"></i>
                                     Ver detalle
                                 </button>
                                 @endif
@@ -231,7 +231,7 @@
                                         @click="openModal(JSON.parse($el.dataset.modal))"
                                         class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200
                                                {{ $abierto ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200' : 'bg-dre-primary text-white hover:bg-dre-accent shadow-blue-200' }}">
-                                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0 pointer-events-none"></i>
                                     Ver detalle
                                 </button>
                                 @endif
