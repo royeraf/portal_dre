@@ -129,7 +129,7 @@
                                 @foreach($submenus as $submenu)
                                     @if($submenu->categoriamenu == $row->id)
                                         @php
-                                            $siteDomain = env('APP_DOMAIN', parse_url(config('app.url'), PHP_URL_HOST));
+                                            $siteDomain = env('APP_DOMAIN', 'drehuanuco.gob.pe');
                                             $href       = $submenu->link_menu;
                                             $linkHost   = Str::startsWith($href, 'http') ? parse_url($href, PHP_URL_HOST) : null;
                                             $isExt      = $linkHost && $linkHost !== $siteDomain && $linkHost !== request()->getHost();
@@ -148,7 +148,7 @@
                         </div>
                     @else
                         @php
-                            $siteDomain = env('APP_DOMAIN', parse_url(config('app.url'), PHP_URL_HOST));
+                            $siteDomain = env('APP_DOMAIN', 'drehuanuco.gob.pe');
                             $href       = $row->link_menu;
                             $linkHost   = Str::startsWith($href, 'http') ? parse_url($href, PHP_URL_HOST) : null;
                             $isExt      = $linkHost && $linkHost !== $siteDomain && $linkHost !== request()->getHost();
