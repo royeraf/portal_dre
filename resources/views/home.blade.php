@@ -212,7 +212,7 @@
                          alt="{{ $item->nombre }}"
                          loading="lazy"
                          crossorigin="anonymous"
-                         class="platform-img w-full h-28 sm:h-32 md:h-36 object-cover
+                         class="platform-img w-full h-28 sm:h-32 md:h-36 object-contain p-2
                                 transition-opacity duration-200 ease-out
                                 group-hover:opacity-50">
 
