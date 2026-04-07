@@ -103,7 +103,10 @@
 
             {{-- Cabecera --}}
             <div class="flex items-center gap-2 mb-3">
-                <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">Accesos Rápidos</span>
+                <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap flex items-center gap-1.5">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    Accesos Rápidos
+                </span>
                 <div class="flex-1 h-px bg-blue-200"></div>
             </div>
 
@@ -113,8 +116,6 @@
                 $quickLinks = [
                     ['url' => route('directorioweb'),           'icon' => 'users',          'label' => 'Directorio Institucional', 'target' => null,
                      'ibg' => 'bg-blue-100',    'ico' => 'text-blue-600',    'bar' => 'bg-blue-500',    'hbg' => 'group-hover:bg-blue-50/50'],
-                    ['url' => '/resoluciones',                   'icon' => 'bar-chart-3',    'label' => 'Resoluciones',             'target' => null,
-                     'ibg' => 'bg-indigo-100',  'ico' => 'text-indigo-600',  'bar' => 'bg-indigo-500',  'hbg' => 'group-hover:bg-indigo-50/50'],
                     ['url' => route('documentosdegestionweb'),   'icon' => 'folder-open',    'label' => 'Gestión de Documentos',    'target' => null,
                      'ibg' => 'bg-amber-100',   'ico' => 'text-amber-600',   'bar' => 'bg-amber-500',   'hbg' => 'group-hover:bg-amber-50/50'],
                     ['url' => route('galerias'),                 'icon' => 'camera',         'label' => 'Galería de Imágenes',      'target' => null,
@@ -328,7 +329,10 @@
          x-data="{ page: 0, pages: {{ ceil(count($comunicados) / 3) }} }">
 
         <div class="flex flex-wrap items-center gap-x-2 gap-y-2 mb-4">
-            <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">Comunicados</span>
+            <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap flex items-center gap-1.5">
+                <i data-lucide="megaphone" class="w-4 h-4"></i>
+                Comunicados
+            </span>
             <div class="hidden sm:block flex-1 h-px bg-blue-200"></div>
             <div class="ml-auto flex items-center gap-1.5">
                 <button @click="page = (page - 1 + pages) % pages"
@@ -394,7 +398,10 @@
          x-data="{ page: 0, pages: {{ ceil(count($noticias) / 3) }} }">
 
         <div class="flex flex-wrap items-center gap-x-2 gap-y-2 mb-4">
-            <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">Noticias</span>
+            <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap flex items-center gap-1.5">
+                <i data-lucide="newspaper" class="w-4 h-4"></i>
+                Noticias
+            </span>
             <div class="hidden sm:block flex-1 h-px bg-blue-200"></div>
             <div class="ml-auto flex items-center gap-3">
                 <a href="{{ route('allnoticias') }}"
@@ -541,7 +548,10 @@
 
                 {{-- Cabecera --}}
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="font-display bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">Galería de Videos</span>
+                    <span class="font-display bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i data-lucide="play-circle" class="w-4 h-4"></i>
+                        Galería de Videos
+                    </span>
                     <div class="flex-1 h-px bg-blue-200"></div>
                 </div>
 
@@ -581,7 +591,10 @@
             {{-- TikTok --}}
             <div class="md:col-span-3 min-w-0 flex flex-col">
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="font-display bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">TikTok</span>
+                    <span class="font-display bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78c.29 0 .57.04.84.12v-3.5a6.37 6.37 0 0 0-.84-.05A6.34 6.34 0 0 0 3.15 15.3 6.34 6.34 0 0 0 9.49 21.65a6.34 6.34 0 0 0 6.34-6.34V9.06a8.16 8.16 0 0 0 4.77 1.52V7.13a4.82 4.82 0 0 1-1.01-.44z"/></svg>
+                        TikTok
+                    </span>
                     <div class="flex-1 h-px bg-blue-200"></div>
                 </div>
                 <div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 min-h-[220px] sm:min-h-[300px] skeleton
@@ -602,7 +615,10 @@
             {{-- Facebook --}}
             <div class="md:col-span-3 min-w-0 flex flex-col">
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="font-display bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">Facebook</span>
+                    <span class="font-display bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Facebook
+                    </span>
                     <div class="flex-1 h-px bg-blue-200"></div>
                 </div>
                 <div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 min-h-[220px] sm:min-h-[300px] skeleton
@@ -715,8 +731,9 @@
 @endif
 
 {{-- ── VISITAS ──────────────────────────────────────────────── --}}
-<div class="fixed bottom-0 left-0 z-50 bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-tr-lg shadow-lg">
-    Visitas: {{ $contador }}
+<div class="fixed bottom-0 left-0 z-50 bg-dre-primary/75 backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border-t border-r border-white/20 text-yellow-400 text-xs font-bold px-6 py-3 rounded-tr-2xl flex items-center gap-2">
+    <i data-lucide="bar-chart-2" class="w-4 h-4 text-yellow-400"></i>
+    <span>Visitas: <span class="tracking-wide ml-1">{{ $contador }}</span></span>
 </div>
 
 @endsection

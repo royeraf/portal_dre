@@ -11,19 +11,11 @@
     <title>@yield('title', 'DIRECCION REGIONAL DE EDUCACION - HUANUCO')</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('img/log33.png') }}">
 
-    {{-- Google Fonts — non-blocking (preload trick) --}}
+    {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style"
-          href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap"
-          onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" as="style"
-          href="https://fonts.googleapis.com/css2?family=Rubik:300,400,500,700,900&display=swap"
-          onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Rubik:300,400,500,700,900&display=swap" rel="stylesheet">
-    </noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..700;1,300..700&display=swap">
 
 
     {{-- Icons: Lucide (loaded via npm/Vite in app.js) --}}

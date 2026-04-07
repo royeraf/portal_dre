@@ -26,6 +26,11 @@
     }
 }
 
+/* ── Force Winky Rough — unlayered so it wins over all @layer rules ── */
+.font-display {
+    font-family: 'Winky Rough', Rubik, ui-sans-serif, system-ui, sans-serif !important;
+}
+
 /* ── Component layer ───────────────────────────────── */
 @layer components {
     /* Scrollbar hide utility for news ticker */
