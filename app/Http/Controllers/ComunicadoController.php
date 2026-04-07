@@ -21,7 +21,7 @@ class ComunicadoController extends Controller
             $file = $request->file('imagen');
             $filename = time().'.'.$file->extension();
             $comunicado->imagen=$filename;
-            $file->move(public_path('../../public_html/img/comunicados'), $filename);
+            $file->move(public_path('img/comunicados'), $filename);
         }
         $comunicado->save();
         return redirect()->route('comunicado');
@@ -35,13 +35,13 @@ class ComunicadoController extends Controller
         $comunicado->url = $request->url;
         if($request->hasFile('imagen')){
             $file = $request->file('imagen');
-            $image_path = public_path('../../public_html/img/comunicados/').$comunicado->imagen;
+            $image_path = public_path('img/comunicados/').$comunicado->imagen;
             if ($comunicado->imagen!=null && file_exists($image_path)){
                 unlink($image_path);
             }
             $filename = time().'.'.$file->extension();
             $comunicado->imagen=$filename;
-            $file->move(public_path('../../public_html/img/comunicados'), $filename);
+            $file->move(public_path('img/comunicados'), $filename);
         }
         $comunicado->save();
         return redirect()->route('comunicado');

@@ -20,7 +20,7 @@ class MainrightController extends Controller
             $file = $request->file('imagen');
             $filename = time().'.'.$file->extension();
             $mainright->imagen=$filename;
-            $file->move(public_path('../../public_html/img/mainright'), $filename);
+            $file->move(public_path('img/mainright'), $filename);
         }
         $mainright->save();
         return redirect()->route('mainright');

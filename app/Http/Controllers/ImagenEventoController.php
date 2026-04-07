@@ -35,7 +35,7 @@ class ImagenEventoController extends Controller
     if ($request->hasFile('archivo_img')) {
         $file = $request->file('archivo_img');
         $filename = time() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('../../public_html/img/imageneventos'), $filename);
+        $file->move(public_path('img/imageneventos'), $filename);
         $imagenevento->archivo_img = $filename;
     }
 
@@ -50,7 +50,7 @@ class ImagenEventoController extends Controller
         return redirect()->route('galeria');
     }
     public function destroyarchivo(ImagenEvento $imagenevento){
-        $image_path = public_path('../../public_html/img/imageneventos').$imagenevento->archivo_img;
+        $image_path = public_path('img/imageneventos').$imagenevento->archivo_img;
         if ($imagenevento->archivo_img!=null && file_exists($image_path)){
             unlink($image_path);
         }
@@ -73,13 +73,13 @@ class ImagenEventoController extends Controller
         $imagenevento->descripcion=$request->descripcion;
         if($request->hasFile('archivo_img')){
             $file = $request->file('archivo_img');
-            $image_path = public_path('../../public_html/img/imageneventos').$imagenevento->archivo_img;
+            $image_path = public_path('img/imageneventos').$imagenevento->archivo_img;
             $filename = substr($imagenevento->archivo_img, 0, -4).'.'.$file->extension();
             $imagenevento->archivo_img=$filename;
             if (file_exists($image_path)){
                 unlink($image_path);
             }
-            $file->move(public_path('../../public_html/img/imageneventos'), $filename);
+            $file->move(public_path('img/imageneventos'), $filename);
         }
         $imagenevento->save();
         return redirect()->route('imagenevento');

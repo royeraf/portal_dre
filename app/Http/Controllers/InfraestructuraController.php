@@ -17,14 +17,14 @@ class InfraestructuraController extends Controller
             $filename = time().'.'.$file->extension();
             $comunicado->imagen=$filename;
             //$file->move(public_path('img/infraestructura'), $filename);
-            $file->move(public_path('../../public_html/img/infraestructura'), $filename);
+            $file->move(public_path('img/infraestructura'), $filename);
         }
         $comunicado->save();
         return redirect()->route('Infraestructura');
     }
     public function destroy(Infraestructura $infraestructura){
         //$image_path = public_path('img/infraestructura/').$infraestructura->imagen;
-         $image_path = public_path('../../public_html/img/infraestructura/').$infraestructura->imagen;
+         $image_path = public_path('img/infraestructura/').$infraestructura->imagen;
         if ($infraestructura->imagen!=null && file_exists($image_path)){
             unlink($image_path);
         }

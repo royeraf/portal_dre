@@ -69,7 +69,7 @@ class EPRController extends Controller
      */
     private function getPdfPath($filename)
     {
-        return public_path('../../public_html/img/epr/' . $filename);
+        return public_path('img/epr/' . $filename);
     }
 
     /**

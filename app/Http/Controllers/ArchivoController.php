@@ -19,7 +19,7 @@ class ArchivoController extends Controller
             $file = $request->file('file');
             $filename = time().'.'.$file->extension();
             $archivo->link=$filename;
-            $file->move(public_path('../../public_html/archivos'), $filename);
+            $file->move(public_path('archivos'), $filename);
         }else{
             echo 'NO SUBIO EL ARCHIVO';
         }
@@ -29,7 +29,7 @@ class ArchivoController extends Controller
     }
     public function destroy(Archivo $archivo){
         if($archivo->link!=null){
-            $file_path = public_path('../../public_html/archivos/').$archivo->link;
+            $file_path = public_path('archivos/').$archivo->link;
             if (file_exists($file_path)){
                 unlink($file_path);
             }
@@ -47,13 +47,13 @@ class ArchivoController extends Controller
 
         if($request->hasFile('file')){
             $file = $request->file('file');
-            $file_path = public_path('../../public_html/archivos/').$archivo->link;
+            $file_path = public_path('archivos/').$archivo->link;
             $filename = substr($archivo->link, 0, -4).'.'.$file->extension();
             $archivo->link=$filename;
             if ($archivo->link!=null && file_exists($file_path)){
                 unlink($file_path);
             }
-            $file->move(public_path('../../public_html/img/archivos'), $filename);
+            $file->move(public_path('img/archivos'), $filename);
         }
         $archivo->save();
         return redirect()->route('archivos.edit', $archivo);

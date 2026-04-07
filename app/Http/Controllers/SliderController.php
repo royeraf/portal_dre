@@ -23,14 +23,14 @@ class SliderController extends Controller
             $slider->activo_slider=1;
             $slider->link=$request->link;
             $slider->save();
-            $file->move(public_path('../../public_html/img/slider'), $filename);
+            $file->move(public_path('img/slider'), $filename);
         }else{
             return 'no hay imagen';
         }
         return redirect()->route('slide.create');
     }
     public function destroy(Slider $slider){
-        $image_path = public_path('../../public_html/img/slider/').$slider->img_slider;
+        $image_path = public_path('img/slider/').$slider->img_slider;
         if (file_exists($image_path)){
             unlink($image_path);
         }
@@ -47,13 +47,13 @@ class SliderController extends Controller
         $slider->link=$request->link;
         if($request->hasFile('img_slider')){
             $file = $request->file('img_slider');
-            $image_path = public_path('../../public_html/img/slider/').$slider->img_slider;
+            $image_path = public_path('img/slider/').$slider->img_slider;
             $filename = substr($slider->img_slider, 0, -4).'.'.$file->extension();
             $slider->img_slider=$filename;
             if (file_exists($image_path)){
                 unlink($image_path);
             }
-            $file->move(public_path('../../public_html/img/slider'), $filename);
+            $file->move(public_path('img/slider'), $filename);
         }
         $slider->save();
         return redirect()->route('slide.edit', $slider);
