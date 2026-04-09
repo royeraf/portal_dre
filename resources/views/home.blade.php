@@ -827,7 +827,8 @@
 {{-- ── POPUP ────────────────────────────────────────────────── --}}
 @if(isset($popup))
 @php
-    $popupLinks = $imagenes->pluck('enlace')->toArray();
+    $popupLinks  = $imagenes->pluck('enlace')->toArray();
+    $popupImages = $imagenes->map(fn($r) => asset('img/popup/'.$r->imagen))->toArray();
 @endphp
 <div x-data="{ open: true }" x-show="open" x-transition.opacity x-cloak
      class="fixed inset-0 z-[9998] flex items-end sm:items-center justify-center bg-black/60 p-4 sm:p-6"
@@ -852,7 +853,7 @@
             </button>
         </div>
 
-        <div x-data="{ slide: 0, total: {{ count($imagenes) }}, links: {{ json_encode($popupLinks) }} }"
+        <div x-data="{ slide: 0, total: {{ count($imagenes) }}, links: {{ json_encode($popupLinks) }}, imgs: {{ json_encode($popupImages) }} }"
              class="flex flex-col flex-1 min-h-0">
 
             {{-- Imagen --}}
@@ -893,16 +894,26 @@
                 </div>
             </div>
 
-            {{-- Botón CTA --}}
-            <div x-show="links[slide] && links[slide].length > 0"
-                 class="px-4 py-3 bg-white border-t border-gray-100 shrink-0">
-                <a :href="links[slide]" target="_blank"
-                   class="flex items-center justify-center gap-2 w-full
+            {{-- Botones footer --}}
+            <div class="px-4 py-3 bg-white border-t border-gray-100 shrink-0 flex gap-2">
+                {{-- Ver imagen completa (siempre visible) --}}
+                <a :href="imgs[slide]" target="_blank"
+                   class="flex items-center justify-center gap-1.5 flex-1
+                          border border-gray-200 hover:border-dre-primary hover:text-dre-primary
+                          text-gray-500 font-semibold text-sm py-2.5 px-3 rounded-xl
+                          transition-colors">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    Ver imagen
+                </a>
+                {{-- Ver comunicado (solo si tiene enlace) --}}
+                <a x-show="links[slide] && links[slide].length > 0"
+                   :href="links[slide]" target="_blank"
+                   class="flex items-center justify-center gap-1.5 flex-1
                           bg-dre-primary hover:bg-dre-accent active:bg-dre-primary
-                          text-white font-semibold text-sm py-3 px-4 rounded-xl
+                          text-white font-semibold text-sm py-2.5 px-3 rounded-xl
                           transition-colors shadow-sm">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    Ver Comunicado Completo
+                    Ver comunicado
                 </a>
             </div>
 

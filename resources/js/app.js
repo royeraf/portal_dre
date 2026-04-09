@@ -38,7 +38,7 @@ import {
     // Direcciones / show
     Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,
     Zap, Megaphone, PlayCircle, Smartphone,
-    Lightbulb, Images, ImageOff
+    Lightbulb, Images, ImageOff, Image
 } from 'lucide';
 
 const icons = {
@@ -57,7 +57,7 @@ const icons = {
     Expand,
     Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,
     Zap, Megaphone, PlayCircle, Smartphone,
-    Lightbulb, Images, ImageOff
+    Lightbulb, Images, ImageOff, Image
 };
 
 createIcons({ icons, attrs: { 'stroke-width': 1.75 } });

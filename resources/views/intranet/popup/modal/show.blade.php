@@ -18,7 +18,8 @@
                     <div class="carousel-inner">
                         <?php $estado=false; ?>
                         @foreach($imagenes as $row)
-                          <div class="carousel-item {{ $estado==false ? 'active' : '' }}">
+                          <div class="carousel-item {{ $estado==false ? 'active' : '' }}"
+                               data-img-url="{{ asset('img/popup/'.$row->imagen) }}">
                             <img class="d-block w-100" src="{{asset('img/popup/'.$row->imagen)}}" alt="First slide">
                           </div>
                         <?php $estado = true ?>
@@ -35,8 +36,34 @@
                 </div>
             </div><!-- modal-body -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary tx-size-xs" data-dismiss="modal">Close</button>
+                <a id="btn-ver-imagen"
+                   href="{{ asset('img/popup/' . $imagenes->first()?->imagen) }}"
+                   target="_blank"
+                   class="btn btn-primary tx-size-xs d-inline-flex align-items-center" style="gap:6px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         viewBox="0 0 24 24" style="flex-shrink:0;">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                    </svg>
+                    Ver imagen completa
+                </a>
+                <button type="button" class="btn btn-secondary tx-size-xs" data-dismiss="modal">Cerrar</button>
             </div>
             </div>
         </div><!-- modal-dialog -->
     </div><!-- modal -->
+
+    <script>
+        (function () {
+            var carousel = document.getElementById('carouselExampleIndicators');
+            var btnVer   = document.getElementById('btn-ver-imagen');
+            if (!carousel || !btnVer) return;
+
+            carousel.addEventListener('slid.bs.carousel', function (e) {
+                var activeItem = carousel.querySelector('.carousel-item.active');
+                if (activeItem && activeItem.dataset.imgUrl) {
+                    btnVer.href = activeItem.dataset.imgUrl;
+                }
+            });
+        })();
+    </script>
