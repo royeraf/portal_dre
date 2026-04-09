@@ -868,11 +868,20 @@
             {{-- Imagen --}}
             <div class="relative flex-1 min-h-0 overflow-hidden bg-gray-50">
                 @foreach($imagenes as $ri => $row)
-                    <div x-show="slide === {{ $ri }}" x-transition.opacity class="h-full">
+                    <div x-show="slide === {{ $ri }}" x-transition.opacity class="h-full relative">
+                        {{-- Skeleton --}}
+                        <div class="absolute inset-0 skeleton rounded-none img-skeleton-{{ $ri }}"
+                             id="skeleton-{{ $ri }}"></div>
                         <img src="{{ asset('img/popup/'.$row->imagen) }}"
-                             class="w-full h-full object-contain cursor-pointer"
+                             class="w-full h-full object-contain cursor-pointer relative z-10 opacity-0 transition-opacity duration-300"
                              alt="{{ $popup->titulopopup ?? '' }}"
-                             @click="if(links[slide]) window.open(links[slide], '_blank')">
+                             id="popup-img-{{ $ri }}"
+                             @click="if(links[slide]) window.open(links[slide], '_blank')"
+                             onload="
+                                 this.classList.remove('opacity-0');
+                                 this.classList.add('opacity-100');
+                                 document.getElementById('skeleton-{{ $ri }}').style.display='none';
+                             ">
                     </div>
                 @endforeach
 
