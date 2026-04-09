@@ -941,9 +941,9 @@
 @endif
 
 {{-- ── VISITAS ──────────────────────────────────────────────── --}}
-<div class="fixed bottom-0 left-0 z-50 bg-dre-primary/75 backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border-t border-r border-white/20 text-yellow-400 text-xs font-bold px-6 py-3 rounded-tr-2xl flex items-center gap-2">
-    <i data-lucide="bar-chart-2" class="w-4 h-4 text-yellow-400"></i>
-    <span>Visitas: <span class="tracking-wide ml-1">{{ $contador }}</span></span>
+<div class="fixed bottom-0 left-0 z-50 bg-dre-primary/75 backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-lg border-t border-r border-white/20 text-yellow-400 font-bold px-3 py-1.5 rounded-tr-xl flex items-center gap-1.5" style="font-size:0.65rem;">
+    <i data-lucide="bar-chart-2" class="w-3 h-3 text-yellow-400 shrink-0"></i>
+    <span>Visitas: <span class="tracking-wide ml-0.5">{{ $contador }}</span></span>
 </div>
 
 @endsection
