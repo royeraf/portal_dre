@@ -39,6 +39,7 @@ Route::get('/nosotros', [HomeController::class, 'nosotros'])->name('nosotros');
 Route::get('/mision', [HomeController::class, 'mision'])->name('mision');
 Route::get('/vision', [HomeController::class, 'vision'])->name('vision');
 Route::get('/portafoliodet/{galeria}', [HomeController::class, 'portafoliodet'])->name('portafoliodet');
+Route::get('/galeria/{galeria}/json', [HomeController::class, 'galeriaJson'])->name('galeria.json');
 Route::get('/allnoticias', [HomeController::class, 'allnoticias'])->name('allnoticias');
 Route::get('/galeriaimagenes', [HomeController::class, 'galeria'])->name('galerias');
 Route::get('/convocatoriaweb', [HomeController::class, 'convocatoriaweb'])->name('convocatoriaweb');

@@ -37,7 +37,8 @@ import {
     Expand,
     // Direcciones / show
     Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,
-    Zap, Megaphone, PlayCircle, Smartphone
+    Zap, Megaphone, PlayCircle, Smartphone,
+    Lightbulb, Images, ImageOff
 } from 'lucide';
 
 const icons = {
@@ -55,7 +56,8 @@ const icons = {
     SlidersHorizontal, Filter, Paperclip, LayoutGrid, List,
     Expand,
     Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,
-    Zap, Megaphone, PlayCircle, Smartphone
+    Zap, Megaphone, PlayCircle, Smartphone,
+    Lightbulb, Images, ImageOff
 };
 
 createIcons({ icons, attrs: { 'stroke-width': 1.75 } });

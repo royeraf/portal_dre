@@ -102,6 +102,15 @@ class HomeController extends Controller
         $data['submenus']=$submenus;
         return view('paginas/vision', $data);
     }
+    public function galeriaJson(Galeria $galeria){
+        $imagenes = ImagenEvento::where('idgaleria', $galeria->id)->get(['archivo_img']);
+        return response()->json([
+            'id'          => $galeria->id,
+            'titulo'      => $galeria->titulo,
+            'descripcion' => $galeria->descripcion,
+            'imagenes'    => $imagenes->pluck('archivo_img'),
+        ]);
+    }
     public function portafoliodet(Galeria $galeria){
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();

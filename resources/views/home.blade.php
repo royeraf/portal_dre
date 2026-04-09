@@ -37,7 +37,188 @@
 
 </div>
 
+{{-- ── HERO INSTITUCIONAL ────────────────────────────────────── --}}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+  @keyframes dreHeroFadeUp  { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes dreHeroSlideIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
+
+  /* ── Fondo: usa dre-darker (#00092b) → dre-dark (#00183a) → dre-primary (#013072) ── */
+  .dre-inst-hero { background: linear-gradient(135deg, #00092b 0%, #00183a 45%, #013072 100%); }
+
+  .dre-inst-title { font-family:'Winky Rough','Rubik',sans-serif; font-weight:900; font-size:clamp(1.9rem,3.2vw,3rem); line-height:1.1; letter-spacing:-0.01em; }
+  .dre-inst-tag   { font-family:'DM Sans',sans-serif; font-size:0.68rem; font-weight:600; letter-spacing:0.18em; }
+  .dre-inst-desc  { font-family:'DM Sans',sans-serif; font-size:0.92rem; line-height:1.85; font-weight:400; }
+  .dre-inst-pillar-title { font-family:'DM Sans',sans-serif; font-size:0.86rem; font-weight:600; }
+  .dre-inst-pillar-text  { font-family:'DM Sans',sans-serif; font-size:0.78rem; line-height:1.6; font-weight:400; }
+
+  .dre-a1 { animation: dreHeroFadeUp  0.8s cubic-bezier(.22,1,.36,1) 0.05s both; }
+  .dre-a2 { animation: dreHeroFadeUp  0.8s cubic-bezier(.22,1,.36,1) 0.2s  both; }
+  .dre-a3 { animation: dreHeroSlideIn 0.65s cubic-bezier(.22,1,.36,1) 0.28s both; }
+  .dre-a4 { animation: dreHeroSlideIn 0.65s cubic-bezier(.22,1,.36,1) 0.40s both; }
+  .dre-a5 { animation: dreHeroSlideIn 0.65s cubic-bezier(.22,1,.36,1) 0.52s both; }
+
+  /* Pilares: glow al hover */
+  .dre-pillar:hover { border-color:rgba(0,105,217,.5); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+  .dre-pillar:hover .dre-pillar-ico { background:rgba(0,105,217,.22) !important; box-shadow:0 0 18px rgba(0,105,217,.30); }
+
+  /* Ícono de pilares: amarillo de acento */
+  .dre-pillar-ico { color:#facc15; }
+
+  /* Botón primario: amarillo tipo dre (igual al btn-warning del sitio) */
+  .dre-btn-gold        { background:#ffc107; color:#00092b; }
+  .dre-btn-gold:hover  { background:#ffca28; transform:translateY(-2px); box-shadow:0 8px 22px rgba(255,193,7,.35); text-decoration:none; color:#00092b; }
+
+  /* Botón secundario: borde blanco semitransparente */
+  .dre-btn-ghost:hover { background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.5); transform:translateY(-2px); text-decoration:none; }
+
+  /* Diagonal inferior: empata con el fondo de accesos rápidos (blanco) */
+  .dre-hero-cut { background:#ffffff; clip-path:polygon(0 100%,100% 0,100% 100%); height:40px; }
+</style>
+
+<section class="dre-inst-hero relative overflow-hidden">
+
+    {{-- Rejilla de fondo (usa dre-accent semitransparente) --}}
+    <div class="absolute inset-0 pointer-events-none"
+         style="background-image:
+            repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,.012) 60px,rgba(255,255,255,.012) 61px),
+            repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,.012) 60px,rgba(255,255,255,.012) 61px),
+            radial-gradient(circle at 18% 55%,rgba(0,105,217,.12) 0%,transparent 50%),
+            radial-gradient(circle at 78% 18%,rgba(0,105,217,.07) 0%,transparent 40%);"></div>
+
+    {{-- Panel diagonal decorativo (dre-accent tenue) --}}
+    <div class="absolute top-0 right-0 h-full w-5/12 pointer-events-none hidden lg:block"
+         style="background:rgba(0,105,217,.04);clip-path:polygon(22% 0%,100% 0%,100% 100%,0% 100%);"></div>
+
+    <div class="max-w-screen-xl mx-auto px-4 md:px-12 py-12 relative z-10
+                grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+        {{-- ── COLUMNA IZQUIERDA ── --}}
+        <div class="dre-a1">
+
+            {{-- Etiqueta institucional --}}
+            <div class="inline-flex items-center gap-2 mb-5 select-none">
+                <span class="inline-flex items-center gap-1.5 dre-inst-tag uppercase tracking-[.14em]
+                             px-3 py-1.5 rounded-full"
+                      style="color:#93c5fd; background:rgba(147,197,253,.12); border:1px solid rgba(147,197,253,.25);">
+                    <i data-lucide="landmark" class="w-3.5 h-3.5 shrink-0"></i>
+                    Gobierno Regional de Huánuco
+                </span>
+                <span class="w-1 h-1 rounded-full bg-blue-400/50"></span>
+                <span class="dre-inst-tag text-[0.62rem] uppercase tracking-[.14em]"
+                      style="color:rgba(255,255,255,0.45);">
+                    Perú
+                </span>
+            </div>
+
+            {{-- Título --}}
+            <h2 class="dre-inst-title text-white mb-1">
+                Dirección Regional<br>
+                {{-- Acento: Amarillo vibrante --}}
+                <em class="not-italic text-yellow-400">de Educación</em>
+            </h2>
+
+            {{-- Divisor: Amarillo intenso --}}
+            <div class="h-[3px] w-14 rounded-full mb-5 mt-4"
+                 style="background:linear-gradient(90deg,#fadd15,rgba(250,204,21,.15));"></div>
+
+            {{-- Descripción --}}
+            <p class="dre-inst-desc max-w-lg mb-7" style="color:rgba(255,255,255,0.92)">
+                Lideramos la transformación educativa en la región Huánuco, garantizando
+                una educación de calidad con equidad e inclusión para todos los estudiantes,
+                forjando ciudadanos con valores y competencias para el desarrollo sostenible.
+            </p>
+
+            {{-- Botones CTA --}}
+            <div class="flex flex-wrap gap-3 mt-2">
+                {{-- Botón amarillo (dre warning) --}}
+                <a href="{{ route('directorioweb') }}"
+                   class="dre-btn-gold inline-flex items-center gap-2 text-[.82rem] font-semibold
+                          px-5 py-2.5 rounded-lg transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Directorio Institucional
+                </a>
+                {{-- Botón outline blanco --}}
+                <a href="{{ route('allnoticias') }}"
+                   class="dre-btn-ghost inline-flex items-center gap-2
+                          text-white text-[.82rem] font-medium
+                          border border-white/40 px-5 py-2.5 rounded-lg
+                          transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+                    Noticias
+                </a>
+            </div>
+        </div>
+
+        {{-- ── COLUMNA DERECHA: PILARES (BENTO GRID) ── --}}
+        <div class="dre-a2 grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
+
+            {{-- Pilar 1: Destacado (Ancho completo en sm) --}}
+            <div class="dre-pillar relative overflow-hidden sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 sm:p-6 transition-all duration-500 dre-a3 group" style="background:rgba(255,255,255,.07);">
+                <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                
+                <div class="dre-pillar-ico shrink-0 w-14 h-14 rounded-xl flex items-center justify-center
+                            border transition-all duration-500 shadow-lg relative z-10 text-yellow-400 group-hover:text-yellow-300 group-hover:bg-yellow-400/10"
+                     style="background:rgba(147,197,253,.15); border-color:rgba(147,197,253,.3);">
+                    <i data-lucide="graduation-cap" class="w-7 h-7"></i>
+                </div>
+                <div class="relative z-10">
+                    <h4 class="dre-inst-pillar-title text-white font-bold text-base md:text-lg mb-1.5">Calidad Educativa</h4>
+                    <p class="dre-inst-pillar-text text-sm leading-relaxed" style="color:rgba(255,255,255,0.88)">Promovemos estándares de excelencia académica en todos los niveles y modalidades educativas de la región Huánuco, asegurando aprendizajes significativos.</p>
+                </div>
+            </div>
+
+            {{-- Pilar 2 --}}
+            <div class="dre-pillar relative overflow-hidden flex flex-col gap-4
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500 dre-a4 group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
+                <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                
+                <div class="dre-pillar-ico shrink-0 w-12 h-12 rounded-xl flex items-center justify-center
+                            border transition-all duration-500 shadow-md relative z-10 text-yellow-400 group-hover:text-yellow-300 group-hover:bg-yellow-400/10"
+                     style="background:rgba(147,197,253,.12); border-color:rgba(147,197,253,.25);">
+                    <i data-lucide="globe" class="w-6 h-6"></i>
+                </div>
+                <div class="relative z-10 mt-auto">
+                    <h4 class="dre-inst-pillar-title text-white font-bold mb-1.5">Inclusión e Interculturalidad</h4>
+                    <p class="dre-inst-pillar-text text-[0.8rem] leading-snug" style="color:rgba(255,255,255,0.85)">Educación bilingüe intercultural y acceso equitativo para comunidades indígenas y rurales.</p>
+                </div>
+            </div>
+
+            {{-- Pilar 3 --}}
+            <div class="dre-pillar relative overflow-hidden flex flex-col gap-4
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500 dre-a5 group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
+                <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                
+                <div class="dre-pillar-ico shrink-0 w-12 h-12 rounded-xl flex items-center justify-center
+                            border transition-all duration-500 shadow-md relative z-10 text-yellow-400 group-hover:text-yellow-300 group-hover:bg-yellow-400/10"
+                     style="background:rgba(147,197,253,.12); border-color:rgba(147,197,253,.25);">
+                    <i data-lucide="lightbulb" class="w-6 h-6"></i>
+                </div>
+                <div class="relative z-10 mt-auto">
+                    <h4 class="dre-inst-pillar-title text-white font-bold mb-1.5">Innovación y Gestión</h4>
+                    <p class="dre-inst-pillar-text text-[0.8rem] leading-snug" style="color:rgba(255,255,255,0.85)">Transformación digital e innovación pedagógica para una gestión moderna y transparente.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {{-- Corte diagonal inferior hacia fondo blanco --}}
+    <div class="dre-hero-cut"></div>
+
+</section>
+
 {{-- ── HERO SLIDER ──────────────────────────────────────────── --}}
+<div class="max-w-screen-xl mx-auto px-4 md:px-12 pt-5 pb-2">
+    <div class="flex items-center gap-2">
+        <span class="font-display bg-dre-primary text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="newspaper" class="w-4 h-4"></i>
+            Novedades
+        </span>
+        <div class="flex-1 h-px bg-blue-200"></div>
+    </div>
+</div>
 <section class="sm:px-4 md:px-12 sm:py-3"
          x-data="{ current: 0, total: {{ count($sliders) }}, autoplay: null }"
          x-init="autoplay = setInterval(() => current = (current + 1) % total, 5000)"
@@ -64,7 +245,7 @@
                         </p>
                         @if ($row->link != null && $row->link != '')
                             <a href="{{ $row->link }}"
-                               class="mt-5 inline-block bg-yellow-400 text-black font-bold px-8 py-2.5 hover:bg-yellow-300 transition-colors uppercase text-sm tracking-wider rounded">
+                               class="mt-5 inline-block bg-yellow-400 text-black font-bold px-8 py-2.5 hover:bg-yellow-300 transition-colors uppercase text-sm tracking-wider rounded-lg">
                                 Leer Más
                             </a>
                         @endif
