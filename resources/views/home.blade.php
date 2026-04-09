@@ -40,8 +40,6 @@
 {{-- ── HERO INSTITUCIONAL ────────────────────────────────────── --}}
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
-  @keyframes dreHeroFadeUp  { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes dreHeroSlideIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
 
   /* ── Fondo: usa dre-darker (#00092b) → dre-dark (#00183a) → dre-primary (#013072) ── */
   .dre-inst-hero { background: linear-gradient(135deg, #00092b 0%, #00183a 45%, #013072 100%); }
@@ -51,12 +49,6 @@
   .dre-inst-desc  { font-family:'DM Sans',sans-serif; font-size:0.92rem; line-height:1.85; font-weight:400; }
   .dre-inst-pillar-title { font-family:'DM Sans',sans-serif; font-size:0.86rem; font-weight:600; }
   .dre-inst-pillar-text  { font-family:'DM Sans',sans-serif; font-size:0.78rem; line-height:1.6; font-weight:400; }
-
-  .dre-a1 { animation: dreHeroFadeUp  0.8s cubic-bezier(.22,1,.36,1) 0.05s both; }
-  .dre-a2 { animation: dreHeroFadeUp  0.8s cubic-bezier(.22,1,.36,1) 0.2s  both; }
-  .dre-a3 { animation: dreHeroSlideIn 0.65s cubic-bezier(.22,1,.36,1) 0.28s both; }
-  .dre-a4 { animation: dreHeroSlideIn 0.65s cubic-bezier(.22,1,.36,1) 0.40s both; }
-  .dre-a5 { animation: dreHeroSlideIn 0.65s cubic-bezier(.22,1,.36,1) 0.52s both; }
 
   /* Pilares: glow al hover */
   .dre-pillar:hover { border-color:rgba(0,105,217,.5); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
@@ -94,7 +86,7 @@
                 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
         {{-- ── COLUMNA IZQUIERDA ── --}}
-        <div class="dre-a1">
+        <div>
 
             {{-- Etiqueta institucional --}}
             <div class="inline-flex items-center gap-2 mb-5 select-none">
@@ -102,7 +94,7 @@
                              px-3 py-1.5 rounded-full"
                       style="color:#93c5fd; background:rgba(147,197,253,.12); border:1px solid rgba(147,197,253,.25);">
                     <i data-lucide="landmark" class="w-3.5 h-3.5 shrink-0"></i>
-                    Gobierno Regional de Huánuco
+                    Gob. Regional Huánuco
                 </span>
                 <span class="w-1 h-1 rounded-full bg-blue-400/50"></span>
                 <span class="dre-inst-tag text-[0.62rem] uppercase tracking-[.14em]"
@@ -130,17 +122,18 @@
             </p>
 
             {{-- Botones CTA --}}
-            <div class="flex flex-wrap gap-3 mt-2">
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 mt-2">
                 {{-- Botón amarillo (dre warning) --}}
                 <a href="{{ route('directorioweb') }}"
-                   class="dre-btn-gold inline-flex items-center gap-2 text-[.82rem] font-semibold
+                   class="dre-btn-gold inline-flex items-center justify-center gap-2 text-[.82rem] font-semibold
                           px-5 py-2.5 rounded-lg transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    Directorio Institucional
+                    <span class="hidden sm:inline">Directorio Institucional</span>
+                    <span class="sm:hidden">Directorio</span>
                 </a>
                 {{-- Botón outline blanco --}}
                 <a href="{{ route('allnoticias') }}"
-                   class="dre-btn-ghost inline-flex items-center gap-2
+                   class="dre-btn-ghost inline-flex items-center justify-center gap-2
                           text-white text-[.82rem] font-medium
                           border border-white/40 px-5 py-2.5 rounded-lg
                           transition-all duration-300">
@@ -151,11 +144,11 @@
         </div>
 
         {{-- ── COLUMNA DERECHA: PILARES (BENTO GRID) ── --}}
-        <div class="dre-a2 grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
 
             {{-- Pilar 1: Destacado (Ancho completo en sm) --}}
             <div class="dre-pillar relative overflow-hidden sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6
-                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 sm:p-6 transition-all duration-500 dre-a3 group" style="background:rgba(255,255,255,.07);">
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 sm:p-6 transition-all duration-500group" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 
                 <div class="dre-pillar-ico shrink-0 w-14 h-14 rounded-xl flex items-center justify-center
@@ -171,7 +164,7 @@
 
             {{-- Pilar 2 --}}
             <div class="dre-pillar relative overflow-hidden flex flex-col gap-4
-                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500 dre-a4 group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 
                 <div class="dre-pillar-ico shrink-0 w-12 h-12 rounded-xl flex items-center justify-center
@@ -187,7 +180,7 @@
 
             {{-- Pilar 3 --}}
             <div class="dre-pillar relative overflow-hidden flex flex-col gap-4
-                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500 dre-a5 group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 
                 <div class="dre-pillar-ico shrink-0 w-12 h-12 rounded-xl flex items-center justify-center
