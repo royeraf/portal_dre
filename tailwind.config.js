@@ -48,6 +48,8 @@ module.exports = {
         'bg-amber-50',  'bg-amber-100',  'bg-amber-500',  'text-amber-700',  'border-amber-100',
         'bg-orange-50', 'bg-orange-100', 'bg-orange-500', 'text-orange-700', 'border-orange-100',
         'bg-purple-50', 'bg-purple-100', 'bg-purple-500', 'text-purple-700', 'border-purple-100',
+        // popup close button
+        'bg-red-600', 'hover:bg-red-500', 'active:bg-red-700',
         // directorio.blade.php — $directivos dynamic bar/ring
         'bg-indigo-600', 'ring-indigo-400',
         'bg-teal-600',   'ring-teal-400',

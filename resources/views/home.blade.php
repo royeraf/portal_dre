@@ -845,10 +845,19 @@
                 max-h-[88dvh] sm:max-h-[88vh] overflow-hidden">
 
         {{-- Barra superior --}}
-        <div class="flex items-center justify-end px-4 py-3 border-b border-gray-100 shrink-0">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0 bg-dre-primary">
+            <div class="flex items-center gap-2">
+                <i data-lucide="megaphone" class="w-5 h-5 text-yellow-400 shrink-0"></i>
+                <span style="font-family:'Winky Rough',cursive; font-weight:700; font-size:1.1rem; color:#fff; letter-spacing:0.01em;">
+                    Comunicados
+                </span>
+            </div>
             <button @click="open = false" type="button"
-                    class="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition-colors active:scale-95">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    class="group flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                           bg-red-600 hover:bg-red-500 active:bg-red-700
+                           text-white text-xs font-semibold
+                           transition-all duration-200 hover:scale-105 active:scale-90">
+                <i data-lucide="x" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-90"></i>
                 Cerrar
             </button>
         </div>
@@ -895,25 +904,25 @@
             </div>
 
             {{-- Botones footer --}}
-            <div class="px-4 py-3 bg-white border-t border-gray-100 shrink-0 flex gap-2">
+            <div class="px-3 py-3 bg-white border-t border-gray-100 shrink-0 flex gap-2">
                 {{-- Ver imagen completa (siempre visible) --}}
                 <a :href="imgs[slide]" target="_blank"
                    class="flex items-center justify-center gap-1.5 flex-1
                           border border-gray-200 hover:border-dre-primary hover:text-dre-primary
-                          text-gray-500 font-semibold text-sm py-2.5 px-3 rounded-xl
-                          transition-colors">
+                          text-gray-500 font-semibold text-xs sm:text-sm py-2.5 px-2 sm:px-3 rounded-xl
+                          transition-colors min-w-0">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                    Ver imagen
+                    <span class="truncate">Ver imagen</span>
                 </a>
                 {{-- Ver comunicado (solo si tiene enlace) --}}
                 <a x-show="links[slide] && links[slide].length > 0"
                    :href="links[slide]" target="_blank"
                    class="flex items-center justify-center gap-1.5 flex-1
                           bg-dre-primary hover:bg-dre-accent active:bg-dre-primary
-                          text-white font-semibold text-sm py-2.5 px-3 rounded-xl
-                          transition-colors shadow-sm">
+                          text-white font-semibold text-xs sm:text-sm py-2.5 px-2 sm:px-3 rounded-xl
+                          transition-colors shadow-sm min-w-0">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    Ver comunicado
+                    <span class="truncate">Ver comunicado</span>
                 </a>
             </div>
 
