@@ -38,7 +38,7 @@
 </div>
 
 {{-- ── HERO INSTITUCIONAL ────────────────────────────────────── --}}
-{{--
+@if (false)
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -202,7 +202,7 @@
     <div class="dre-hero-cut"></div>
 
 </section>
---}}
+@endif
 
 {{-- ── HERO SLIDER ──────────────────────────────────────────── --}}
 <div class="max-w-screen-xl mx-auto px-4 md:px-12 pt-5 pb-2">
