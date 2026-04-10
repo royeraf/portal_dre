@@ -38,6 +38,7 @@
 </div>
 
 {{-- ── HERO INSTITUCIONAL ────────────────────────────────────── --}}
+{{--
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -150,7 +151,7 @@
             <div class="dre-pillar relative overflow-hidden sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6
                         backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 sm:p-6 transition-all duration-500group" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                
+
                 <div class="dre-pillar-ico shrink-0 w-14 h-14 rounded-xl flex items-center justify-center
                             border transition-all duration-500 shadow-lg relative z-10 text-yellow-400 group-hover:text-yellow-300 group-hover:bg-yellow-400/10"
                      style="background:rgba(147,197,253,.15); border-color:rgba(147,197,253,.3);">
@@ -166,7 +167,7 @@
             <div class="dre-pillar relative overflow-hidden flex flex-col gap-4
                         backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                
+
                 <div class="dre-pillar-ico shrink-0 w-12 h-12 rounded-xl flex items-center justify-center
                             border transition-all duration-500 shadow-md relative z-10 text-yellow-400 group-hover:text-yellow-300 group-hover:bg-yellow-400/10"
                      style="background:rgba(147,197,253,.12); border-color:rgba(147,197,253,.25);">
@@ -182,7 +183,7 @@
             <div class="dre-pillar relative overflow-hidden flex flex-col gap-4
                         backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                
+
                 <div class="dre-pillar-ico shrink-0 w-12 h-12 rounded-xl flex items-center justify-center
                             border transition-all duration-500 shadow-md relative z-10 text-yellow-400 group-hover:text-yellow-300 group-hover:bg-yellow-400/10"
                      style="background:rgba(147,197,253,.12); border-color:rgba(147,197,253,.25);">
@@ -201,6 +202,7 @@
     <div class="dre-hero-cut"></div>
 
 </section>
+--}}
 
 {{-- ── HERO SLIDER ──────────────────────────────────────────── --}}
 <div class="max-w-screen-xl mx-auto px-4 md:px-12 pt-5 pb-2">
