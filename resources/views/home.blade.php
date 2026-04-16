@@ -840,26 +840,27 @@
                 max-h-[88dvh] sm:max-h-[88vh] overflow-hidden">
 
         {{-- Barra superior --}}
-        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0 bg-dre-primary">
-            <div class="flex items-center gap-2">
-                <i data-lucide="megaphone" class="w-5 h-5 text-yellow-400 shrink-0"></i>
-                <span style="font-family:'Winky Rough',cursive; font-weight:700; font-size:1.1rem; color:#fff; letter-spacing:0.01em;">
+        <div class="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 border-b border-gray-100 shrink-0 bg-dre-primary">
+            <div class="flex items-center gap-1.5 min-w-0">
+                <i data-lucide="megaphone" class="w-4 h-4 text-yellow-400 shrink-0"></i>
+                <span class="truncate" style="font-family:'Winky Rough',cursive; font-weight:700; font-size:1rem; color:#fff; letter-spacing:0.01em;">
                     Comunicados
                 </span>
                 @if(count($imagenes) > 0)
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold tabular-nums border border-white/30">
+                <span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold tabular-nums border border-white/30">
                     <i data-lucide="images" class="w-3 h-3 shrink-0"></i>
-                    {{ count($imagenes) }} {{ count($imagenes) == 1 ? 'publicado' : 'publicados' }}
+                    <span>{{ count($imagenes) }}</span>
+                    <span class="hidden sm:inline">{{ count($imagenes) == 1 ? 'publicado' : 'publicados' }}</span>
                 </span>
                 @endif
             </div>
             <button @click="open = false" type="button"
-                    class="group flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                    class="shrink-0 group flex items-center gap-1 px-2.5 py-1.5 rounded-full
                            bg-red-600 hover:bg-red-500 active:bg-red-700
                            text-white text-xs font-semibold
                            transition-all duration-200 hover:scale-105 active:scale-90">
                 <i data-lucide="x" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-90"></i>
-                Cerrar
+                <span class="hidden sm:inline">Cerrar</span>
             </button>
         </div>
 
@@ -888,9 +889,10 @@
 
                 {{-- Contador de slide actual --}}
                 <div x-show="total > 1"
-                     class="absolute top-2 right-2 z-20 flex items-center gap-1
+                     class="absolute top-2 left-1/2 -translate-x-1/2 z-20
+                            flex items-center gap-1
                             bg-black/50 backdrop-blur-sm text-white rounded-full
-                            px-2.5 py-1 text-[11px] font-bold tabular-nums select-none">
+                            px-2.5 py-1 text-[11px] font-bold tabular-nums select-none pointer-events-none">
                     <i data-lucide="layers" class="w-3 h-3 shrink-0 text-yellow-300"></i>
                     <span x-text="slide + 1"></span>
                     <span class="opacity-50">/</span>
