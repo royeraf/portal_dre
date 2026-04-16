@@ -32,7 +32,7 @@ import {
     // Directorio
     Phone,
     // Convocatorias
-    SlidersHorizontal, Filter, Paperclip, LayoutGrid, List,
+    SlidersHorizontal, Filter, Paperclip, LayoutGrid, List, Sparkles,
     // Infraestructura slider
     Expand,
     // Direcciones / show
@@ -53,7 +53,7 @@ const icons = {
     Briefcase, FileCheck, BarChart2, Receipt, Landmark, Building2, BookMarked,
     Video, Play,
     Phone,
-    SlidersHorizontal, Filter, Paperclip, LayoutGrid, List,
+    SlidersHorizontal, Filter, Paperclip, LayoutGrid, List, Sparkles,
     Expand,
     Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,
     Zap, Megaphone, PlayCircle, Smartphone,
