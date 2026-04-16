@@ -846,6 +846,12 @@
                 <span style="font-family:'Winky Rough',cursive; font-weight:700; font-size:1.1rem; color:#fff; letter-spacing:0.01em;">
                     Comunicados
                 </span>
+                @if(count($imagenes) > 0)
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold tabular-nums border border-white/30">
+                    <i data-lucide="images" class="w-3 h-3 shrink-0"></i>
+                    {{ count($imagenes) }} {{ count($imagenes) == 1 ? 'publicado' : 'publicados' }}
+                </span>
+                @endif
             </div>
             <button @click="open = false" type="button"
                     class="group flex items-center gap-1.5 px-3 py-1.5 rounded-full
@@ -879,6 +885,17 @@
                              ">
                     </div>
                 @endforeach
+
+                {{-- Contador de slide actual --}}
+                <div x-show="total > 1"
+                     class="absolute top-2 right-2 z-20 flex items-center gap-1
+                            bg-black/50 backdrop-blur-sm text-white rounded-full
+                            px-2.5 py-1 text-[11px] font-bold tabular-nums select-none">
+                    <i data-lucide="layers" class="w-3 h-3 shrink-0 text-yellow-300"></i>
+                    <span x-text="slide + 1"></span>
+                    <span class="opacity-50">/</span>
+                    <span x-text="total"></span>
+                </div>
 
                 {{-- Flechas de navegación --}}
                 <button x-show="total > 1" @click="slide = (slide - 1 + total) % total" type="button"
