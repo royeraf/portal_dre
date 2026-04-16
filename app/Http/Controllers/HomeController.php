@@ -25,7 +25,7 @@ use App\Models\Visita;
 class HomeController extends Controller
 {
     public function __invoke(){
-        return 'verificar';
+
         $data['mainrightitem']=Mainright::orderBy('indice', 'asc')->get();
         $data['comunicados']=Comunicado::orderBy('created_at', 'desc')->take(10)->get();
         $data['noticias']=Noticia::orderBy('fechapubli', 'desc')->take(6)->get();

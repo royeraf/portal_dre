@@ -26,11 +26,14 @@ APP_URL=$(grep '^APP_URL=' "$REPO/.env" 2>/dev/null | head -1 | cut -d= -f2- | t
 APP_KEY=$(grep '^APP_KEY=' "$REPO/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"' | tr -d "'" | tr -d ' ')
 if [ -n "$APP_URL" ] && [ -n "$APP_KEY" ]; then
     TOKEN=$(echo -n "$APP_KEY" | sha256sum | cut -d' ' -f1)
-    RESULT=$(curl -s --max-time 10 "${APP_URL}/_flush/${TOKEN}")
+    RESULT=$(curl -s --max-time 10 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" "${APP_URL}/_flush/${TOKEN}")
     [ "$RESULT" = "OK" ] && echo "  OPcache reset OK" || echo "  OPcache reset falló (respuesta: $RESULT)"
 else
     echo "  APP_URL o APP_KEY no encontrado en $REPO/.env"
 fi
+
+echo "▸ Limpiando caché de nginx..."
+sudo rm -rf /var/nginx/cache/drehua5/* 2>/dev/null && echo "  Nginx cache limpiado" || echo "  Sin permisos para limpiar nginx cache (ejecutar manualmente)"
 
 echo ""
 echo "✔  Deploy completado."
