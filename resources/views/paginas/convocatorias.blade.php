@@ -127,6 +127,7 @@
                     $detail  = $row->descripcion || count($row->archivos) > 0;
                     $fi      = $row->fecha_inicio  ? \Carbon\Carbon::parse($row->fecha_inicio)->format('d/m/Y')  : '—';
                     $ft      = $row->fecha_termino ? \Carbon\Carbon::parse($row->fecha_termino)->format('d/m/Y') : '—';
+                    $nuevo   = $row->created_at && \Carbon\Carbon::parse($row->created_at)->diffInDays(now()) <= 5;
                     $mdata   = [
                         'tipo'        => $row->tipo,
                         'pill'        => $ts['pill'],
@@ -163,6 +164,12 @@
                             <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white/70 text-gray-400 border border-gray-200">
                                 <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
                                 {{ strtoupper($row->estado) }}
+                            </span>
+                        @endif
+                        @if($nuevo)
+                            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest bg-rose-500 text-white shadow-sm shadow-rose-200 animate-pulse">
+                                <i data-lucide="sparkles" class="w-3 h-3 pointer-events-none"></i>
+                                NUEVO
                             </span>
                         @endif
                     </div>
