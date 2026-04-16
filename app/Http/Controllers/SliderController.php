@@ -13,6 +13,7 @@ class SliderController extends Controller
         return view('intranet/slide/create', $data);
     }
     public function store(Request $request){
+        $request->validate(['img_slider' => 'required|file|mimes:jpg,jpeg,png,gif,webp|max:5120']);
         $slider = new Slider();
         if($request->hasFile('img_slider')){
             $file = $request->file('img_slider');
@@ -42,6 +43,7 @@ class SliderController extends Controller
         return view('intranet/slide/edit', $data);
     }
     public function update(Request $request, Slider $slider){
+        $request->validate(['img_slider' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120']);
         $slider->titulo=$request->titulo;
         $slider->descripcioncorta=$request->descripcioncorta;
         $slider->link=$request->link;

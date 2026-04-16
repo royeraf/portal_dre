@@ -14,6 +14,11 @@ class NoticiaController extends Controller
         return view('intranet/noticias/create');
     }
     public function store(Request $request){
+        $request->validate([
+            'img1' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'img2' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'img3' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+        ]);
         $noticia = new Noticia();
         $noticia->titulo = $request->titulo;
         $noticia->descripcioncorta = $request->descripcioncorta;
@@ -68,6 +73,11 @@ class NoticiaController extends Controller
         return view('intranet/noticias/edit', $data);
     }
     public function update(Request $request, Noticia $noticia){
+        $request->validate([
+            'img1' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'img2' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'img3' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+        ]);
         $noticia->titulo = $request->titulo;
         $noticia->descripcioncorta = $request->descripcioncorta;
         $noticia->contenido=$request->contenido;

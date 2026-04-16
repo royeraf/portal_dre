@@ -14,6 +14,7 @@ class ComunicadoController extends Controller
         return view('intranet/comunicados/create');
     }
     public function store(Request $request){
+        $request->validate(['imagen' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120']);
         $comunicado = new Comunicado();
         $comunicado->titulo=$request->titulo;
         $comunicado->url=$request->url;
@@ -31,6 +32,7 @@ class ComunicadoController extends Controller
         return view('intranet/comunicados/edit', $data);
     }
     public function update(Comunicado $comunicado, Request $request){
+        $request->validate(['imagen' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120']);
         $comunicado->titulo = $request->titulo;
         $comunicado->url = $request->url;
         if($request->hasFile('imagen')){

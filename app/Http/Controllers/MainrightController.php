@@ -12,6 +12,7 @@ class MainrightController extends Controller
         return view('intranet/mainright/index', $data);
     }
     public function store(Request $request){
+        $request->validate(['imagen' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120']);
         $mainright = New Mainright();
         $mainright->nombre= $request->nombre;
         $mainright->url=$request->url;

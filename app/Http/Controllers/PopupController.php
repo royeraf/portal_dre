@@ -22,6 +22,7 @@ class PopupController extends Controller
         return redirect()->route('popup.edit', $popup);
     }
     public function store2(Request $request, Popup $popup){
+        $request->validate(['imagen' => 'required|file|mimes:jpg,jpeg,png,gif,webp|max:5120']);
         $imagenpopup=new ImagenPopup();
         if($request->hasFile('imagen')){
             $file = $request->file('imagen');

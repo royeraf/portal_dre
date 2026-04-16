@@ -11,6 +11,7 @@ class ArchivoController extends Controller
         return view('intranet/archivos/create', $data);
     }
     public function store(Request $request){
+        $request->validate(['file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip|max:10240']);
         $archivo = new Archivo();
         $archivo->nombre=$request->nombre;
         $archivo->categoria=$request->categoria;
@@ -42,6 +43,7 @@ class ArchivoController extends Controller
         return view('intranet/archivos/edit', $data);
     }
     public function update(Request $request, Archivo $archivo){
+        $request->validate(['file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip|max:10240']);
         $archivo->nombre = $request->nombre;
         $archivo->categoria = $request->categoria;
 

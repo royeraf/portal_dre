@@ -71,6 +71,7 @@ class ImagenEventoController extends Controller
     public function updatearchivo(ImagenEvento $imagenevento, Request $request){
         $imagenevento->titulo=$request->titulo;
         $imagenevento->descripcion=$request->descripcion;
+        $request->validate(['archivo_img' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:4096']);
         if($request->hasFile('archivo_img')){
             $file = $request->file('archivo_img');
             $image_path = public_path('img/imageneventos').$imagenevento->archivo_img;
