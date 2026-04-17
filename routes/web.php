@@ -262,6 +262,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('reports/{report}/toggle-publish', [SiagieController::class, 'togglePublish'])->name('reports.toggle-publish');
         Route::delete('reports/{report}', [SiagieController::class, 'destroyReport'])->name('reports.destroy');
     });
+// Debug temporal — ELIMINAR después del diagnóstico
+Route::get('/debug-session', function () {
+    return response()->json([
+        'authenticated' => auth()->check(),
+        'user_id'       => auth()->id(),
+        'session_id'    => session()->getId(),
+        'cookie_header' => request()->header('Cookie'),
+    ])->header('Cache-Control', 'no-store, no-cache, must-revalidate');
+});
+
 // CSRF token fresco para el modal de login (no cacheable)
 Route::get('/csrf-token', function () {
     return response()->json(['token' => csrf_token()])
