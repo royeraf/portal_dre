@@ -2,15 +2,29 @@
 <div x-data="{
         open: false,
         csrfToken: '',
+        loading: false,
+        error: '',
         async fetchCsrf() {
             try {
-                const r = await fetch('/csrf-token');
+                const r = await fetch('/csrf-token', { credentials: 'same-origin' });
+                if (!r.ok) throw new Error('csrf_fetch_failed');
                 const d = await r.json();
                 this.csrfToken = d.token;
-            } catch(e) {}
+            } catch(e) {
+                this.error = 'No se pudo cargar el formulario. Recarga la página e intenta de nuevo.';
+            }
+        },
+        async submitLogin(event) {
+            if (!this.csrfToken) {
+                event.preventDefault();
+                this.error = 'Cargando seguridad... intenta de nuevo en un momento.';
+                await this.fetchCsrf();
+                return;
+            }
+            this.loading = true;
         }
      }" x-cloak
-     @open-login.window="open = true; fetchCsrf()">
+     @open-login.window="open = true; error = ''; fetchCsrf()">
     <template x-teleport="body">
         <div x-show="open" x-transition.opacity
              class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4"
@@ -21,8 +35,11 @@
                     <h3 class="text-xl font-bold">INTRANET</h3>
                     <p class="text-sm text-blue-200 mt-1">DRE Huánuco</p>
                 </div>
-                <form method="POST" action="{{ route('login') }}" class="p-6 space-y-4">
+                <form method="POST" action="{{ route('login') }}" class="p-6 space-y-4"
+                      @submit="submitLogin($event)">
                     <input type="hidden" name="_token" :value="csrfToken">
+                    <div x-show="error" x-text="error"
+                         class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                         <input type="text" name="email" required autofocus
@@ -33,9 +50,10 @@
                         <input type="password" name="password" required
                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-dre-accent focus:border-dre-accent outline-none">
                     </div>
-                    <button type="submit"
-                            class="w-full bg-dre-primary text-white font-bold py-2.5 rounded-lg hover:bg-dre-accent transition-colors">
-                        Ingresar
+                    <button type="submit" :disabled="loading"
+                            class="w-full bg-dre-primary text-white font-bold py-2.5 rounded-lg hover:bg-dre-accent transition-colors disabled:opacity-60">
+                        <span x-show="!loading">Ingresar</span>
+                        <span x-show="loading">Ingresando...</span>
                     </button>
                 </form>
                 <button @click="open = false"
