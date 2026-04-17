@@ -188,7 +188,7 @@ Route::get('/intranet', function () {
         'user_id'       => auth()->id(),
         'session_id'    => session()->getId(),
     ]);
-    return view('dashboard');
+    return response()->view('dashboard')->header('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 })->middleware(['auth'])->name('intranet');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
