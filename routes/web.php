@@ -184,7 +184,7 @@ Route::get('convivenciasinviolencia', [ConvivenciaSinViolenciaController::class,
 Route::get('prueba', [MenuController::class, 'prueba'])->name('prueba');
 Route::get('/intranet', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('intranet');
+})->middleware(['auth'])->name('intranet');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
