@@ -17,6 +17,9 @@ FOLDERS=(
     "img/organigrama_areas"
     "img/post_noticias"
     "img/popup"
+    "img/slider"
+    "img/mainright"
+    "img/directorio"
 )
 
 for folder in "${FOLDERS[@]}"; do
@@ -38,6 +41,19 @@ for folder in "${FOLDERS[@]}"; do
 
     ln -s "$dest" "$src"
     echo "✔  $folder — symlink creado"
+done
+
+# Proteger cada carpeta contra ejecución de PHP
+HTACCESS='<FilesMatch "\.php$">
+    deny from all
+</FilesMatch>'
+
+echo ""
+echo "▸ Aplicando .htaccess de seguridad..."
+for folder in "${FOLDERS[@]}"; do
+    dest="$WEB/$folder"
+    echo "$HTACCESS" > "$dest/.htaccess"
+    echo "✔  $folder/.htaccess"
 done
 
 echo ""
