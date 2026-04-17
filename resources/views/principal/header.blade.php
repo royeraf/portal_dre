@@ -1,6 +1,16 @@
 {{-- ── LOGIN MODAL ──────────────────────────────────────────── --}}
-<div x-data="{ open: false }" x-cloak
-     @open-login.window="open = true">
+<div x-data="{
+        open: false,
+        csrfToken: '',
+        async fetchCsrf() {
+            try {
+                const r = await fetch('/csrf-token');
+                const d = await r.json();
+                this.csrfToken = d.token;
+            } catch(e) {}
+        }
+     }" x-cloak
+     @open-login.window="open = true; fetchCsrf()">
     <template x-teleport="body">
         <div x-show="open" x-transition.opacity
              class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4"
@@ -12,7 +22,7 @@
                     <p class="text-sm text-blue-200 mt-1">DRE Huánuco</p>
                 </div>
                 <form method="POST" action="{{ route('login') }}" class="p-6 space-y-4">
-                    @csrf
+                    <input type="hidden" name="_token" :value="csrfToken">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
                         <input type="text" name="email" required autofocus

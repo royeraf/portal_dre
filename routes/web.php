@@ -257,6 +257,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('reports/{report}/toggle-publish', [SiagieController::class, 'togglePublish'])->name('reports.toggle-publish');
         Route::delete('reports/{report}', [SiagieController::class, 'destroyReport'])->name('reports.destroy');
     });
+// CSRF token fresco para el modal de login (no cacheable)
+Route::get('/csrf-token', function () {
+    return response()->json(['token' => csrf_token()])
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate');
+})->middleware('web');
+
 // OPcache reset — protegido con hash del APP_KEY, solo para deploy
 Route::get('/_flush/{token}', function (string $token) {
     if (!hash_equals(hash('sha256', config('app.key')), $token)) abort(404);
