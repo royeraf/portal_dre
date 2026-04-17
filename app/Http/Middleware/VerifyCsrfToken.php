@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        // Temporal: diagnosticar si el problema es CSRF o sesión post-login
+        'login',
     ];
 }
