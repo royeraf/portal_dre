@@ -183,6 +183,11 @@ Route::get('convivenciasinviolencia', [ConvivenciaSinViolenciaController::class,
 
 Route::get('prueba', [MenuController::class, 'prueba'])->name('prueba');
 Route::get('/intranet', function () {
+    \Log::info('[INTRANET-HIT]', [
+        'authenticated' => auth()->check(),
+        'user_id'       => auth()->id(),
+        'session_id'    => session()->getId(),
+    ]);
     return view('dashboard');
 })->middleware(['auth'])->name('intranet');
 Route::middleware('auth')->group(function () {

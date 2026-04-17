@@ -32,6 +32,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        \Log::info('[LOGIN-OK]', [
+            'email'      => $request->email,
+            'session_id' => $request->session()->getId(),
+            'user_id'    => \Illuminate\Support\Facades\Auth::id(),
+        ]);
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
