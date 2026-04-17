@@ -25,7 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Forzar HTTPS en producción (solución para error 419 en VPS con proxies SSL)
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+        
         Builder::defaultStringLength(191);
         Paginator::useBootstrapFour();
     }
