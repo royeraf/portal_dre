@@ -23,6 +23,7 @@
     {{-- Tailwind CSS + Alpine.js via Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
+    <script>if(!/jsid=/.test(document.cookie)){document.cookie='jsid=1;path=/;SameSite=Lax';}</script>
 </head>
 <body class="min-h-screen flex flex-col overflow-x-hidden">
 
