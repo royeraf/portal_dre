@@ -34,6 +34,9 @@ fi
 
 echo "▸ Limpiando caché de nginx..."
 sudo rm -rf /var/nginx/cache/drehua5/* 2>/dev/null && echo "  Nginx cache limpiado" || echo "  Sin permisos para limpiar nginx cache (ejecutar manualmente)"
+if [ -n "$APP_URL" ]; then
+    curl -sk -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" "${APP_URL}/purge/" | grep -q "Successful purge" && echo "  Nginx purge OK" || echo "  Nginx purge falló"
+fi
 
 echo ""
 echo "✔  Deploy completado."
