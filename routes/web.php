@@ -52,7 +52,7 @@ Route::get('/infraestructuraall', [HomeController::class, 'infraestructura'])->n
 Route::get('/resoluciones', [HomeController::class, 'resoluciones'])->name('resoluciones');
 Route::get('/paginas/{pagina}', [HomeController::class, 'showpaginaweb'])->name('pagina.showpaginaweb');
 
-Route::controller(MenuController::class)->group(function(){
+Route::controller(MenuController::class)->middleware(['auth', 'verified'])->group(function(){
     Route::get('menus', 'index')->name('menu');
     Route::get('menus/edit/{menu}', 'edit')->name('menu.edit');
     Route::get('menus/create', 'create')->name('formregistro');
@@ -71,9 +71,9 @@ Route::controller(ArchivoController::class)->group(function(){
     Route::get('archivos/{archivo}', 'destroy')->middleware(['auth', 'verified'])->name('archivos.destroy');
     Route::get('archivos/edit/{archivo}', 'edit')->middleware(['auth', 'verified'])->name('archivos.edit');
     Route::post('archivos/store', 'store')->middleware(['auth', 'verified'])->name('archivos.store');
-    Route::put('archivos/update/{archivo}', 'update')->name('archivos.update');
+    Route::put('archivos/update/{archivo}', 'update')->middleware(['auth', 'verified'])->name('archivos.update');
 });
-Route::controller(SliderController::class)->group(function(){
+Route::controller(SliderController::class)->middleware(['auth', 'verified'])->group(function(){
     Route::get('slider/create', 'create')->name('slide.create');
     Route::post('slider/store', 'store')->name('slide.store');
     Route::get('slider/edit/{slider}', 'edit')->name('slide.edit');
