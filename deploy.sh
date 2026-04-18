@@ -29,7 +29,7 @@ if [ -n "$APP_URL" ] && [ -n "$APP_KEY" ]; then
     # Purgar cache de nginx para /_flush antes de llamarlo
     curl -sk -A "Mozilla/5.0" "${APP_URL}/purge/_flush/${TOKEN}" > /dev/null
     sleep 1
-    RESULT=$(curl -s --max-time 10 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" "${APP_URL}/_flush/${TOKEN}")
+    RESULT=$(curl -s --max-time 10 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" "${APP_URL}/_flush/${TOKEN}" | tr -d ' \t\r\n')
     [ "$RESULT" = "OK" ] && echo "  OPcache reset OK" || echo "  OPcache reset falló (respuesta: $RESULT)"
 else
     echo "  APP_URL o APP_KEY no encontrado en $REPO/.env"

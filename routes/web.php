@@ -52,6 +52,8 @@ Route::get('/infraestructuraall', [HomeController::class, 'infraestructura'])->n
 Route::get('/resoluciones', [HomeController::class, 'resoluciones'])->name('resoluciones');
 Route::get('/paginas/{pagina}', [HomeController::class, 'showpaginaweb'])->name('pagina.showpaginaweb');
 
+Route::get('menus/paginaweb/{pagina}', [MenuController::class, 'showpaginaweb'])->name('menus.showpaginaweb');
+
 Route::controller(MenuController::class)->middleware(['auth', 'verified'])->group(function(){
     Route::get('menus', 'index')->name('menu');
     Route::get('menus/edit/{menu}', 'edit')->name('menu.edit');
@@ -64,7 +66,6 @@ Route::controller(MenuController::class)->middleware(['auth', 'verified'])->grou
     Route::post('menus/submenusstore', 'submenusstore')->name('submenus.store');
     Route::delete('menus/submenu/{submenu}', 'submenudestroy')->name('submenu.destroy');
     Route::post('menus/paginawebstore', 'paginawebstore')->name('pagina.paginawebstore');
-    Route::get('menus/paginaweb/{pagina}', 'showpaginaweb')->name('menus.showpaginaweb');
 });
 Route::controller(ArchivoController::class)->group(function(){
     Route::get('archivos/inicio', 'index')->middleware(['auth', 'verified'])->name('archivo');
