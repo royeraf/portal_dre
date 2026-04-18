@@ -38,7 +38,12 @@ fi
 echo "▸ Limpiando caché de nginx..."
 sudo rm -rf /var/nginx/cache/drehua5/* 2>/dev/null && echo "  Nginx cache limpiado" || echo "  Sin permisos para limpiar nginx cache (ejecutar manualmente)"
 if [ -n "$APP_URL" ]; then
-    for path in / /login /intranet /csrf-token; do
+    for path in / /login /intranet /csrf-token \
+                /mision /vision /nosotros /directorioweb \
+                /convocatoriaweb /allnoticias /galeriaimagenes \
+                /comunicadosall /documentosdegestionweb \
+                /infraestructuraall /resoluciones /siagie /epr \
+                /convivenciasinviolencia; do
         curl -sk -A "Mozilla/5.0" "${APP_URL}/purge${path}" > /dev/null
     done
     echo "  Nginx purge OK"
