@@ -263,6 +263,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('reports/{report}', [SiagieController::class, 'destroyReport'])->name('reports.destroy');
     });
 // Debug temporal — ELIMINAR después del diagnóstico
+Route::get('/test-cookie', function () {
+    return response()->json(['ok' => true])
+        ->cookie('test_cookie', 'hello123', 5, '/', null, false, false, false, 'lax')
+        ->header('Cache-Control', 'no-store, no-cache');
+});
+
 Route::get('/debug-session', function () {
     return response()->json([
         'authenticated' => auth()->check(),
