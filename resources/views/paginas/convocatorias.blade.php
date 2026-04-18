@@ -152,7 +152,7 @@
 
                     {{-- Zone 1: Category header --}}
                     <div class="flex items-center flex-wrap gap-x-2 gap-y-1.5 px-5 py-2.5 {{ $ts['hbg'] }} border-b {{ $ts['hbd'] }}">
-                        <span class="shrink-0 inline-flex max-w-[9rem] truncate px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest {{ $ts['pill'] }}">
+                        <span class="shrink-0 inline-flex px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest {{ $ts['pill'] }}">
                             {{ $row->tipo }}
                         </span>
                         @if($abierto)
