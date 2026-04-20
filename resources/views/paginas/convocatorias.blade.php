@@ -112,7 +112,7 @@
                 'CAP'                  => ['pill'=>'bg-indigo-100 text-indigo-700',  'bar'=>'bg-indigo-500',  'hbg'=>'bg-indigo-50',  'hbd'=>'border-indigo-100'],
                 'DOCENTE'              => ['pill'=>'bg-emerald-100 text-emerald-700','bar'=>'bg-emerald-500', 'hbg'=>'bg-emerald-50', 'hbd'=>'border-emerald-100'],
                 'DIRECTIVO'            => ['pill'=>'bg-dre-50 text-dre-primary',     'bar'=>'bg-dre-primary', 'hbg'=>'bg-dre-50',     'hbd'=>'border-dre-primary/20'],
-                'LOCACION DE SERVICIO' => ['pill'=>'bg-amber-100 text-amber-700',    'bar'=>'bg-amber-500',   'hbg'=>'bg-amber-50',   'hbd'=>'border-amber-100'],
+                'LOCACION DE SERVICIO' => ['pill'=>'bg-teal-100 text-teal-700',      'bar'=>'bg-teal-500',    'hbg'=>'bg-teal-50',    'hbd'=>'border-teal-100'],
                 'REASIGNACION'         => ['pill'=>'bg-orange-100 text-orange-700',  'bar'=>'bg-orange-500',  'hbg'=>'bg-orange-50',  'hbd'=>'border-orange-100'],
                 '276'                  => ['pill'=>'bg-purple-100 text-purple-700',  'bar'=>'bg-purple-500',  'hbg'=>'bg-purple-50',  'hbd'=>'border-purple-100'],
             ];
@@ -122,12 +122,13 @@
 
                 @forelse ($convocatorias as $row)
                 @php
-                    $ts      = $tipoStyles[$row->tipo] ?? ['pill'=>'bg-gray-100 text-gray-600','bar'=>'bg-gray-400','hbg'=>'bg-gray-50','hbd'=>'border-gray-100'];
-                    $abierto = strtoupper($row->estado) === 'ABIERTO';
-                    $detail  = $row->descripcion || count($row->archivos) > 0;
-                    $fi      = $row->fecha_inicio  ? \Carbon\Carbon::parse($row->fecha_inicio)->format('d/m/Y')  : '—';
-                    $ft      = $row->fecha_termino ? \Carbon\Carbon::parse($row->fecha_termino)->format('d/m/Y') : '—';
-                    $nuevo   = $row->created_at && \Carbon\Carbon::parse($row->created_at)->diffInDays(now()) <= 5;
+                    $ts         = $tipoStyles[$row->tipo] ?? ['pill'=>'bg-gray-100 text-gray-600','bar'=>'bg-gray-400','hbg'=>'bg-gray-50','hbd'=>'border-gray-100'];
+                    $abierto    = strtoupper($row->estado) === 'ABIERTO';
+                    $detail     = $row->descripcion || count($row->archivos) > 0;
+                    $fi         = $row->fecha_inicio  ? \Carbon\Carbon::parse($row->fecha_inicio)->format('d/m/Y')  : '—';
+                    $ft         = $row->fecha_termino ? \Carbon\Carbon::parse($row->fecha_termino)->format('d/m/Y') : '—';
+                    $nuevo      = $row->created_at && \Carbon\Carbon::parse($row->created_at)->diffInDays(now()) <= 5;
+                    $finalizado = $row->fecha_termino && \Carbon\Carbon::parse($row->fecha_termino)->endOfDay()->isPast();
                     $mdata   = [
                         'tipo'        => $row->tipo,
                         'pill'        => $ts['pill'],
@@ -136,6 +137,7 @@
                         'titulo'      => $row->titulo,
                         'estado'      => strtoupper($row->estado),
                         'abierto'     => $abierto,
+                        'finalizado'  => $finalizado,
                         'fi'          => $fi,
                         'ft'          => $ft,
                         'descripcion' => $row->descripcion,
@@ -155,20 +157,25 @@
                         <span class="shrink-0 inline-flex px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest {{ $ts['pill'] }}">
                             {{ $row->tipo }}
                         </span>
-                        @if($abierto)
-                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white text-emerald-700 border border-emerald-200">
+                        @if($finalizado)
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 shadow-sm">
+                                <svg class="w-3 h-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+                                FINALIZADO
+                            </span>
+                        @elseif($abierto)
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white text-emerald-700 border border-emerald-200 shadow-sm">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                 ABIERTO
                             </span>
                         @else
-                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white/70 text-gray-400 border border-gray-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white/70 text-gray-500 border border-gray-200 shadow-sm">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
                                 {{ strtoupper($row->estado) }}
                             </span>
                         @endif
-                        @if($nuevo)
-                            <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest bg-rose-500 text-white shadow-sm shadow-rose-200 animate-pulse">
-                                <i data-lucide="sparkles" class="w-3 h-3 pointer-events-none"></i>
+                        @if($nuevo && !$finalizado)
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shadow-sm animate-pulse">
+                                <svg class="w-3 h-3 text-rose-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
                                 NUEVO
                             </span>
                         @endif
@@ -317,15 +324,21 @@
                                       :class="modal?.pill"
                                       x-text="modal?.tipo">
                                 </span>
-                                <template x-if="modal?.abierto">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white text-emerald-700 border border-emerald-200">
+                                <template x-if="modal?.finalizado">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 shadow-sm">
+                                        <svg class="w-3 h-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+                                        FINALIZADO
+                                    </span>
+                                </template>
+                                <template x-if="modal?.abierto && !modal?.finalizado">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white text-emerald-700 border border-emerald-200 shadow-sm">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                         ABIERTO
                                     </span>
                                 </template>
-                                <template x-if="!modal?.abierto">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white/80 text-gray-400 border border-gray-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                <template x-if="!modal?.abierto && !modal?.finalizado">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white/80 text-gray-500 border border-gray-200 shadow-sm">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
                                         <span x-text="modal?.estado"></span>
                                     </span>
                                 </template>
