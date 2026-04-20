@@ -45,7 +45,7 @@ module.exports = {
         'bg-indigo-50', 'bg-indigo-100', 'bg-indigo-500', 'text-indigo-700', 'border-indigo-100',
         'bg-emerald-50','bg-emerald-100','bg-emerald-500','text-emerald-700','border-emerald-100',
         'bg-emerald-200','border-emerald-200','hover:bg-emerald-600','shadow-emerald-200',
-        'bg-amber-50',  'bg-amber-100',  'bg-amber-500',  'text-amber-700',  'border-amber-100',
+        'bg-teal-50',   'bg-teal-100',   'bg-teal-500',   'text-teal-700',   'border-teal-100',
         'bg-orange-50', 'bg-orange-100', 'bg-orange-500', 'text-orange-700', 'border-orange-100',
         'bg-purple-50', 'bg-purple-100', 'bg-purple-500', 'text-purple-700', 'border-purple-100',
         // popup close button
