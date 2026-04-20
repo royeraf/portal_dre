@@ -113,6 +113,7 @@
                 'DOCENTE'              => ['pill'=>'bg-emerald-100 text-emerald-700','bar'=>'bg-emerald-500', 'hbg'=>'bg-emerald-50', 'hbd'=>'border-emerald-100'],
                 'DIRECTIVO'            => ['pill'=>'bg-dre-50 text-dre-primary',     'bar'=>'bg-dre-primary', 'hbg'=>'bg-dre-50',     'hbd'=>'border-dre-primary/20'],
                 'LOCACION DE SERVICIO' => ['pill'=>'bg-teal-100 text-teal-700',      'bar'=>'bg-teal-500',    'hbg'=>'bg-teal-50',    'hbd'=>'border-teal-100'],
+                'LOCACION DE SERVICIOS'=> ['pill'=>'bg-teal-100 text-teal-700',      'bar'=>'bg-teal-500',    'hbg'=>'bg-teal-50',    'hbd'=>'border-teal-100'],
                 'REASIGNACION'         => ['pill'=>'bg-orange-100 text-orange-700',  'bar'=>'bg-orange-500',  'hbg'=>'bg-orange-50',  'hbd'=>'border-orange-100'],
                 '276'                  => ['pill'=>'bg-purple-100 text-purple-700',  'bar'=>'bg-purple-500',  'hbg'=>'bg-purple-50',  'hbd'=>'border-purple-100'],
             ];
