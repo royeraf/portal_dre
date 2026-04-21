@@ -207,7 +207,8 @@ for f in "${EXPOSED[@]}"; do rm_if "$f"; done
 # .env en raíz de subdominios: mover fuera de la raíz pública
 log ""
 log "-- .env en raíces de subdominios (mover a ~/envs_rescued/) --"
-SUBDOMS=(constancias convocatoria datos documentos enlinea resoluciones reunion visitas)
+# documentos y enlinea excluidos: su .env está en raíz de proyecto (no en public/), no es web-accesible
+SUBDOMS=(constancias convocatoria datos resoluciones reunion visitas)
 if [ $APPLY -eq 1 ]; then mkdir -p "$HOME/envs_rescued"; fi
 for s in "${SUBDOMS[@]}"; do
   f="$HOME_DREHUA/${s}.drehuanuco.gob.pe/.env"
