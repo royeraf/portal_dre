@@ -117,11 +117,22 @@ WEBSHELLS=(
   "$HOME_DREHUA/enlinea.drehuanuco.gob.pe/public/img/logominedu/defaults.php"
   "$HOME_DREHUA/enlinea.drehuanuco.gob.pe/public/img/logominedu/index.php"
   "$HOME_DREHUA/public_html/convocatoriaweb/index.php"
-  "$HOME_DREHUA/atencionmesadepartes.drehuanuco.gob.pe/public/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Calculation/Financial/CashFlow/Constant/Periodic/index.php"
-  "$HOME_DREHUA/atencionmesadepartes.drehuanuco.gob.pe/public/ass.php"
+  # atencionmesadepartes: directorio completo eliminado manualmente el 20-abr-2026
   "$HOME_DREHUA/auladgp.drehuanuco.gob.pe/backup/moodle2/tests/fixtures/ALFA_DATA/alfacgiapi/lastp-hidden.php"
+  # confirmados por PHP error logs (17-abr-2026 barrido del atacante)
+  "$HOME_DREHUA/bienvenidos.drehuanuco.gob.pe/vendor/autoload/Authentication/K87sy7.php"
+  "$HOME_DREHUA/datos.drehuanuco.gob.pe/public/vendor/livewire/livewire/livewire.esm/G7sdnm.php"
+  "$HOME_DREHUA/documentos.drehuanuco.gob.pe/public/images/login-bg/about/S7dmg.php"
+  "$HOME_DREHUA/enlinea.drehuanuco.gob.pe/public/build/assets/app-f3d3/Session/Dk34ss.php"
+  "$HOME_DREHUA/drehuanuco.edu.pe/images/modify.php"
 )
 for f in "${WEBSHELLS[@]}"; do rm_if "$f"; done
+
+# directorios completos creados por el atacante
+rm_if "$HOME_DREHUA/bienvenidos.drehuanuco.gob.pe/vendor/autoload/Authentication"
+rm_if "$HOME_DREHUA/datos.drehuanuco.gob.pe/public/vendor/livewire/livewire/livewire.esm"
+rm_if "$HOME_DREHUA/documentos.drehuanuco.gob.pe/public/images/login-bg/about"
+rm_if "$HOME_DREHUA/enlinea.drehuanuco.gob.pe/public/build/assets/app-f3d3"
 
 # si existe el dir completo ALFA_DATA, mandarlo a la basura
 rm_if "$HOME_DREHUA/auladgp.drehuanuco.gob.pe/backup/moodle2/tests/fixtures/ALFA_DATA"
