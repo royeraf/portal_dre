@@ -68,6 +68,14 @@
                     {{-- Degradado inferior --}}
                     <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
 
+                    {{-- Badge Nuevo --}}
+                    @if(\Carbon\Carbon::parse($row->created_at)->gte(now()->subDays(5)))
+                    <span class="absolute top-2 left-2 bg-green-500 text-white
+                                 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                        Nuevo
+                    </span>
+                    @endif
+
                     {{-- Fecha --}}
                     <span class="absolute bottom-2 left-2 bg-yellow-400 text-black
                                  text-[10px] font-mono font-bold px-2 py-0.5 rounded">
