@@ -42,7 +42,7 @@ if [ -n "$APP_URL" ]; then
                 /mision /vision /nosotros /directorioweb \
                 /convocatoriaweb /allnoticias /galeriaimagenes \
                 /comunicadosall /documentosdegestionweb \
-                /infraestructuraall /resoluciones /siagie /epr \
+                /infraestructuraall /infraestructura-galeria /resoluciones /siagie /epr \
                 /convivenciasinviolencia; do
         curl -sk -A "Mozilla/5.0" "${APP_URL}/purge${path}" > /dev/null
     done

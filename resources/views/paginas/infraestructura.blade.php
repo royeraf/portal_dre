@@ -33,10 +33,21 @@
                     Área de Infraestructura
                 </h2>
             </div>
-            <div class="ml-auto hidden sm:flex items-center gap-2">
-                <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">DRE Huánuco</span>
-                <div class="w-1 h-1 rounded-full bg-dre-accent"></div>
-                <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ date('Y') }}</span>
+            <div class="ml-auto flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2">
+                    <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">DRE Huánuco</span>
+                    <div class="w-1 h-1 rounded-full bg-dre-accent"></div>
+                    <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ date('Y') }}</span>
+                </div>
+                @if(count($registros) > 0)
+                <a href="{{ route('infraestructura.galeria') }}"
+                   class="inline-flex items-center gap-2 bg-dre-primary text-white
+                          text-xs font-bold px-4 py-2 rounded-xl shadow-md
+                          hover:bg-dre-accent transition-all duration-200">
+                    <i data-lucide="images" class="w-3.5 h-3.5 shrink-0"></i>
+                    Ver todas las imágenes
+                </a>
+                @endif
             </div>
         </div>
 

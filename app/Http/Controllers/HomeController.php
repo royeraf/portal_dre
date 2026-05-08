@@ -208,6 +208,12 @@ class HomeController extends Controller
         $data['registros']=Infraestructura::orderBy('created_at', 'desc')->take(10)->get();
         return view('paginas/infraestructura', $data);
     }
+    public function infraestructuragaleria(){
+        $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
+        $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
+        $data['registros']=Infraestructura::orderBy('created_at', 'desc')->paginate(12);
+        return view('paginas/infraestructuragaleria', $data);
+    }
     public function showpaginaweb(Pagina $pagina){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $submenus= Menu::whereNotNull('categoriamenu')->get();

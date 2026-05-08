@@ -49,6 +49,7 @@ Route::get('/verconvocatoria/{convocatoria}', [HomeController::class, 'verconvoc
 Route::get('/comunicadosall', [HomeController::class, 'comunicadosall'])->name('comunicadosall');
 Route::get('/documentosdegestionweb', [HomeController::class, 'documentosdegestionweb'])->name('documentosdegestionweb');
 Route::get('/infraestructuraall', [HomeController::class, 'infraestructura'])->name('infraestructuraall');
+Route::get('/infraestructura-galeria', [HomeController::class, 'infraestructuragaleria'])->name('infraestructura.galeria');
 Route::get('/resoluciones', [HomeController::class, 'resoluciones'])->name('resoluciones');
 Route::get('/paginas/{pagina}', [HomeController::class, 'showpaginaweb'])->name('pagina.showpaginaweb');
 
