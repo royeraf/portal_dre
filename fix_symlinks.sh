@@ -20,6 +20,7 @@ FOLDERS=(
     "img/slider"
     "img/mainright"
     "img/directorio"
+    "img/infraestructura"
 )
 
 for folder in "${FOLDERS[@]}"; do
