@@ -212,6 +212,15 @@
             Novedades
         </span>
         <div class="flex-1 h-px bg-blue-200"></div>
+        @if(isset($popup))
+        <button onclick="window.dispatchEvent(new CustomEvent('open-comunicados'))"
+                class="inline-flex items-center gap-1.5 bg-green-600 text-white
+                       text-xs font-bold px-3 py-1.5 rounded-full shadow-sm
+                       hover:bg-green-700 transition-all duration-200 shrink-0">
+            <i data-lucide="megaphone" class="w-3.5 h-3.5 shrink-0"></i>
+            Ver comunicados
+        </button>
+        @endif
     </div>
 </div>
 <section class="sm:px-4 md:px-12 sm:py-3"
@@ -826,6 +835,7 @@
     $popupImages = $imagenes->map(fn($r) => asset('img/popup/'.$r->imagen))->toArray();
 @endphp
 <div x-data="{ open: true }" x-show="open" x-transition.opacity x-cloak
+     @open-comunicados.window="open = true"
      class="fixed inset-0 z-[9998] flex items-end sm:items-center justify-center bg-black/60 p-4 sm:p-6"
      @click.self="open = false">
 
