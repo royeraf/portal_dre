@@ -288,7 +288,7 @@
                  role="dialog" aria-modal="true">
 
                 {{-- Backdrop --}}
-                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                <div class="absolute inset-0 bg-black/60"
                      x-show="modal"
                      x-transition:enter="transition ease-out duration-200"
                      x-transition:enter-start="opacity-0"
@@ -299,15 +299,16 @@
                      @click="closeModal()">
                 </div>
 
-                {{-- Panel: wrapper exterior recorta el scrollbar con overflow-hidden + border-radius --}}
+                {{-- Panel --}}
                 <div class="relative w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden"
+                     style="will-change: transform"
                      x-show="modal"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter="transition ease-out duration-250"
+                     x-transition:enter-start="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95"
                      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
                      x-transition:leave="transition ease-in duration-200"
                      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                     x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
+                     x-transition:leave-end="opacity-0 translate-y-full sm:translate-y-4 sm:scale-95"
                      @click.stop>
                 {{-- Interior: scrollea aquí, el scrollbar queda dentro del border-radius --}}
                 <div class="bg-white overflow-y-auto max-h-[92dvh] sm:max-h-[85vh]
@@ -416,7 +417,7 @@
                     </div>
 
                     {{-- Footer: sticky bottom-0 — siempre visible --}}
-                    <div class="sticky bottom-0 z-20 px-6 py-4 border-t border-gray-100 bg-gray-50/95 backdrop-blur-sm flex justify-end">
+                    <div class="sticky bottom-0 z-20 px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
                         <button @click="closeModal()"
                                 class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-dre-primary text-white text-sm font-semibold hover:bg-dre-accent transition-colors shadow-sm">
                             <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i>
