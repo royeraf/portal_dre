@@ -322,9 +322,6 @@
                     ['url' => 'https://drive.google.com/file/d/1HggIH8vWMyCGRxHbyK6-33la7yHcBjcY/view?usp=sharing',
                                                                  'icon' => 'link',           'label' => 'Directorio DRE-UGEL',      'target' => '_blank',
                      'ibg' => 'bg-teal-100',    'ico' => 'text-teal-600',    'bar' => 'bg-teal-500',    'hbg' => 'group-hover:bg-teal-50/50'],
-                    ['url' => 'https://gestion.drehuanuco.gob.pe/tablas/evepublics',
-                                                                 'icon' => 'calendar-days',  'label' => 'Agenda Directoral',        'target' => '_blank',
-                     'ibg' => 'bg-yellow-100',  'ico' => 'text-yellow-600',  'bar' => 'bg-yellow-400',  'hbg' => 'group-hover:bg-yellow-50/50'],
                 ];
                 @endphp
 
