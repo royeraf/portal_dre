@@ -218,7 +218,7 @@
                        text-xs font-bold px-3 py-1.5 rounded-full shadow-sm
                        hover:bg-green-700 transition-all duration-200 shrink-0">
             <i data-lucide="megaphone" class="w-3.5 h-3.5 shrink-0"></i>
-            Ver detalles
+            Ver comunicados
         </button>
         @endif
     </div>
@@ -952,7 +952,7 @@
                           text-white font-semibold text-xs sm:text-sm py-2.5 px-2 sm:px-3 rounded-xl
                           transition-colors shadow-sm min-w-0">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    <span class="truncate">Ver comunicado</span>
+                    <span class="truncate">Ver detalles</span>
                 </a>
             </div>
 
