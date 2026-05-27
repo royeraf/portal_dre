@@ -831,7 +831,13 @@
     $popupLinks  = $imagenes->pluck('enlace')->toArray();
     $popupImages = $imagenes->map(fn($r) => asset('img/popup/'.$r->imagen))->toArray();
 @endphp
-<div x-data="{ open: true }" x-show="open" x-transition.opacity x-cloak
+<div x-data="{ open: true }" x-show="open" x-cloak
+     x-transition:enter="transition ease-out duration-250"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
      @open-comunicados.window="open = true"
      class="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60 p-4 sm:p-6"
      @click.self="open = false">
@@ -841,8 +847,8 @@
          x-transition:enter-start="opacity-0 scale-95"
          x-transition:enter-end="opacity-100 scale-100"
          x-transition:leave="transition ease-in duration-200 transform"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 translate-y-16 scale-95"
+         x-transition:leave-start="translate-y-0"
+         x-transition:leave-end="translate-y-full"
          class="bg-white w-full sm:max-w-lg rounded-2xl shadow-2xl flex flex-col
                 max-h-[88dvh] sm:max-h-[88vh] overflow-hidden">
 
