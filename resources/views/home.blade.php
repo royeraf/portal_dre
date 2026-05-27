@@ -218,7 +218,7 @@
                        text-xs font-bold px-3 py-1.5 rounded-full shadow-sm
                        hover:bg-green-700 transition-all duration-200 shrink-0">
             <i data-lucide="megaphone" class="w-3.5 h-3.5 shrink-0"></i>
-            Ver comunicados
+            Ver detalles
         </button>
         @endif
     </div>
