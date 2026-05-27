@@ -865,7 +865,7 @@
                     class="shrink-0 group flex items-center gap-1 px-2.5 py-1.5 rounded-full
                            bg-red-600 hover:bg-red-500 active:bg-red-700
                            text-white text-xs font-semibold
-                           transition-all duration-200 hover:scale-105 active:scale-90">
+                           transition-colors duration-200">
                 <i data-lucide="x" class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-90"></i>
                 <span class="hidden sm:inline">Cerrar</span>
             </button>
