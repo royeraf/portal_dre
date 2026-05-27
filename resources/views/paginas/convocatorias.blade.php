@@ -25,22 +25,22 @@
         {{-- ── WRAPPER ALPINE ───────────────────────────────── --}}
         <div
             x-data="{
-                view:  localStorage.getItem('conv_view') || 'list',
+                view:  window.innerWidth < 640 ? 'list' : (localStorage.getItem('conv_view') || 'list'),
                 modal: null,
                 openModal(data)  { this.modal = data; document.body.style.overflow = 'hidden'; },
                 closeModal()     { this.modal = null; document.body.style.overflow = ''; }
             }"
-            x-init="$watch('view', v => localStorage.setItem('conv_view', v))"
+            x-init="$watch('view', v => { localStorage.setItem('conv_view', v); $nextTick(() => reInitLucideIcons()); })"
             @keydown.escape.window="closeModal()">
 
             {{-- ── FILTROS ───────────────────────────────────── --}}
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+            <div class="bg-white rounded-2xl border border-slate-100/90 shadow-[0_4px_24px_-4px_rgba(1,48,114,0.04)] p-5 mb-6">
                 <div class="flex items-center justify-between gap-3 mb-4">
                     <div class="flex items-center gap-2">
                         <i data-lucide="sliders-horizontal" class="w-4 h-4 text-dre-accent shrink-0"></i>
                         <span class="font-display font-bold text-gray-800 text-sm uppercase tracking-wider">Filtrar Convocatorias</span>
                     </div>
-                    <div class="flex items-center gap-1 shrink-0">
+                    <div class="hidden sm:flex items-center gap-1 shrink-0">
                         <button @click="view = 'list'"
                                 :class="view === 'list' ? 'bg-dre-primary text-white shadow-sm' : 'bg-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-200'"
                                 class="p-2 rounded-lg transition-all duration-200" title="Vista lista">
@@ -119,7 +119,7 @@
             ];
             @endphp
 
-            <div :class="view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4' : 'flex flex-col gap-3'">
+            <div :class="view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4' : 'flex flex-col gap-4'">
 
                 @forelse ($convocatorias as $row)
                 @php
@@ -149,33 +149,35 @@
                     ];
                 @endphp
 
-                <article class="group bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col
-                                border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5
-                                {{ $abierto ? 'border-emerald-200' : 'border-gray-100' }}">
+                <article class="group bg-white rounded-2xl overflow-hidden flex flex-col
+                                border transition-all duration-300 ease-out hover:-translate-y-1.5
+                                {{ $abierto 
+                                   ? 'border-emerald-200 shadow-[0_4px_24px_-4px_rgba(16,185,129,0.06)] hover:border-emerald-400 hover:shadow-[0_20px_48px_-10px_rgba(16,185,129,0.14)]' 
+                                   : 'border-gray-200 shadow-[0_4px_24px_-4px_rgba(1,48,114,0.04)] hover:border-dre-accent/30 hover:shadow-[0_20px_48px_-10px_rgba(1,48,114,0.10)]' }}">
 
                     {{-- Zone 1: Category header --}}
-                    <div class="flex items-center flex-wrap gap-x-2 gap-y-1.5 px-5 py-2.5 {{ $ts['hbg'] }} border-b {{ $ts['hbd'] }}">
+                    <div class="flex items-center flex-wrap gap-x-2 gap-y-1.5 px-4 py-3 sm:px-5 sm:py-3.5 {{ $ts['hbg'] }} border-b {{ $ts['hbd'] }}/50 transition-colors">
                         <span class="shrink-0 inline-flex px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest {{ $ts['pill'] }}">
                             {{ $row->tipo }}
                         </span>
                         @if($finalizado)
-                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 shadow-sm">
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-100/80 shadow-sm">
                                 <svg class="w-3 h-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
                                 FINALIZADO
                             </span>
                         @elseif($abierto)
-                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white text-emerald-700 border border-emerald-200 shadow-sm">
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                 ABIERTO
                             </span>
                         @else
-                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white/70 text-gray-500 border border-gray-200 shadow-sm">
-                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-slate-50 text-slate-600 border border-slate-200/80 shadow-sm">
+                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                                 {{ strtoupper($row->estado) }}
                             </span>
                         @endif
                         @if($nuevo && !$finalizado)
-                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shadow-sm animate-pulse">
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100/80 shadow-sm animate-pulse">
                                 <svg class="w-3 h-3 text-rose-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
                                 NUEVO
                             </span>
@@ -183,37 +185,45 @@
                     </div>
 
                     {{-- Zone 2: Title --}}
-                    <div :class="view === 'grid' ? 'px-4 pt-3 pb-2' : 'px-5 pt-4 pb-3'">
-                        <h3 class="font-display font-bold text-gray-900 leading-snug group-hover:text-dre-accent transition-colors duration-200"
-                            :class="view === 'grid' ? 'text-sm line-clamp-3' : 'text-base sm:text-[17px]'">
+                    <div :class="view === 'grid' ? 'px-4 pt-3.5 pb-2' : 'px-4 pt-4 pb-3 sm:px-5 sm:pt-4.5 sm:pb-3.5'">
+                        <h3 class="font-display font-bold text-gray-800 leading-snug group-hover:text-dre-accent transition-colors duration-200"
+                            :class="view === 'grid' ? 'text-sm line-clamp-3' : 'text-[15px] sm:text-[17px]'">
                             {{ $row->titulo }}
                         </h3>
                     </div>
 
                     {{-- Zone 3: Meta + CTA --}}
-                    <div class="mt-auto border-t border-gray-100 bg-gray-50/50"
-                         :class="view === 'grid' ? 'px-4 py-3' : 'flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3'">
+                    <div class="mt-auto border-t border-gray-100/60 bg-slate-50/50"
+                         :class="view === 'grid' ? 'px-4 py-3.5' : 'px-4 py-3 sm:px-5 sm:py-3.5'">
 
                         {{-- Lista --}}
                         <template x-if="view === 'list'">
-                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 w-full">
-                                <div class="flex items-center gap-1.5 text-xs text-gray-400">
-                                    <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-dre-accent shrink-0"></i>
-                                    <span>Inicia: <span class="font-semibold text-gray-600">{{ $fi }}</span></span>
-                                    <span class="text-gray-300 mx-0.5">·</span>
-                                    <i data-lucide="calendar-days" class="w-3.5 h-3.5 {{ $abierto ? 'text-amber-500' : 'text-gray-400' }} shrink-0"></i>
-                                    <span class="{{ $abierto ? 'text-amber-500' : '' }}">Termina: <span class="font-semibold {{ $abierto ? 'text-amber-600' : 'text-gray-600' }}">{{ $ft }}</span></span>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-y-2 gap-x-4 w-full sm:w-auto">
+                                    {{-- Fechas --}}
+                                    <div class="flex flex-col min-[480px]:flex-row min-[480px]:items-center gap-y-1.5 gap-x-3 text-xs text-gray-500">
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-dre-accent shrink-0"></i>
+                                            <span>Inicia: <span class="font-semibold text-gray-700">{{ $fi }}</span></span>
+                                        </div>
+                                        <span class="hidden min-[480px]:inline text-gray-300">·</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="calendar-days" class="w-3.5 h-3.5 {{ $abierto ? 'text-amber-500' : 'text-gray-400' }} shrink-0"></i>
+                                            <span class="{{ $abierto ? 'text-amber-500' : '' }}">Termina: <span class="font-semibold {{ $abierto ? 'text-amber-600' : 'text-gray-700' }}">{{ $ft }}</span></span>
+                                        </div>
+                                    </div>
+                                    {{-- Archivos --}}
+                                    @if(count($row->archivos) > 0)
+                                    <div class="flex items-center gap-1.5 text-xs text-gray-500 bg-slate-100/80 px-2 py-0.5 rounded-md w-fit shrink-0">
+                                        <i data-lucide="paperclip" class="w-3.5 h-3.5 text-gray-400 shrink-0"></i>
+                                        <span class="font-medium">{{ count($row->archivos) }} {{ count($row->archivos) > 1 ? 'archivos' : 'archivo' }}</span>
+                                    </div>
+                                    @endif
                                 </div>
-                                @if(count($row->archivos) > 0)
-                                <div class="flex items-center gap-1.5 text-xs text-gray-400">
-                                    <i data-lucide="paperclip" class="w-3.5 h-3.5 shrink-0"></i>
-                                    <span>{{ count($row->archivos) }} archivo{{ count($row->archivos) > 1 ? 's' : '' }}</span>
-                                </div>
-                                @endif
                                 @if($detail)
                                 <button data-modal="{{ json_encode($mdata) }}"
                                         @click="openModal(JSON.parse($el.dataset.modal))"
-                                        class="ml-auto flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200
+                                        class="w-full sm:w-auto justify-center flex items-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-xl sm:rounded-lg text-xs font-bold shadow-sm transition-all duration-200 shrink-0
                                                {{ $abierto ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200' : 'bg-dre-primary text-white hover:bg-dre-accent shadow-blue-200' }}">
                                     <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0 pointer-events-none"></i>
                                     Ver detalle
@@ -224,27 +234,27 @@
 
                         {{-- Cuadrícula --}}
                         <template x-if="view === 'grid'">
-                            <div class="w-full space-y-2">
-                                <div class="flex flex-col gap-1 text-[11px] text-gray-400">
+                            <div class="w-full space-y-3">
+                                <div class="flex flex-col gap-1.5 text-xs text-gray-500">
                                     <div class="flex items-center gap-1.5">
-                                        <i data-lucide="calendar-days" class="w-3 h-3 text-dre-accent shrink-0"></i>
-                                        <span>Inicia: <span class="font-semibold text-gray-600">{{ $fi }}</span></span>
+                                        <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-dre-accent shrink-0"></i>
+                                        <span>Inicia: <span class="font-semibold text-gray-700">{{ $fi }}</span></span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
-                                        <i data-lucide="calendar-days" class="w-3 h-3 {{ $abierto ? 'text-amber-500' : 'text-gray-400' }} shrink-0"></i>
-                                        <span class="{{ $abierto ? 'text-amber-500' : '' }}">Termina: <span class="font-semibold {{ $abierto ? 'text-amber-600' : 'text-gray-600' }}">{{ $ft }}</span></span>
+                                        <i data-lucide="calendar-days" class="w-3.5 h-3.5 {{ $abierto ? 'text-amber-500' : 'text-gray-400' }} shrink-0"></i>
+                                        <span class="{{ $abierto ? 'text-amber-500' : '' }}">Termina: <span class="font-semibold {{ $abierto ? 'text-amber-600' : 'text-gray-700' }}">{{ $ft }}</span></span>
                                     </div>
                                     @if(count($row->archivos) > 0)
-                                    <div class="flex items-center gap-1.5">
-                                        <i data-lucide="paperclip" class="w-3 h-3 shrink-0"></i>
-                                        <span>{{ count($row->archivos) }} archivo{{ count($row->archivos) > 1 ? 's' : '' }}</span>
+                                    <div class="flex items-center gap-1.5 bg-slate-100/80 px-2 py-0.5 rounded-md w-fit mt-1">
+                                        <i data-lucide="paperclip" class="w-3.5 h-3.5 text-gray-400 shrink-0"></i>
+                                        <span class="font-medium text-xs">{{ count($row->archivos) }} {{ count($row->archivos) > 1 ? 'archivos' : 'archivo' }}</span>
                                     </div>
                                     @endif
                                 </div>
                                 @if($detail)
                                 <button data-modal="{{ json_encode($mdata) }}"
                                         @click="openModal(JSON.parse($el.dataset.modal))"
-                                        class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200
+                                        class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl sm:rounded-lg text-xs font-bold shadow-sm transition-all duration-200
                                                {{ $abierto ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200' : 'bg-dre-primary text-white hover:bg-dre-accent shadow-blue-200' }}">
                                     <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0 pointer-events-none"></i>
                                     Ver detalle
@@ -284,7 +294,7 @@
             {{-- ══════════════════════════════════════════════ --}}
             <div x-show="modal"
                  x-cloak
-                 class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+                 class="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4"
                  role="dialog" aria-modal="true">
 
                 {{-- Backdrop --}}
@@ -300,7 +310,7 @@
                 </div>
 
                 {{-- Panel --}}
-                <div class="relative w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden"
+                <div class="relative w-full sm:max-w-2xl rounded-t-2xl sm:rounded-2xl shadow-[0_24px_70px_rgba(1,48,114,0.18)] border border-slate-100 overflow-hidden"
                      style="will-change: transform"
                      x-show="modal"
                      x-transition:enter="transition ease-out duration-250"
@@ -312,45 +322,45 @@
                      @click.stop>
                 {{-- Interior: scrollea aquí, el scrollbar queda dentro del border-radius --}}
                 <div class="bg-white overflow-y-auto max-h-[92dvh] sm:max-h-[85vh]
-                            [&::-webkit-scrollbar]:w-1.5
-                            [&::-webkit-scrollbar-track]:bg-gray-100
+                            [&::-webkit-scrollbar]:w-2
+                            [&::-webkit-scrollbar-track]:bg-slate-100/80
                             [&::-webkit-scrollbar-thumb]:rounded-full
-                            [&::-webkit-scrollbar-thumb]:bg-gray-300">
+                            [&::-webkit-scrollbar-thumb]:bg-slate-400/80
+                            hover:[&::-webkit-scrollbar-thumb]:bg-slate-500">
 
                     {{-- Header: sticky top-0 — siempre visible --}}
-                    <div class="sticky top-0 z-20 flex items-start justify-between gap-4 px-6 py-4 border-b border-black/5"
+                    <div class="sticky top-0 z-20 flex items-center justify-between gap-4 px-6 py-4 border-b border-black/5"
                          :class="modal?.hbg ?? 'bg-white'">
-                        <div class="flex flex-col gap-2 min-w-0">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="font-display font-bold text-gray-700 text-xs sm:text-sm uppercase tracking-wider">Convocatoria</span>
+                            <div class="w-px h-4 bg-gray-200"></div>
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="inline-flex px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest"
                                       :class="modal?.pill"
                                       x-text="modal?.tipo">
                                 </span>
                                 <template x-if="modal?.finalizado">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 shadow-sm">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-100/80 shadow-sm">
                                         <svg class="w-3 h-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
                                         FINALIZADO
                                     </span>
                                 </template>
                                 <template x-if="modal?.abierto && !modal?.finalizado">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white text-emerald-700 border border-emerald-200 shadow-sm">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                         ABIERTO
                                     </span>
                                 </template>
                                 <template x-if="!modal?.abierto && !modal?.finalizado">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-white/80 text-gray-500 border border-gray-200 shadow-sm">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-slate-50 text-slate-600 border border-slate-200/80 shadow-sm">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                                         <span x-text="modal?.estado"></span>
                                     </span>
                                 </template>
                             </div>
-                            <h2 class="font-display font-bold text-gray-900 text-base sm:text-lg leading-snug"
-                                x-text="modal?.titulo">
-                            </h2>
                         </div>
                         <button @click="closeModal()"
-                                class="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 text-gray-500 hover:text-gray-800 transition-all duration-200 mt-0.5">
+                                class="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 text-gray-500 hover:text-gray-800 transition-all duration-200">
                             <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i>
                         </button>
                     </div>
@@ -372,6 +382,13 @@
 
                     {{-- Cuerpo — scrollea con el contenido --}}
                     <div class="px-6 py-5 space-y-6">
+
+                        {{-- Título de la Convocatoria --}}
+                        <div class="border-b border-gray-100 pb-4">
+                            <h2 class="font-display font-bold text-gray-900 text-base sm:text-xl leading-snug"
+                                x-text="modal?.titulo">
+                            </h2>
+                        </div>
 
                         {{-- Descripción --}}
                         <template x-if="modal?.descripcion">

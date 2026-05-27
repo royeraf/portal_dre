@@ -153,7 +153,7 @@ class HomeController extends Controller
         $convocatorias->whereBetween('fecha_inicio', [$request->startDate, $request->endDate]);
     }
 
-    $convocatorias = $convocatorias->orderBy('id', 'desc')->paginate(10);
+    $convocatorias = $convocatorias->orderBy('id', 'desc')->paginate(12);
 
     foreach ($convocatorias as $row) {
         $archivoconvocatoria = ArchivoConvocatoria::where('id_convocatoria', $row->id)->get();

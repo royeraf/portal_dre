@@ -61,6 +61,7 @@ const icons = {
 };
 
 createIcons({ icons, attrs: { 'stroke-width': 1.75 } });
+window.reInitLucideIcons = () => createIcons({ icons, attrs: { 'stroke-width': 1.75 } });
 
 // ── Skeleton removal on image load ─────────────────────────
 document.querySelectorAll('.img-wrap').forEach(wrap => {
