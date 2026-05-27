@@ -139,6 +139,7 @@
                         'estado'      => strtoupper($row->estado),
                         'abierto'     => $abierto,
                         'finalizado'  => $finalizado,
+                        'nuevo'       => $nuevo,
                         'fi'          => $fi,
                         'ft'          => $ft,
                         'descripcion' => $row->descripcion,
@@ -329,40 +330,49 @@
                             hover:[&::-webkit-scrollbar-thumb]:bg-slate-500">
 
                     {{-- Header: sticky top-0 — siempre visible --}}
-                    <div class="sticky top-0 z-20 flex items-center justify-between gap-4 px-6 py-4 border-b border-black/5"
+                    <div class="sticky top-0 z-20 flex flex-col gap-3 px-6 py-4 border-b border-black/5"
                          :class="modal?.hbg ?? 'bg-white'">
-                        <div class="flex items-center gap-2.5 min-w-0">
+                        
+                        {{-- Row 1: Header Title + Close Button --}}
+                        <div class="flex items-center justify-between w-full">
                             <span class="font-display font-bold text-gray-700 text-xs sm:text-sm uppercase tracking-wider">Convocatoria</span>
-                            <div class="w-px h-4 bg-gray-200"></div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="inline-flex px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest"
-                                      :class="modal?.pill"
-                                      x-text="modal?.tipo">
-                                </span>
-                                <template x-if="modal?.finalizado">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-100/80 shadow-sm">
-                                        <svg class="w-3 h-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
-                                        FINALIZADO
-                                    </span>
-                                </template>
-                                <template x-if="modal?.abierto && !modal?.finalizado">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                        ABIERTO
-                                    </span>
-                                </template>
-                                <template x-if="!modal?.abierto && !modal?.finalizado">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-slate-50 text-slate-600 border border-slate-200/80 shadow-sm">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                        <span x-text="modal?.estado"></span>
-                                    </span>
-                                </template>
-                            </div>
+                            <button @click="closeModal()"
+                                    class="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 text-gray-500 hover:text-gray-800 transition-all duration-200">
+                                <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i>
+                            </button>
                         </div>
-                        <button @click="closeModal()"
-                                class="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 text-gray-500 hover:text-gray-800 transition-all duration-200">
-                            <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i>
-                        </button>
+
+                        {{-- Row 2: Badges (Correctly distributed) --}}
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="inline-flex px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-widest"
+                                  :class="modal?.pill"
+                                  x-text="modal?.tipo">
+                            </span>
+                            <template x-if="modal?.finalizado">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-100/80 shadow-sm">
+                                    <svg class="w-3 h-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+                                    FINALIZADO
+                                </span>
+                            </template>
+                            <template x-if="modal?.abierto && !modal?.finalizado">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    ABIERTO
+                                </span>
+                            </template>
+                            <template x-if="!modal?.abierto && !modal?.finalizado">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-slate-50 text-slate-600 border border-slate-200/80 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                    <span x-text="modal?.estado"></span>
+                                </span>
+                            </template>
+                            <template x-if="modal?.nuevo && !modal?.finalizado">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100/80 shadow-sm animate-pulse">
+                                    <svg class="w-3 h-3 text-rose-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
+                                    NUEVO
+                                </span>
+                            </template>
+                        </div>
                     </div>
 
                     {{-- Meta (fechas) — scrollea con el contenido --}}
