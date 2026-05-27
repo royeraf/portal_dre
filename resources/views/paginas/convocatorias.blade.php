@@ -425,15 +425,15 @@
                                     <template x-for="(archivo, i) in modal?.archivos" :key="i">
                                         <li>
                                             <a :href="archivo.url" target="_blank"
-                                               class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50
+                                               class="flex items-start gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50
                                                       hover:bg-dre-50 hover:border-dre-accent/30 transition-all duration-200 group/file">
-                                                <span class="w-8 h-8 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center shrink-0 group-hover/file:bg-red-100 transition-colors">
+                                                <span class="w-8 h-8 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center shrink-0 group-hover/file:bg-red-100 transition-colors mt-0.5">
                                                     <svg class="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
                                                 </span>
-                                                <span class="flex-1 min-w-0 text-xs font-medium text-gray-700 group-hover/file:text-dre-accent transition-colors truncate"
+                                                <span class="flex-1 min-w-0 text-xs font-medium text-gray-700 group-hover/file:text-dre-accent transition-colors break-words mt-1 leading-normal"
                                                       x-text="archivo.nom">
                                                 </span>
-                                                <svg class="w-3.5 h-3.5 text-gray-300 group-hover/file:text-dre-accent shrink-0 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                                <svg class="w-3.5 h-3.5 text-gray-300 group-hover/file:text-dre-accent shrink-0 transition-colors mt-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                                             </a>
                                         </li>
                                     </template>
