@@ -883,7 +883,7 @@
             {{-- Imagen --}}
             <div class="relative flex-1 min-h-0 overflow-hidden bg-gray-50">
                 @foreach($imagenes as $ri => $row)
-                    <div x-show="slide === {{ $ri }}" x-transition.opacity class="h-full relative">
+                    <div x-show="slide === {{ $ri }}" x-transition.opacity class="absolute inset-0 w-full h-full">
                         {{-- Skeleton --}}
                         <div class="absolute inset-0 skeleton rounded-none img-skeleton-{{ $ri }}"
                              id="skeleton-{{ $ri }}"></div>
