@@ -9,6 +9,7 @@ use App\Models\EventoArea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Menu;
+use Mews\Purifier\Facades\Purifier;
 
 class DireccionController extends Controller
 {
@@ -176,14 +177,14 @@ class DireccionController extends Controller
             if ($pagina) {
                 $pagina->update([
                     'nom_pagina' => $request->nom_pagina,
-                    'cont_pagina' => $request->cont_pagina
+                    'cont_pagina' => Purifier::clean($request->cont_pagina, 'rich_content')
                 ]);
             } else {
                 // Crear la página si no existe
                 Pagina::create([
                     'id' => $direccion->idpagina,
                     'nom_pagina' => $request->nom_pagina,
-                    'cont_pagina' => $request->cont_pagina
+                    'cont_pagina' => Purifier::clean($request->cont_pagina, 'rich_content')
                 ]);
             }
         }

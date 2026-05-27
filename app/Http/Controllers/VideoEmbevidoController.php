@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\VideoEmbevido;
+use Mews\Purifier\Facades\Purifier;
 
 class VideoEmbevidoController extends Controller
 {
@@ -14,7 +15,7 @@ class VideoEmbevidoController extends Controller
     public function store(Request $request){
         $videoempbevido = new VideoEmbevido();
         $videoempbevido->titulo = $request->titulo;
-        $videoempbevido->contenido=$request->contenido;
+        $videoempbevido->contenido=Purifier::clean($request->contenido, 'video_embed');
         $videoempbevido->save();
         return redirect()->route('videoembevido');
     }
@@ -28,7 +29,7 @@ class VideoEmbevidoController extends Controller
     }
     public function update(Request $request, VideoEmbevido $videoembevido){
         $videoembevido->titulo=$request->titulo;
-        $videoembevido->contenido=$request->contenido;
+        $videoembevido->contenido=Purifier::clean($request->contenido, 'video_embed');
         $videoembevido->save();
         return redirect()->route('videoembevido', $videoembevido);
     }

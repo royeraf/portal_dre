@@ -5,6 +5,7 @@ use App\Models\Pagina;
 use Illuminate\Http\Request;
 use App\Models\Menu;
 use App\Models\SubMenu;
+use Mews\Purifier\Facades\Purifier;
 class PaginaWebController extends Controller
 {
     public function index(){
@@ -18,7 +19,7 @@ class PaginaWebController extends Controller
         $pagina = new pagina();
         $pagina->id=$idpagina;
         $pagina->nom_pagina=$request->nom_pagina;
-        $pagina->cont_pagina=$request->cont_pagina;
+        $pagina->cont_pagina=Purifier::clean($request->cont_pagina, 'rich_content');
         $pagina->save();
         return redirect()->route('paginawebadmin');
     }
@@ -34,7 +35,7 @@ class PaginaWebController extends Controller
     }
     public function update(Pagina $pagina, Request $request){
         $pagina->nom_pagina=$request->nom_pagina;
-        $pagina->cont_pagina=$request->cont_pagina;
+        $pagina->cont_pagina=Purifier::clean($request->cont_pagina, 'rich_content');
         $pagina->save();
         return redirect()->route('paginawebadmin');
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Noticia;
+use Mews\Purifier\Facades\Purifier;
 class NoticiaController extends Controller
 {
     public function index(){
@@ -22,7 +23,7 @@ class NoticiaController extends Controller
         $noticia = new Noticia();
         $noticia->titulo = $request->titulo;
         $noticia->descripcioncorta = $request->descripcioncorta;
-        $noticia->contenido = $request->contenido;
+        $noticia->contenido = Purifier::clean($request->contenido, 'rich_content');
         $noticia->iduser = $request->iduser;
         $noticia->fechapubli = $request->fechapubli;
         if($request->hasFile('img1')){
@@ -80,7 +81,7 @@ class NoticiaController extends Controller
         ]);
         $noticia->titulo = $request->titulo;
         $noticia->descripcioncorta = $request->descripcioncorta;
-        $noticia->contenido=$request->contenido;
+        $noticia->contenido=Purifier::clean($request->contenido, 'rich_content');
         if($request->hasFile('img1')){
             $file = $request->file('img1');
             $image_path = public_path('img/noticias/').$noticia->img1;
