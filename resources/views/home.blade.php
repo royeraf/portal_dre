@@ -881,7 +881,7 @@
              class="flex flex-col flex-1 min-h-0">
 
             {{-- Imagen --}}
-            <div class="relative flex-1 min-h-0 overflow-hidden bg-gray-50">
+            <div class="relative w-full h-[55dvh] sm:h-[450px] overflow-hidden bg-gray-50">
                 @foreach($imagenes as $ri => $row)
                     <div x-show="slide === {{ $ri }}" x-transition.opacity class="absolute inset-0 w-full h-full">
                         {{-- Skeleton --}}
