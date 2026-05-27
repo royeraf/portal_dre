@@ -833,7 +833,7 @@
 @endphp
 <div x-data="{ open: true }" x-show="open" x-transition.opacity x-cloak
      @open-comunicados.window="open = true"
-     class="fixed inset-0 z-[9998] flex items-end sm:items-center justify-center bg-black/60 p-4 sm:p-6"
+     class="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60 p-4 sm:p-6"
      @click.self="open = false">
 
     <div x-show="open"
