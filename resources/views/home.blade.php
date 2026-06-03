@@ -840,7 +840,7 @@
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0"
      @open-comunicados.window="open = true"
-     class="fixed inset-0 z-[9998] flex items-stretch justify-center bg-black/60 py-4 px-3 sm:py-6 sm:px-4"
+     class="fixed inset-0 z-[9998] flex items-center sm:items-stretch justify-center bg-black/60 py-4 px-3 sm:py-6 sm:px-4"
      @click.self="open = false">
 
     <div x-show="open"
@@ -877,11 +877,28 @@
             </button>
         </div>
 
-        <div x-data="{ slide: 0, total: {{ count($imagenes) }}, links: {{ json_encode($popupLinks) }}, imgs: {{ json_encode($popupImages) }} }"
+        <div x-data="{
+                 slide: 0,
+                 total: {{ count($imagenes) }},
+                 links: {{ json_encode($popupLinks) }},
+                 imgs: {{ json_encode($popupImages) }},
+                 ratio: null,
+                 updateRatio() {
+                   const img = document.getElementById('popup-img-' + this.slide);
+                   if (!img) return;
+                   if (img.complete && img.naturalWidth > 0) {
+                     this.ratio = img.naturalWidth / img.naturalHeight;
+                   } else {
+                     img.addEventListener('load', () => { this.ratio = img.naturalWidth / img.naturalHeight; }, { once: true });
+                   }
+                 }
+             }"
+             x-effect="$nextTick(() => updateRatio())"
              class="flex flex-col flex-1 min-h-0">
 
             {{-- Imagen --}}
-            <div class="relative w-full flex-1 overflow-hidden bg-gray-50">
+            <div class="relative w-full sm:flex-1 overflow-hidden bg-gray-50"
+                 :style="window.innerWidth < 640 && ratio ? 'height:' + Math.min((window.innerWidth - 24) / ratio, window.innerHeight * 0.72) + 'px' : null">
                 @foreach($imagenes as $ri => $row)
                     <div x-show="slide === {{ $ri }}" x-transition.opacity class="absolute inset-0 w-full h-full">
                         {{-- Skeleton --}}
