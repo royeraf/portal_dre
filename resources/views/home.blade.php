@@ -839,7 +839,7 @@
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0"
      @open-comunicados.window="open = true"
-     class="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60 p-4 sm:p-6"
+     class="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60"
      @click.self="open = false">
 
     <div x-show="open"
@@ -849,8 +849,8 @@
          x-transition:leave="transition ease-in duration-200 transform"
          x-transition:leave-start="translate-y-0"
          x-transition:leave-end="translate-y-full"
-         class="bg-white w-full sm:max-w-lg rounded-2xl shadow-2xl flex flex-col
-                max-h-[88dvh] sm:max-h-[88vh] overflow-hidden">
+         class="bg-white w-full sm:max-w-lg shadow-2xl flex flex-col
+                h-dvh sm:h-dvh overflow-hidden">
 
         {{-- Barra superior --}}
         <div class="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 border-b border-gray-100 shrink-0 bg-dre-primary">
@@ -881,7 +881,7 @@
              class="flex flex-col flex-1 min-h-0">
 
             {{-- Imagen --}}
-            <div class="relative w-full h-[55dvh] sm:h-[450px] overflow-hidden bg-gray-50">
+            <div class="relative w-full flex-1 overflow-hidden bg-gray-50">
                 @foreach($imagenes as $ri => $row)
                     <div x-show="slide === {{ $ri }}" x-transition.opacity class="absolute inset-0 w-full h-full">
                         {{-- Skeleton --}}
