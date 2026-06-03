@@ -831,7 +831,8 @@
     $popupLinks  = $imagenes->pluck('enlace')->toArray();
     $popupImages = $imagenes->map(fn($r) => asset('img/popup/'.$r->imagen))->toArray();
 @endphp
-<div x-data="{ open: true }" x-show="open" x-cloak
+<div x-data="{ open: true }"
+     x-show="open" x-cloak
      x-transition:enter="transition ease-out duration-250"
      x-transition:enter-start="opacity-0"
      x-transition:enter-end="opacity-100"
@@ -849,7 +850,7 @@
          x-transition:leave="transition ease-in duration-200 transform"
          x-transition:leave-start="translate-y-0"
          x-transition:leave-end="translate-y-full"
-         class="bg-white w-full sm:max-w-2xl rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+         class="bg-white w-full sm:max-w-xl rounded-2xl shadow-2xl flex flex-col overflow-hidden">
 
         {{-- Barra superior --}}
         <div class="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 border-b border-gray-100 shrink-0 bg-dre-primary">
