@@ -839,7 +839,7 @@
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0"
      @open-comunicados.window="open = true"
-     class="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60"
+     class="fixed inset-0 z-[9998] flex items-stretch justify-center bg-black/60 py-6"
      @click.self="open = false">
 
     <div x-show="open"
@@ -849,8 +849,7 @@
          x-transition:leave="transition ease-in duration-200 transform"
          x-transition:leave-start="translate-y-0"
          x-transition:leave-end="translate-y-full"
-         class="bg-white w-full sm:max-w-lg shadow-2xl flex flex-col
-                h-dvh sm:h-dvh overflow-hidden">
+         class="bg-white w-full sm:max-w-lg shadow-2xl flex flex-col overflow-hidden">
 
         {{-- Barra superior --}}
         <div class="flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 border-b border-gray-100 shrink-0 bg-dre-primary">
