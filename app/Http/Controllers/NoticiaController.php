@@ -16,9 +16,20 @@ class NoticiaController extends Controller
     }
     public function store(Request $request){
         $request->validate([
-            'img1' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+            'titulo' => 'required|string|max:55',
+            'descripcioncorta' => 'required|string|max:70',
+            'contenido' => 'required|string',
+            'fechapubli' => 'required|date',
+            'img1' => 'required|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
             'img2' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
             'img3' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+        ], [
+            'required' => 'El campo :attribute es obligatorio.',
+            'img1.required' => 'Debes adjuntar la imagen principal.',
+            'titulo.max' => 'El título no debe superar los 55 caracteres.',
+            'descripcioncorta.max' => 'La descripción corta no debe superar los 70 caracteres.',
+            'mimes' => 'La imagen debe ser jpg, jpeg, png, gif o webp.',
+            'max' => 'La imagen no debe superar los 5 MB.',
         ]);
         $noticia = new Noticia();
         $noticia->titulo = $request->titulo;
@@ -31,18 +42,18 @@ class NoticiaController extends Controller
             $filename = time().'1.'.$file->extension();
             $noticia->img1=$filename;
             $file->move(public_path('img/noticias/'), $filename);
-            if($request->hasFile('img2')){
-                $file = $request->file('img2');
-                $filename = time().'2.'.$file->extension();
-                $noticia->img2=$filename;
-                $file->move(public_path('img/noticias/'), $filename);
-                if($request->hasFile('img3')){
-                    $file = $request->file('img3');
-                    $filename = time().'3.'.$file->extension();
-                    $noticia->img3=$filename;
-                    $file->move(public_path('img/noticias/'), $filename);
-                }
-            }
+        }
+        if($request->hasFile('img2')){
+            $file = $request->file('img2');
+            $filename = time().'2.'.$file->extension();
+            $noticia->img2=$filename;
+            $file->move(public_path('img/noticias/'), $filename);
+        }
+        if($request->hasFile('img3')){
+            $file = $request->file('img3');
+            $filename = time().'3.'.$file->extension();
+            $noticia->img3=$filename;
+            $file->move(public_path('img/noticias/'), $filename);
         }
         $noticia->save();
         return redirect()->route('noticias');

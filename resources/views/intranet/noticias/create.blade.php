@@ -5,6 +5,15 @@
     <h6 class="br-section-label">Registro</h6>
     <form action="{{ route('noticias.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="row mg-b-25">
             <div class="col-lg-10">
                 <div class="form-group">
@@ -24,14 +33,16 @@
         <div class="row">
             <div class="col">
                 <label class="form-control-label" for="descripcioncorta">DESCRIPCION CORTA <span class="tx-danger">*</span></label>
-                <textarea name="descripcioncorta" id="descripcioncorta" class="form-control"></textarea> 
-                <br>               
+                <textarea name="descripcioncorta" id="descripcioncorta" class="form-control"></textarea>
+                <x-input-error :messages="$errors->get('descripcioncorta')" class="mt-2" />
+                <br>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <label class="form-control-label" for="idusuario">CONTENIDO: <span class="tx-danger">*</span></label>
                 <textarea rows="16" class="form-control is-valid mg-t-20" name="contenido" id="mysummernote" placeholder="Textarea (success state)"></textarea>
+                <x-input-error :messages="$errors->get('contenido')" class="mt-2" />
             </div><!-- col-4 -->            
         </div>
         <br>
@@ -44,6 +55,7 @@
                         <label class="custom-file-label" for="inputGroupFile1" aria-describedby="inputGroupFileAddon">Choose image</label>
                     </div>
                 </div>
+                <x-input-error :messages="$errors->get('img1')" class="mt-2" />
                 <div class="border rounded-lg text-center p-3">
                     <img src="//placehold.it/140?text=IMAGE" class="img-fluid" id="preview1" />
                 </div>
