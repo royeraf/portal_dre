@@ -57,7 +57,7 @@
                 </div>
                 <x-input-error :messages="$errors->get('img1')" class="mt-2" />
                 <div class="border rounded-lg text-center p-3">
-                    <img src="//placehold.it/140?text=IMAGE" class="img-fluid" id="preview1" />
+                    <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview1" />
                 </div>
             </div>
             <div class="col">
@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div class="border rounded-lg text-center p-3">
-                    <img src="//placehold.it/140?text=IMAGE" class="img-fluid" id="preview2" />
+                    <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview2" />
                 </div>
             </div>
         </div>
@@ -83,7 +83,7 @@
                     </div>
                 </div>
                 <div class="border rounded-lg text-center p-3">
-                    <img src="//placehold.it/140?text=IMAGE" class="img-fluid" id="preview3" />
+                    <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview3" />
                 </div>                  
             </div>
             <div class="col">
@@ -100,6 +100,46 @@
             </div>
         </div>
     </form>
+
+    {{-- Modal para ver la imagen a detalle --}}
+    <div class="modal fade" id="imgDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-0 text-center position-relative">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                        style="position:absolute;top:8px;right:12px;z-index:2;background:#fff;border-radius:50%;width:32px;height:32px;opacity:1;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <img src="" id="imgDetailTarget" class="img-fluid" style="max-height:85vh;" alt="Vista a detalle" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @push('styles')
+        <style>
+            .preview-img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                border-radius: .5rem;
+                cursor: pointer;
+                transition: opacity .2s;
+            }
+            .preview-img:hover { opacity: .85; }
+        </style>
+    @endpush
+
+    @push('scripts')
+        <script>
+            $(document).on('click', '.preview-img', function () {
+                var src = $(this).attr('src');
+                if (!src || src.indexOf('placehold') !== -1) return; // aún sin imagen elegida
+                $('#imgDetailTarget').attr('src', src);
+                $('#imgDetailModal').modal('show');
+            });
+        </script>
+    @endpush
 
 </x-app-layout>
 
