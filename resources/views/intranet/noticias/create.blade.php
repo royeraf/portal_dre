@@ -57,7 +57,7 @@
         <br>
         <h6 class="br-section-label">Imágenes</h6>
         <div class="row">
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 img-field">
                 <label class="form-control-label" for="inputGroupFile1">IMAGEN 1: <span class="tx-danger">*</span></label>
                 <div class="custom-file mb-3">
                     <input type="file" class="custom-file-input" id="inputGroupFile1" name="img1" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
@@ -76,7 +76,7 @@
                     <i class="far fa-trash-alt"></i> Quitar imagen
                 </button>
             </div>
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 img-field">
                 <label class="form-control-label" for="inputGroupFile2">IMAGEN 2: </label>
                 <div class="custom-file mb-3">
                     <input type="file" class="custom-file-input" id="inputGroupFile2" name="img2" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
@@ -94,7 +94,7 @@
                     <i class="far fa-trash-alt"></i> Quitar imagen
                 </button>
             </div>
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 img-field">
                 <label class="form-control-label" for="inputGroupFile3">IMAGEN 3: </label>
                 <div class="custom-file mb-3">
                     <input type="file" class="custom-file-input" id="inputGroupFile3" name="img3" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
@@ -201,7 +201,7 @@
 
             // Al elegir una imagen: mostrarla, ocultar el estado vacío y mostrar "Quitar"
             $('.custom-file-input').on('change', function () {
-                var $col = $(this).closest('.col');
+                var $col = $(this).closest('.img-field');
                 if (this.files && this.files[0]) {
                     var reader = new FileReader();
                     reader.onload = function (e) {
@@ -215,12 +215,12 @@
 
             // Clic en el estado vacío → abre el selector de archivo
             $('.preview-empty').on('click', function () {
-                $(this).closest('.col').find('.custom-file-input').click();
+                $(this).closest('.img-field').find('.custom-file-input').click();
             });
 
             // Quitar la imagen seleccionada (por si fue por error)
             $('.clear-img').on('click', function () {
-                var $col = $(this).closest('.col');
+                var $col = $(this).closest('.img-field');
                 var $input = $('#' + $(this).data('input'));
                 $input.val('');                                                   // no se enviará
                 $col.find('.preview-img').attr('src', '').hide();
