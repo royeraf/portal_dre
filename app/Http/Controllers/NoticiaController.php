@@ -16,8 +16,8 @@ class NoticiaController extends Controller
     }
     public function store(Request $request){
         $request->validate([
-            'titulo' => 'required|string|max:55',
-            'descripcioncorta' => 'required|string|max:70',
+            'titulo' => 'required|string|max:200',
+            'descripcioncorta' => 'required|string|max:200',
             'contenido' => 'required|string',
             'fechapubli' => 'required|date',
             'img1' => 'required|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
@@ -26,8 +26,8 @@ class NoticiaController extends Controller
         ], [
             'required' => 'El campo :attribute es obligatorio.',
             'img1.required' => 'Debes adjuntar la imagen principal.',
-            'titulo.max' => 'El título no debe superar los 55 caracteres.',
-            'descripcioncorta.max' => 'La descripción corta no debe superar los 70 caracteres.',
+            'titulo.max' => 'El título no debe superar los 200 caracteres.',
+            'descripcioncorta.max' => 'La descripción corta no debe superar los 200 caracteres.',
             'mimes' => 'La imagen debe ser jpg, jpeg, png, gif o webp.',
             'max' => 'La imagen no debe superar los 5 MB.',
         ]);
@@ -86,12 +86,23 @@ class NoticiaController extends Controller
     }
     public function update(Request $request, Noticia $noticia){
         $request->validate([
+            'titulo' => 'required|string|max:200',
+            'descripcioncorta' => 'required|string|max:200',
+            'contenido' => 'required|string',
+            'fechapubli' => 'required|date',
             'img1' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
             'img2' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
             'img3' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp|max:5120',
+        ], [
+            'required' => 'El campo :attribute es obligatorio.',
+            'titulo.max' => 'El título no debe superar los 200 caracteres.',
+            'descripcioncorta.max' => 'La descripción corta no debe superar los 200 caracteres.',
+            'mimes' => 'La imagen debe ser jpg, jpeg, png, gif o webp.',
+            'max' => 'La imagen no debe superar los 5 MB.',
         ]);
         $noticia->titulo = $request->titulo;
         $noticia->descripcioncorta = $request->descripcioncorta;
+        $noticia->fechapubli = $request->fechapubli;
         $noticia->contenido=Purifier::clean($request->contenido, 'rich_content');
         if($request->hasFile('img1')){
             $file = $request->file('img1');
