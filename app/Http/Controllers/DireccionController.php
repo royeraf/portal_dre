@@ -435,12 +435,12 @@ class DireccionController extends Controller
     }
 
     /**
-     * Guardar imagen de funcionario en ../../public_html/img/encargado_areas/
+     * Guardar imagen de funcionario en public_path('img/encargado_areas')
      */
     private function guardarImagenFuncionario($file, $slug)
     {
         // Crear directorio si no existe - usando ruta relativa hacia public_html
-        $directorioBase = dirname(dirname(public_path())) . '/public_html/img/encargado_areas';
+        $directorioBase = public_path('img/encargado_areas');
         if (!file_exists($directorioBase)) {
             mkdir($directorioBase, 0755, true);
         }
@@ -457,12 +457,12 @@ class DireccionController extends Controller
     }
 
     /**
-     * Guardar imagen de organigrama en ../../public_html/img/organigrama_areas/
+     * Guardar imagen de organigrama en public_path('img/organigrama_areas')
      */
     private function guardarImagenOrganigrama($file, $slug)
     {
         // Crear directorio si no existe - usando ruta relativa hacia public_html
-        $directorioBase = dirname(dirname(public_path())) . '/public_html/img/organigrama_areas';
+        $directorioBase = public_path('img/organigrama_areas');
         if (!file_exists($directorioBase)) {
             mkdir($directorioBase, 0755, true);
         }
@@ -479,13 +479,13 @@ class DireccionController extends Controller
     }
 
     /**
-     * Eliminar imagen física del servidor desde ../../public_html/
+     * Eliminar imagen física del servidor desde public_path()
      */
     private function eliminarImagen($rutaImagen)
     {
         if ($rutaImagen) {
             // Construir la ruta completa hacia public_html
-            $rutaCompleta = dirname(dirname(public_path())) . '/public_html/' . $rutaImagen;
+            $rutaCompleta = public_path($rutaImagen);
             if (file_exists($rutaCompleta)) {
                 unlink($rutaCompleta);
             }

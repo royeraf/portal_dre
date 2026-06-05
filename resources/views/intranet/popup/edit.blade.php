@@ -73,7 +73,7 @@
             </tr>
             @foreach ($imagenes as $item)
             @php
-                $image_path = public_path('../../public_html/img/popup/').$item->imagen;
+                $image_path = public_path('img/popup/').$item->imagen;
             @endphp
             <tr>
                 <td class="border border-slate-500">{{$item->id}}</td>
