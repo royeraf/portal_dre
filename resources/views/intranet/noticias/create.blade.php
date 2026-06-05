@@ -56,8 +56,12 @@
                     </div>
                 </div>
                 <x-input-error :messages="$errors->get('img1')" class="mt-2" />
-                <div class="border rounded-lg text-center p-3">
-                    <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview1" />
+                <div class="border rounded-lg text-center p-3 preview-box">
+                    <div class="preview-empty" id="empty1">
+                        <i class="far fa-image preview-icon"></i>
+                        <div class="preview-hint">Vista previa</div>
+                    </div>
+                    <img src="" class="preview-img" id="preview1" style="display:none;" />
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-danger mt-2 clear-img" style="display:none;"
                     data-input="inputGroupFile1" data-preview="preview1">
@@ -72,8 +76,12 @@
                         <label class="custom-file-label" for="inputGroupFile2" aria-describedby="inputGroupFileAddon">Choose image</label>
                     </div>
                 </div>
-                <div class="border rounded-lg text-center p-3">
-                    <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview2" />
+                <div class="border rounded-lg text-center p-3 preview-box">
+                    <div class="preview-empty" id="empty2">
+                        <i class="far fa-image preview-icon"></i>
+                        <div class="preview-hint">Vista previa</div>
+                    </div>
+                    <img src="" class="preview-img" id="preview2" style="display:none;" />
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-danger mt-2 clear-img" style="display:none;"
                     data-input="inputGroupFile2" data-preview="preview2">
@@ -90,8 +98,12 @@
                         <label class="custom-file-label" for="inputGroupFile3" aria-describedby="inputGroupFileAddon">Choose image</label>
                     </div>
                 </div>
-                <div class="border rounded-lg text-center p-3">
-                    <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview3" />
+                <div class="border rounded-lg text-center p-3 preview-box">
+                    <div class="preview-empty" id="empty3">
+                        <i class="far fa-image preview-icon"></i>
+                        <div class="preview-hint">Vista previa</div>
+                    </div>
+                    <img src="" class="preview-img" id="preview3" style="display:none;" />
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-danger mt-2 clear-img" style="display:none;"
                     data-input="inputGroupFile3" data-preview="preview3">
@@ -130,6 +142,26 @@
 
     @push('styles')
         <style>
+            .preview-box {
+                min-height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f8f9fb;
+            }
+            .preview-empty {
+                color: #b8c0cc;
+                cursor: pointer;
+                transition: color .2s;
+                user-select: none;
+            }
+            .preview-empty:hover { color: #8a94a6; }
+            .preview-icon { font-size: 56px; line-height: 1; }
+            .preview-hint {
+                font-size: 13px;
+                margin-top: 8px;
+                letter-spacing: .3px;
+            }
             .preview-img {
                 width: 100%;
                 height: 200px;
@@ -144,25 +176,40 @@
 
     @push('scripts')
         <script>
+            // Abrir el modal de detalle al hacer clic en una vista previa con imagen
             $(document).on('click', '.preview-img', function () {
                 var src = $(this).attr('src');
-                if (!src || src.indexOf('placehold') !== -1) return; // aún sin imagen elegida
+                if (!src) return;
                 $('#imgDetailTarget').attr('src', src);
                 $('#imgDetailModal').modal('show');
             });
 
-            // Mostrar el botón "Quitar" al elegir una imagen
+            // Al elegir una imagen: mostrarla, ocultar el estado vacío y mostrar "Quitar"
             $('.custom-file-input').on('change', function () {
-                if (this.files && this.files.length) {
-                    $(this).closest('.col').find('.clear-img').show();
+                var $col = $(this).closest('.col');
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $col.find('.preview-img').attr('src', e.target.result).show();
+                        $col.find('.preview-empty').hide();
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                    $col.find('.clear-img').show();
                 }
+            });
+
+            // Clic en el estado vacío → abre el selector de archivo
+            $('.preview-empty').on('click', function () {
+                $(this).closest('.col').find('.custom-file-input').click();
             });
 
             // Quitar la imagen seleccionada (por si fue por error)
             $('.clear-img').on('click', function () {
+                var $col = $(this).closest('.col');
                 var $input = $('#' + $(this).data('input'));
-                $input.val('');                                                       // no se enviará
-                $('#' + $(this).data('preview')).attr('src', '//placehold.it/140?text=IMAGE');
+                $input.val('');                                                   // no se enviará
+                $col.find('.preview-img').attr('src', '').hide();
+                $col.find('.preview-empty').show();
                 $input.siblings('.custom-file-label').removeClass('selected').text('Choose image');
                 $(this).hide();
             });
