@@ -13,6 +13,10 @@ fail() { echo "✖  Error: $1"; exit 1; }
 echo "▸ Pulling latest changes..."
 cd "$REPO" && git pull || fail "git pull falló"
 
+echo "▸ Installing PHP dependencies..."
+cd "$REPO" && composer install --no-dev --optimize-autoloader --no-interaction \
+    || fail "composer install falló"
+
 echo "▸ Building assets..."
 cd "$REPO" && bun run build || fail "bun build falló"
 # Vite escribe directamente a ~/public_html/build/ via VITE_PUBLIC_DIR
