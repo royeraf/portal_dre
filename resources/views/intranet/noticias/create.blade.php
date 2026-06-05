@@ -59,6 +59,10 @@
                 <div class="border rounded-lg text-center p-3">
                     <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview1" />
                 </div>
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2 clear-img" style="display:none;"
+                    data-input="inputGroupFile1" data-preview="preview1">
+                    <i class="far fa-trash-alt"></i> Quitar imagen
+                </button>
             </div>
             <div class="col">
                 <label class="form-control-label" for="inputGroupFile2">IMAGEN 2: </label>
@@ -71,6 +75,10 @@
                 <div class="border rounded-lg text-center p-3">
                     <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview2" />
                 </div>
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2 clear-img" style="display:none;"
+                    data-input="inputGroupFile2" data-preview="preview2">
+                    <i class="far fa-trash-alt"></i> Quitar imagen
+                </button>
             </div>
         </div>
         <div class="row">
@@ -84,7 +92,11 @@
                 </div>
                 <div class="border rounded-lg text-center p-3">
                     <img src="//placehold.it/140?text=IMAGE" class="preview-img" id="preview3" />
-                </div>                  
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger mt-2 clear-img" style="display:none;"
+                    data-input="inputGroupFile3" data-preview="preview3">
+                    <i class="far fa-trash-alt"></i> Quitar imagen
+                </button>                  
             </div>
             <div class="col">
                 <div class="form-group">
@@ -137,6 +149,22 @@
                 if (!src || src.indexOf('placehold') !== -1) return; // aún sin imagen elegida
                 $('#imgDetailTarget').attr('src', src);
                 $('#imgDetailModal').modal('show');
+            });
+
+            // Mostrar el botón "Quitar" al elegir una imagen
+            $('.custom-file-input').on('change', function () {
+                if (this.files && this.files.length) {
+                    $(this).closest('.col').find('.clear-img').show();
+                }
+            });
+
+            // Quitar la imagen seleccionada (por si fue por error)
+            $('.clear-img').on('click', function () {
+                var $input = $('#' + $(this).data('input'));
+                $input.val('');                                                       // no se enviará
+                $('#' + $(this).data('preview')).attr('src', '//placehold.it/140?text=IMAGE');
+                $input.siblings('.custom-file-label').removeClass('selected').text('Choose image');
+                $(this).hide();
             });
         </script>
     @endpush
