@@ -15,6 +15,15 @@
             </div>
         @endif
         <div class="row mg-b-25">
+            <div class="col-lg-3">
+                <div class="form-group">
+                    <label class="form-control-label" for="fechapubli">FECHA DE PUBLICACION: <span class="tx-danger">*</span></label>
+                    <input class="form-control" type="date" name="fechapubli" id="fechapubli" value="{{ old('fechapubli', date('Y-m-d')) }}">
+                    <x-input-error :messages="$errors->get('fechapubli')" class="mt-2" />
+                </div>
+            </div>
+        </div>
+        <div class="row mg-b-25">
             <div class="col-lg-10">
                 <div class="form-group">
                     <label class="form-control-label" for="titulo">Titulo: <span class="tx-danger">*</span></label>
@@ -46,14 +55,13 @@
             </div><!-- col-4 -->            
         </div>
         <br>
+        <h6 class="br-section-label">Imágenes</h6>
         <div class="row">
-            <div class="col">
-                <label class="form-control-label" for="inputGroupFile1">IMAGEN 1: </label>
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile1" name="img1" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
-                        <label class="custom-file-label" for="inputGroupFile1" aria-describedby="inputGroupFileAddon">Choose image</label>
-                    </div>
+            <div class="col-md-4 mb-4">
+                <label class="form-control-label" for="inputGroupFile1">IMAGEN 1: <span class="tx-danger">*</span></label>
+                <div class="custom-file mb-3">
+                    <input type="file" class="custom-file-input" id="inputGroupFile1" name="img1" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
+                    <label class="custom-file-label" for="inputGroupFile1" data-browse="Examinar">Seleccionar imagen</label>
                 </div>
                 <x-input-error :messages="$errors->get('img1')" class="mt-2" />
                 <div class="border rounded-lg text-center p-3 preview-box">
@@ -68,13 +76,11 @@
                     <i class="far fa-trash-alt"></i> Quitar imagen
                 </button>
             </div>
-            <div class="col">
+            <div class="col-md-4 mb-4">
                 <label class="form-control-label" for="inputGroupFile2">IMAGEN 2: </label>
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile2" name="img2" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
-                        <label class="custom-file-label" for="inputGroupFile2" aria-describedby="inputGroupFileAddon">Choose image</label>
-                    </div>
+                <div class="custom-file mb-3">
+                    <input type="file" class="custom-file-input" id="inputGroupFile2" name="img2" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
+                    <label class="custom-file-label" for="inputGroupFile2" data-browse="Examinar">Seleccionar imagen</label>
                 </div>
                 <div class="border rounded-lg text-center p-3 preview-box">
                     <div class="preview-empty" id="empty2">
@@ -88,15 +94,11 @@
                     <i class="far fa-trash-alt"></i> Quitar imagen
                 </button>
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            <div class="col-md-4 mb-4">
                 <label class="form-control-label" for="inputGroupFile3">IMAGEN 3: </label>
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile3" name="img3" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
-                        <label class="custom-file-label" for="inputGroupFile3" aria-describedby="inputGroupFileAddon">Choose image</label>
-                    </div>
+                <div class="custom-file mb-3">
+                    <input type="file" class="custom-file-input" id="inputGroupFile3" name="img3" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
+                    <label class="custom-file-label" for="inputGroupFile3" data-browse="Examinar">Seleccionar imagen</label>
                 </div>
                 <div class="border rounded-lg text-center p-3 preview-box">
                     <div class="preview-empty" id="empty3">
@@ -108,14 +110,7 @@
                 <button type="button" class="btn btn-sm btn-outline-danger mt-2 clear-img" style="display:none;"
                     data-input="inputGroupFile3" data-preview="preview3">
                     <i class="far fa-trash-alt"></i> Quitar imagen
-                </button>                  
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label class="form-control-label" for="fechapubli">FECHA DE PUBLICACION: <span class="tx-danger">*</span></label>
-                    <input class="form-control" type="date" name="fechapubli" id="fechapubli" value="{{ old('fechapubli', date('Y-m-d')) }}">
-                    <x-input-error :messages="$errors->get('fechapubli')" class="mt-2" />
-                </div>   
+                </button>
             </div>
         </div>
         <div class="row">
@@ -171,6 +166,26 @@
                 transition: opacity .2s;
             }
             .preview-img:hover { opacity: .85; }
+
+            /* File input más prolijo */
+            .custom-file { height: calc(2.25rem + 2px); }
+            .custom-file-input { cursor: pointer; }
+            .custom-file-label {
+                border-radius: .4rem;
+                color: #8a94a6;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding-right: 6.5rem;
+            }
+            .custom-file-label::after {
+                background-color: #17a2b8;
+                color: #fff;
+                border-left: 0;
+                border-radius: 0 .4rem .4rem 0;
+                padding: .375rem 1rem;
+            }
+            .custom-file-input:hover ~ .custom-file-label::after { background-color: #138496; }
         </style>
     @endpush
 
@@ -210,7 +225,7 @@
                 $input.val('');                                                   // no se enviará
                 $col.find('.preview-img').attr('src', '').hide();
                 $col.find('.preview-empty').show();
-                $input.siblings('.custom-file-label').removeClass('selected').text('Choose image');
+                $input.siblings('.custom-file-label').removeClass('selected').text('Seleccionar imagen');
                 $(this).hide();
             });
         </script>
