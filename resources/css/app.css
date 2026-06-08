@@ -53,23 +53,9 @@
         animation-delay: 0s !important;
     }
 
-    /* 2. Disable infinite animations that cause heavy CPU/GPU rendering */
-    .animate-ticker,
+    /* 2. Disable infinite animations that cause heavy CPU/GPU rendering (excluding news ticker) */
     .animate-pulse {
         animation: none !important;
-    }
-    
-    /* Make the news ticker scrollable manually by swipe on mobile instead of auto-animating */
-    .animate-ticker {
-        transform: none !important;
-    }
-    .bg-yellow-400 .overflow-hidden.flex-1 {
-        overflow-x: auto !important;
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-    }
-    .bg-yellow-400 .overflow-hidden.flex-1::-webkit-scrollbar {
-        display: none; /* Chrome, Safari and Opera */
     }
 
     /* Disable shimmer animation on skeleton loading placeholders */
@@ -144,5 +130,25 @@
         background: rgba(147, 197, 253, 0.12) !important;
         box-shadow: none !important;
     }
+
+    /* Convocatorias Page Cards */
+    article.group.border.transition-all:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    article.group.border-emerald-200:hover {
+        border-color: rgb(167, 243, 208) !important; /* border-emerald-200 */
+        box-shadow: 0 4px 24px -4px rgba(16, 185, 129, 0.06) !important;
+    }
+    article.group.border-gray-200:hover {
+        border-color: rgb(229, 231, 235) !important; /* border-gray-200 */
+        box-shadow: 0 4px 24px -4px rgba(1, 48, 114, 0.04) !important;
+    }
 }
+
+/* Custom animation for the "NUEVO" tag, keeping it alive on all screens */
+.tag-nuevo-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
 

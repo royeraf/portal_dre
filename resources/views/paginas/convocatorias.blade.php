@@ -178,8 +178,8 @@
                             </span>
                         @endif
                         @if($nuevo && !$finalizado)
-                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100/80 shadow-sm animate-pulse">
-                                <svg class="w-3 h-3 text-rose-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
+                            <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm tag-nuevo-pulse">
+                                <svg class="w-3 h-3 text-emerald-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
                                 NUEVO
                             </span>
                         @endif
@@ -367,8 +367,8 @@
                                 </span>
                             </template>
                             <template x-if="modal?.nuevo && !modal?.finalizado">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100/80 shadow-sm animate-pulse">
-                                    <svg class="w-3 h-3 text-rose-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm tag-nuevo-pulse">
+                                    <svg class="w-3 h-3 text-emerald-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
                                     NUEVO
                                 </span>
                             </template>
