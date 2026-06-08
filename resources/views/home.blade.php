@@ -149,7 +149,7 @@
 
             {{-- Pilar 1: Destacado (Ancho completo en sm) --}}
             <div class="dre-pillar relative overflow-hidden sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6
-                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 sm:p-6 transition-all duration-500group" style="background:rgba(255,255,255,.07);">
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 sm:p-6 transition-all duration-500 group" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                 <div class="dre-pillar-ico shrink-0 w-14 h-14 rounded-xl flex items-center justify-center
@@ -165,7 +165,7 @@
 
             {{-- Pilar 2 --}}
             <div class="dre-pillar relative overflow-hidden flex flex-col gap-4
-                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500 group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                 <div class="dre-pillar-ico shrink-0 w-12 h-12 rounded-xl flex items-center justify-center
@@ -181,7 +181,7 @@
 
             {{-- Pilar 3 --}}
             <div class="dre-pillar relative overflow-hidden flex flex-col gap-4
-                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
+                        backdrop-filter backdrop-blur-md backdrop-saturate-150 shadow-2xl border border-white/20 rounded-2xl p-5 transition-all duration-500 group hover:-translate-y-1.5" style="background:rgba(255,255,255,.07);">
                 <div class="absolute inset-0 bg-gradient-to-br from-[#93c5fd]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                 <div class="dre-pillar-ico shrink-0 w-12 h-12 rounded-xl flex items-center justify-center
@@ -284,7 +284,7 @@
     <div class="flex flex-col lg:flex-row gap-5">
 
         {{-- Grid accesos rápidos --}}
-        <div class="flex-1" x-data="{ shown: false }" x-intersect.once="shown = true">
+        <div class="flex-1" x-data="{ shown: window.innerWidth < 1024 }" x-intersect.once="shown = true">
 
             {{-- Cabecera --}}
             <div class="flex items-center gap-2 mb-3">
@@ -663,7 +663,7 @@
                 <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon1.png') }}" alt="" class="h-14 mx-auto mb-3">
                 <h3 class="font-display text-4xl font-extrabold"
                     x-data="{ count: 0, target: 252392 }"
-                    x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30)"
+                    x-intersect.once="if (window.innerWidth < 1024) { count = target; } else { let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30) }"
                     x-text="count.toLocaleString() + '+'">0</h3>
                 <a target="_blank" href="https://docs.google.com/spreadsheets/d/1ZsMZTp6z_-k2CJB-31A7gf3UKE0XLfzf/edit?usp=share_link"
                    class="mt-3 inline-flex items-center gap-1.5 bg-yellow-400 text-gray-900
@@ -679,7 +679,7 @@
                 <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon2.png') }}" alt="" class="h-14 mx-auto mb-3">
                 <h3 class="font-display text-4xl font-extrabold"
                     x-data="{ count: 0, target: 4415 }"
-                    x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30)"
+                    x-intersect.once="if (window.innerWidth < 1024) { count = target; } else { let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30) }"
                     x-text="count.toLocaleString()">0</h3>
                 <a target="_blank" href="https://docs.google.com/spreadsheets/d/1meqfy82jyk-qrXsaWpndBni3jfBf3koZ/edit?usp=share_link"
                    class="mt-3 inline-flex items-center gap-1.5 bg-yellow-400 text-gray-900
@@ -695,7 +695,7 @@
                 <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon3.png') }}" alt="" class="h-14 mx-auto mb-3">
                 <h3 class="font-display text-4xl font-extrabold"
                     x-data="{ count: 0, target: 17042 }"
-                    x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30)"
+                    x-intersect.once="if (window.innerWidth < 1024) { count = target; } else { let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30) }"
                     x-text="count.toLocaleString() + '+'">0</h3>
                 <a target="_blank" href="https://docs.google.com/spreadsheets/d/1kM5rohSYy0zS8kqak7sWWflUPun9n6jc/edit?usp=share_link"
                    class="mt-3 inline-flex items-center gap-1.5 bg-yellow-400 text-gray-900
@@ -711,7 +711,7 @@
                 <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon4.png') }}" alt="" class="h-14 mx-auto mb-3">
                 <h3 class="font-display text-4xl font-extrabold"
                     x-data="{ count: 0, target: 11 }"
-                    x-intersect.once="let i = setInterval(() => { count++; if(count >= target) { count = target; clearInterval(i); } }, 100)"
+                    x-intersect.once="if (window.innerWidth < 1024) { count = target; } else { let i = setInterval(() => { count++; if(count >= target) { count = target; clearInterval(i); } }, 100) }"
                     x-text="count">0</h3>
                 <p class="mt-1 text-blue-200 text-sm">Ugeles</p>
             </div>

@@ -42,3 +42,107 @@
         display: none;
     }
 }
+
+/* ── Responsive View Optimizations (Disable transitions & animations on screens < 1024px) ── */
+@media (max-width: 1023px) {
+    /* 1. Disable all transitions (colors, shadows, opacity, etc.) */
+    *, ::before, ::after {
+        transition-property: none !important;
+        transition-duration: 0s !important;
+        transition-delay: 0s !important;
+        animation-delay: 0s !important;
+    }
+
+    /* 2. Disable infinite animations that cause heavy CPU/GPU rendering */
+    .animate-ticker,
+    .animate-pulse {
+        animation: none !important;
+    }
+    
+    /* Make the news ticker scrollable manually by swipe on mobile instead of auto-animating */
+    .animate-ticker {
+        transform: none !important;
+    }
+    .bg-yellow-400 .overflow-hidden.flex-1 {
+        overflow-x: auto !important;
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+    .bg-yellow-400 .overflow-hidden.flex-1::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
+    }
+
+    /* Disable shimmer animation on skeleton loading placeholders */
+    .skeleton {
+        animation: none !important;
+        background: #e2e8f0 !important;
+    }
+
+    /* 3. Disable hover-state translations, scales, shadows and other heavy effects on cards/banners/buttons */
+    .hover\:-translate-y-1\.5:hover,
+    .group:hover .group-hover\:-translate-y-1\.5 {
+        transform: none !important;
+    }
+
+    .hover\:scale-\[1\.02\]:hover,
+    .group:hover .group-hover\:scale-110,
+    .group-hover\:scale-110,
+    .group-hover\:scale-105 {
+        transform: none !important;
+        scale: none !important;
+    }
+
+    .hover\:shadow-xl:hover,
+    .hover\:shadow-lg:hover,
+    .group:hover {
+        box-shadow: none !important;
+    }
+
+    /* Quick Links */
+    .group.rounded-xl:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* EPR Banner */
+    .hover\:scale-\[1\.02\]:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Plataformas Institucionales */
+    .platform-card:hover .platform-img {
+        opacity: 1 !important;
+    }
+    .platform-card:hover .platform-label {
+        opacity: 0 !important;
+    }
+    .platform-card:hover .platform-bar {
+        transform: scaleX(0) !important;
+    }
+
+    /* Comunicados, Noticias & Bento Pilares accent lines and arrows */
+    .group:hover .scale-x-0.group-hover\:scale-x-100 {
+        transform: scaleX(0) !important;
+    }
+    .group:hover .group-hover\:gap-2 {
+        gap: 0.25rem !important; /* Keep original spacing */
+    }
+    .group:hover .group-hover\:translate-x-0\.5 {
+        transform: none !important;
+    }
+    .group:hover .group-hover\:text-dre-accent {
+        color: inherit !important;
+    }
+    
+    /* Bento Pilares */
+    .dre-pillar:hover {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+        box-shadow: none !important;
+    }
+    .dre-pillar:hover .dre-pillar-ico {
+        background: rgba(147, 197, 253, 0.12) !important;
+        box-shadow: none !important;
+    }
+}
+
