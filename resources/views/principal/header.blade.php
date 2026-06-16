@@ -41,13 +41,13 @@
                     <div x-show="error" x-text="error"
                          class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="text" name="email" required autofocus
+                        <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input id="login-email" type="email" name="email" required autofocus autocomplete="email"
                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-dre-accent focus:border-dre-accent outline-none">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                        <input type="password" name="password" required
+                        <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                        <input id="login-password" type="password" name="password" required autocomplete="current-password"
                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-dre-accent focus:border-dre-accent outline-none">
                     </div>
                     <button type="submit" :disabled="loading"
