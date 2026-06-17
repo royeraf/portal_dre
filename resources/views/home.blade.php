@@ -1,5 +1,12 @@
 @extends('principal.plantilla')
 @section('title', 'DRE - HUANUCO')
+
+@if(isset($sliders) && count($sliders) > 0)
+@push('styles')
+<link rel="preload" as="image" href="{{ asset('img/slider/'.$sliders[0]->img_slider) }}" fetchpriority="high">
+@endpush
+@endif
+
 @section('content')
 
 {{-- ── NEWS TICKER ──────────────────────────────────────────── --}}
@@ -908,6 +915,7 @@
                              class="w-full h-full object-contain cursor-pointer relative z-10 opacity-0 transition-opacity duration-300"
                              alt="{{ $popup->titulopopup ?? '' }}"
                              id="popup-img-{{ $ri }}"
+                             decoding="async"
                              @click="if(links[slide]) window.open(links[slide], '_blank')"
                              onload="
                                  this.classList.remove('opacity-0');
