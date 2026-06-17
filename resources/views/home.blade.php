@@ -1,5 +1,10 @@
 @extends('principal.plantilla')
 @section('title', 'DRE - HUANUCO')
+@section('og_title', 'Dirección Regional de Educación Huánuco')
+@section('og_description', 'Portal oficial de la DRE Huánuco. Accede a noticias, comunicados, convocatorias, directorio institucional y servicios educativos de la región.')
+@if(isset($sliders) && count($sliders) > 0)
+@section('og_image', asset('img/slider/'.$sliders[0]->img_slider))
+@endif
 
 @if(isset($sliders) && count($sliders) > 0)
 @push('styles')

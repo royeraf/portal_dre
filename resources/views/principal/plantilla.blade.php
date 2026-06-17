@@ -3,13 +3,27 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta content="Cristian Figueroa Ferrer" name="author">
+    <meta name="author" content="Royer J. Ariza">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ $mititulo ?? 'DIRECCION REGIONAL DE EDUCACION HUANUCO' }}">
-    <meta name="keywords" content="todo respecto a DRE Huanuco">
+    <meta name="description" content="{{ $mititulo ?? 'Portal oficial de la Dirección Regional de Educación Huánuco. Noticias, comunicados, convocatorias, directorio institucional y servicios educativos para la región.' }}">
+    <meta name="keywords" content="DRE Huánuco, Dirección Regional de Educación, educación Huánuco, noticias educativas, convocatorias, comunicados, MINEDU, región Huánuco, servicios educativos">
 
     <title>@yield('title', 'DIRECCION REGIONAL DE EDUCACION - HUANUCO')</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('img/log33.png') }}">
+
+    {{-- Social / OpenGraph tags --}}
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="DRE Huánuco">
+    <meta property="og:url"         content="{{ url()->current() }}">
+    <meta property="og:title"       content="@yield('og_title', 'Dirección Regional de Educación - Huánuco')">
+    <meta property="og:description" content="@yield('og_description', 'Portal oficial de la Dirección Regional de Educación Huánuco. Noticias, comunicados, convocatorias y servicios educativos para la región.')">
+    <meta property="og:image"       content="@yield('og_image', asset('img/log33.png'))">
+    <meta property="og:image:width"  content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="@yield('og_title', 'Dirección Regional de Educación - Huánuco')">
+    <meta name="twitter:description" content="@yield('og_description', 'Portal oficial de la Dirección Regional de Educación Huánuco.')">
+    <meta name="twitter:image"       content="@yield('og_image', asset('img/log33.png'))">
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
