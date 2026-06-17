@@ -363,6 +363,7 @@
                 <div class="relative rounded-xl overflow-hidden border-2 border-blue-700 bg-gradient-to-br from-blue-500 to-blue-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
                     <img src="{{ asset('img/per.jpg') }}"
                          alt="EPR - Documentos Digitales"
+                         width="800" height="270"
                          class="w-full object-cover block h-48 sm:h-[270px]">
                     <div class="absolute bottom-3 left-0 right-0 text-center text-white pointer-events-none">
                         <h4 class="font-display font-bold text-xl drop-shadow-lg">EPR</h4>
@@ -400,6 +401,7 @@
                     {{-- Imagen --}}
                     <img src="{{ asset('img/mainright/'.$item->imagen) }}"
                          alt="{{ $item->nombre }}"
+                         width="200" height="144"
                          loading="lazy"
                          crossorigin="anonymous"
                          class="platform-img w-full h-28 sm:h-32 md:h-36 object-contain p-2
@@ -548,6 +550,7 @@
                         <div class="relative h-48 sm:h-52 overflow-hidden shrink-0 skeleton img-wrap">
                             <img src="{{ asset('img/comunicados/'.$item->imagen) }}"
                                  alt="{{ $item->titulo }}"
+                                 width="800" height="208"
                                  loading="lazy"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
@@ -625,6 +628,7 @@
                         <div class="relative h-48 sm:h-52 overflow-hidden shrink-0 skeleton img-wrap">
                             <img src="{{ asset('img/noticias/'.$item->img1) }}"
                                  alt="{{ $item->titulo }}"
+                                 width="800" height="208"
                                  loading="lazy"
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
@@ -667,7 +671,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center text-white">
 
             <div>
-                <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon1.png') }}" alt="" class="h-14 mx-auto mb-3">
+                <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon1.png') }}" alt="" width="56" height="56" class="h-14 mx-auto mb-3">
                 <h3 class="font-display text-4xl font-extrabold"
                     x-data="{ count: 0, target: 252392 }"
                     x-intersect.once="if (window.innerWidth < 1024) { count = target; } else { let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30) }"
@@ -683,7 +687,7 @@
             </div>
 
             <div>
-                <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon2.png') }}" alt="" class="h-14 mx-auto mb-3">
+                <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon2.png') }}" alt="" width="56" height="56" class="h-14 mx-auto mb-3">
                 <h3 class="font-display text-4xl font-extrabold"
                     x-data="{ count: 0, target: 4415 }"
                     x-intersect.once="if (window.innerWidth < 1024) { count = target; } else { let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30) }"
@@ -699,7 +703,7 @@
             </div>
 
             <div>
-                <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon3.png') }}" alt="" class="h-14 mx-auto mb-3">
+                <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon3.png') }}" alt="" width="56" height="56" class="h-14 mx-auto mb-3">
                 <h3 class="font-display text-4xl font-extrabold"
                     x-data="{ count: 0, target: 17042 }"
                     x-intersect.once="if (window.innerWidth < 1024) { count = target; } else { let i = setInterval(() => { count += Math.ceil(target/60); if(count >= target) { count = target; clearInterval(i); } }, 30) }"
@@ -715,7 +719,7 @@
             </div>
 
             <div>
-                <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon4.png') }}" alt="" class="h-14 mx-auto mb-3">
+                <img src="{{ asset('plantillas/eduglobal/assets/images/counter_icon4.png') }}" alt="" width="56" height="56" class="h-14 mx-auto mb-3">
                 <h3 class="font-display text-4xl font-extrabold"
                     x-data="{ count: 0, target: 11 }"
                     x-intersect.once="if (window.innerWidth < 1024) { count = target; } else { let i = setInterval(() => { count++; if(count >= target) { count = target; clearInterval(i); } }, 100) }"
