@@ -918,6 +918,7 @@
                         <img src="{{ asset('img/popup/'.$row->imagen) }}"
                              class="w-full h-full object-contain cursor-pointer relative z-10 opacity-0 transition-opacity duration-300"
                              alt="{{ $popup->titulopopup ?? '' }}"
+                             width="800" height="600"
                              id="popup-img-{{ $ri }}"
                              decoding="async"
                              @click="if(links[slide]) window.open(links[slide], '_blank')"

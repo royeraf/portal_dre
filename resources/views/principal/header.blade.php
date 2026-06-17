@@ -99,7 +99,7 @@
                     <span class="hidden sm:inline">Aula Virtual</span>
                 </a>
                 <a target="_blank" href="https://www.transparencia.gob.pe/enlaces/pte_transparencia_enlaces.aspx?id_entidad=14163#.Y9SgbXbMLrd">
-                    <img src="{{ asset('img/portal.png') }}" class="h-6 sm:h-8" alt="Portal de Transparencia">
+                    <img src="{{ asset('img/portal.png') }}" width="120" height="32" class="h-6 sm:h-8" alt="Portal de Transparencia">
                 </a>
             </div>
 
@@ -115,6 +115,7 @@
                 <span class="flex items-center justify-center bg-dre-primary rounded-lg p-2 shrink-0
                              shadow-sm group-hover:shadow-md group-hover:shadow-dre-primary/30 transition-all">
                     <img src="{{ asset('img/log33.png') }}" alt="DRE Huánuco"
+                         width="36" height="36"
                          class="h-9 w-9 object-contain brightness-0 invert">
                 </span>
                 {{-- Móvil: nombre corto --}}
@@ -196,7 +197,7 @@
             <div class="flex items-center gap-3">
                 {{-- Logo right (gob) --}}
                 <a href="https://www.gob.pe/regionhuanuco-dre" class="shrink-0 hidden md:block">
-                    <img src="{{ asset('img/logogob.png') }}" alt="Gobierno" class="h-10 w-auto">
+                    <img src="{{ asset('img/logogob.png') }}" width="40" height="40" alt="Gobierno" class="h-10 w-auto">
                 </a>
 
                 {{-- Mobile menu button --}}
@@ -250,6 +251,7 @@
                 <span class="flex items-center justify-center bg-white/15 rounded-xl p-2.5
                              border border-white/20 group-hover:border-white/40 transition-colors shrink-0">
                     <img src="{{ asset('img/log33.png') }}" alt="DRE Huánuco"
+                         width="44" height="44"
                          class="h-11 w-11 object-contain brightness-0 invert">
                 </span>
                 <span class="flex flex-col">
@@ -356,7 +358,7 @@
         <div class="shrink-0 px-5 py-4 border-t border-gray-100 bg-gray-50">
             <a href="https://www.gob.pe/regionhuanuco-dre" target="_blank"
                class="flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity">
-                <img src="{{ asset('img/logogob.png') }}" alt="Gobierno del Perú" class="h-8 w-auto">
+                <img src="{{ asset('img/logogob.png') }}" width="32" height="32" alt="Gobierno del Perú" class="h-8 w-auto">
             </a>
             <p class="text-center text-[10px] text-gray-400 mt-2 uppercase tracking-widest">Gobierno del Perú</p>
         </div>

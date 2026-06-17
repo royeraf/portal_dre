@@ -5,14 +5,21 @@
 /* ── Alpine.js x-cloak — must be outside @layer so it loads immediately ── */
 [x-cloak] { display: none !important; }
 
-/* ── Skeleton shimmer ─────────────────────────────────────── */
+/* ── Skeleton shimmer (composited via transform) ──────────── */
 @keyframes shimmer {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 .skeleton {
-    background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 50%, #e2e8f0 75%);
-    background-size: 200% 100%;
+    background: #e2e8f0;
+    overflow: hidden;
+    position: relative;
+}
+.skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
     animation: shimmer 1.5s ease-in-out infinite;
 }
 
