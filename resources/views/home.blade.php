@@ -436,84 +436,6 @@
     </div>
 </section>
 
-<script>
-(function () {
-    function luminance(r, g, b) {
-        return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    }
-
-    function extractVibrant(img) {
-        try {
-            const c = document.createElement('canvas');
-            c.width = 50; c.height = 50;
-            const ctx = c.getContext('2d');
-            ctx.drawImage(img, 0, 0, 50, 50);
-            const d = ctx.getImageData(0, 0, 50, 50).data;
-
-            // 12 cubetas de tono (30° cada una), ponderadas por saturación y brillo
-            const buckets = Array.from({length: 12}, () => ({w: 0, r: 0, g: 0, b: 0}));
-
-            for (let i = 0; i < d.length; i += 4) {
-                const r = d[i] / 255, g = d[i+1] / 255, b = d[i+2] / 255;
-                const max = Math.max(r, g, b), min = Math.min(r, g, b), dlt = max - min;
-
-                // Descartar grises, negros y blancos
-                if (dlt < 0.15 || max < 0.12 || max > 0.95) continue;
-
-                let h = max === r ? ((g - b) / dlt) % 6
-                      : max === g ? (b - r) / dlt + 2
-                      :             (r - g) / dlt + 4;
-                h = ((h * 60) + 360) % 360;
-
-                const sat = dlt / max;
-                const lgt = (max + min) / 2;
-                // Peso: favorece saturación alta y brillo medio
-                const w = sat * (1 - Math.abs(lgt - 0.45) * 1.8);
-                const bi = Math.floor(h / 30) % 12;
-
-                buckets[bi].w += w;
-                buckets[bi].r += d[i]   * w;
-                buckets[bi].g += d[i+1] * w;
-                buckets[bi].b += d[i+2] * w;
-            }
-
-            const best = buckets.reduce((a, b) => b.w > a.w ? b : a);
-            if (best.w < 0.5) return null;
-
-            return {
-                r: Math.round(best.r / best.w),
-                g: Math.round(best.g / best.w),
-                b: Math.round(best.b / best.w),
-            };
-        } catch (e) {
-            return null; // CORS u otro error
-        }
-    }
-
-    function applyColor(card) {
-        const img   = card.querySelector('.platform-img');
-        const label = card.querySelector('.platform-label');
-        const bar   = card.querySelector('.platform-bar');
-        if (!img || !label) return;
-
-        const run = () => {
-            const col = extractVibrant(img);
-            if (!col) return;
-            const bg  = `rgb(${col.r},${col.g},${col.b})`;
-            const txt = luminance(col.r, col.g, col.b) > 0.45 ? '#000000' : '#ffffff';
-            label.style.backgroundColor = bg;
-            label.style.color           = txt;
-            if (bar) bar.style.backgroundColor = bg;
-        };
-
-        if (img.complete && img.naturalWidth) run();
-        else img.addEventListener('load', run);
-    }
-
-    document.querySelectorAll('.platform-card').forEach(applyColor);
-})();
-</script>
-
 {{-- ── COMUNICADOS ──────────────────────────────────────────── --}}
 <section class="py-5">
     <div class="max-w-screen-xl mx-auto px-4 md:px-12"
@@ -1006,6 +928,58 @@
 @endsection
 
 @push('scripts')
+<script>
+(function () {
+    function luminance(r, g, b) {
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    }
+    function extractVibrant(img) {
+        try {
+            const c = document.createElement('canvas');
+            c.width = 50; c.height = 50;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0, 50, 50);
+            const d = ctx.getImageData(0, 0, 50, 50).data;
+            const buckets = Array.from({length: 12}, () => ({w: 0, r: 0, g: 0, b: 0}));
+            for (let i = 0; i < d.length; i += 4) {
+                const r = d[i] / 255, g = d[i+1] / 255, b = d[i+2] / 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b), dlt = max - min;
+                if (dlt < 0.15 || max < 0.12 || max > 0.95) continue;
+                let h = max === r ? ((g - b) / dlt) % 6 : max === g ? (b - r) / dlt + 2 : (r - g) / dlt + 4;
+                h = ((h * 60) + 360) % 360;
+                const sat = dlt / max, lgt = (max + min) / 2;
+                const w = sat * (1 - Math.abs(lgt - 0.45) * 1.8);
+                const bi = Math.floor(h / 30) % 12;
+                buckets[bi].w += w; buckets[bi].r += d[i] * w;
+                buckets[bi].g += d[i+1] * w; buckets[bi].b += d[i+2] * w;
+            }
+            const best = buckets.reduce((a, b) => b.w > a.w ? b : a);
+            if (best.w < 0.5) return null;
+            return { r: Math.round(best.r / best.w), g: Math.round(best.g / best.w), b: Math.round(best.b / best.w) };
+        } catch (e) { return null; }
+    }
+    function applyColor(card) {
+        const img = card.querySelector('.platform-img');
+        const label = card.querySelector('.platform-label');
+        const bar = card.querySelector('.platform-bar');
+        if (!img || !label) return;
+        const run = () => {
+            const col = extractVibrant(img);
+            if (!col) return;
+            const bg = `rgb(${col.r},${col.g},${col.b})`;
+            const txt = luminance(col.r, col.g, col.b) > 0.45 ? '#000000' : '#ffffff';
+            label.style.backgroundColor = bg;
+            label.style.color = txt;
+            if (bar) bar.style.backgroundColor = bg;
+        };
+        if (img.complete && img.naturalWidth) run();
+        else img.addEventListener('load', run);
+    }
+    const run = () => document.querySelectorAll('.platform-card').forEach(applyColor);
+    'requestIdleCallback' in window ? requestIdleCallback(run) : setTimeout(run, 200);
+})();
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var listaVideos = document.getElementById('listaVideos');
