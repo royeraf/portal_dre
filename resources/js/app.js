@@ -8,7 +8,6 @@ Alpine.plugin(intersect);
 Alpine.plugin(collapse);
 
 window.Alpine = Alpine;
-Alpine.start();
 
 /* ── Lucide Icons ──────────────────────────────────────────── */
 import { createIcons } from 'lucide';
@@ -88,3 +87,7 @@ document.addEventListener('alpine:initialized', () => {
     });
     observer.observe(document.body, { childList: true, subtree: true });
 });
+
+// Alpine.start() dispara 'alpine:initialized' de forma sincrona, por lo que
+// debe llamarse despues de registrar el listener de arriba para que lo capture.
+Alpine.start();
