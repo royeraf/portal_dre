@@ -33,6 +33,7 @@ import {
     Phone,
     // Convocatorias
     SlidersHorizontal, Filter, Paperclip, LayoutGrid, List, Sparkles,
+    FileSpreadsheet, Presentation, FileArchive, FileImage, FileType, File, Flag,
     // Infraestructura slider
     Expand,
     // Direcciones / show
@@ -54,6 +55,7 @@ const icons = {
     Video, Play,
     Phone,
     SlidersHorizontal, Filter, Paperclip, LayoutGrid, List, Sparkles,
+    FileSpreadsheet, Presentation, FileArchive, FileImage, FileType, File, Flag,
     Expand,
     Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,
     Zap, Megaphone, PlayCircle, Smartphone,

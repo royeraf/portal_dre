@@ -138,19 +138,19 @@
                         $externo = $host !== '' && !str_contains($host, 'drehuanuco.gob.pe') && $host !== $appHost;
 
                         if ($ext === 'pdf') {
-                            $icon = ['label' => 'PDF', 'bg' => 'bg-red-50 border-red-100 group-hover/file:bg-red-100', 'text' => 'text-red-500'];
+                            $icon = ['icon' => 'file-text', 'bg' => 'bg-red-50 border-red-100 group-hover/file:bg-red-100', 'text' => 'text-red-500'];
                         } elseif (in_array($ext, ['doc', 'docx'])) {
-                            $icon = ['label' => 'DOC', 'bg' => 'bg-blue-50 border-blue-100 group-hover/file:bg-blue-100', 'text' => 'text-blue-500'];
+                            $icon = ['icon' => 'file-type', 'bg' => 'bg-blue-50 border-blue-100 group-hover/file:bg-blue-100', 'text' => 'text-blue-500'];
                         } elseif (in_array($ext, ['xls', 'xlsx', 'csv'])) {
-                            $icon = ['label' => 'XLS', 'bg' => 'bg-emerald-50 border-emerald-100 group-hover/file:bg-emerald-100', 'text' => 'text-emerald-500'];
+                            $icon = ['icon' => 'file-spreadsheet', 'bg' => 'bg-emerald-50 border-emerald-100 group-hover/file:bg-emerald-100', 'text' => 'text-emerald-500'];
                         } elseif (in_array($ext, ['ppt', 'pptx'])) {
-                            $icon = ['label' => 'PPT', 'bg' => 'bg-orange-50 border-orange-100 group-hover/file:bg-orange-100', 'text' => 'text-orange-500'];
+                            $icon = ['icon' => 'presentation', 'bg' => 'bg-orange-50 border-orange-100 group-hover/file:bg-orange-100', 'text' => 'text-orange-500'];
                         } elseif (in_array($ext, ['zip', 'rar', '7z'])) {
-                            $icon = ['label' => 'ZIP', 'bg' => 'bg-amber-50 border-amber-100 group-hover/file:bg-amber-100', 'text' => 'text-amber-500'];
+                            $icon = ['icon' => 'file-archive', 'bg' => 'bg-amber-50 border-amber-100 group-hover/file:bg-amber-100', 'text' => 'text-amber-500'];
                         } elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
-                            $icon = ['label' => 'IMG', 'bg' => 'bg-purple-50 border-purple-100 group-hover/file:bg-purple-100', 'text' => 'text-purple-500'];
+                            $icon = ['icon' => 'file-image', 'bg' => 'bg-purple-50 border-purple-100 group-hover/file:bg-purple-100', 'text' => 'text-purple-500'];
                         } else {
-                            $icon = ['label' => $ext ? strtoupper($ext) : '', 'bg' => 'bg-gray-100 border-gray-200 group-hover/file:bg-gray-200', 'text' => 'text-gray-500'];
+                            $icon = ['icon' => 'file', 'bg' => 'bg-gray-100 border-gray-200 group-hover/file:bg-gray-200', 'text' => 'text-gray-500'];
                         }
 
                         $icon['externo'] = $externo;
@@ -176,7 +176,7 @@
                                 'url'      => $a['url_archivo'],
                                 'fecha'    => $a->created_at ? \Carbon\Carbon::parse($a->created_at)->format('d/m/Y') : null,
                                 'nuevo'    => $a->created_at && \Carbon\Carbon::parse($a->created_at)->diffInDays(now()) <= 2,
-                                'iconLabel'=> $icon['label'],
+                                'icon'     => $icon['icon'],
                                 'iconBg'   => $icon['bg'],
                                 'iconText' => $icon['text'],
                                 'externo'  => $icon['externo'],
@@ -198,7 +198,7 @@
                         </span>
                         @if($finalizado)
                             <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-100/80 shadow-sm">
-                                <svg class="w-3 h-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+                                <i data-lucide="flag" class="w-3 h-3 text-red-500 shrink-0"></i>
                                 FINALIZADO
                             </span>
                         @elseif($abierto)
@@ -214,7 +214,7 @@
                         @endif
                         @if($nuevo && !$finalizado)
                             <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm tag-nuevo-pulse">
-                                <svg class="w-3 h-3 text-emerald-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
+                                <i data-lucide="sparkles" class="w-3 h-3 text-emerald-500 shrink-0"></i>
                                 NUEVO
                             </span>
                         @endif
@@ -385,7 +385,7 @@
                             </span>
                             <template x-if="modal?.finalizado">
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-100/80 shadow-sm">
-                                    <svg class="w-3 h-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+                                    <i data-lucide="flag" class="w-3 h-3 text-red-500 shrink-0"></i>
                                     FINALIZADO
                                 </span>
                             </template>
@@ -402,8 +402,8 @@
                                 </span>
                             </template>
                             <template x-if="modal?.nuevo && !modal?.finalizado">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm tag-nuevo-pulse">
-                                    <svg class="w-3 h-3 text-emerald-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M7 5H3"/><path d="M21 3v4"/><path d="M23 5h-4"/><path d="M19 19v4"/><path d="M21 21h-4"/><path d="M5 19v4"/><path d="M7 21H3"/></svg>
+                                <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm tag-nuevo-pulse">
+                                    <i data-lucide="sparkles" class="w-3 h-3 text-emerald-500 shrink-0"></i>
                                     NUEVO
                                 </span>
                             </template>
@@ -423,6 +423,14 @@
                                           :class="modal?.abierto ? 'text-amber-600' : 'text-gray-700'"
                                           x-text="modal?.ft"></span>
                         </div>
+                        <template x-if="modal?.nuevo && !modal?.finalizado">
+                            <div class="w-full sm:hidden">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 shadow-sm tag-nuevo-pulse">
+                                    <i data-lucide="sparkles" class="w-3 h-3 text-emerald-500 shrink-0"></i>
+                                    NUEVO
+                                </span>
+                            </div>
+                        </template>
                     </div>
 
                     {{-- Cuerpo — scrollea con el contenido --}}
@@ -439,7 +447,7 @@
                         <template x-if="modal?.descripcion">
                             <div>
                                 <p class="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">
-                                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                                    <i data-lucide="file-text" class="w-3.5 h-3.5 shrink-0"></i>
                                     Descripción
                                 </p>
                                 <div class="text-sm text-gray-700 leading-relaxed prose prose-sm max-w-none"
@@ -452,7 +460,7 @@
                         <template x-if="modal?.archivos?.length > 0">
                             <div>
                                 <p class="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">
-                                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                                    <i data-lucide="paperclip" class="w-3.5 h-3.5 shrink-0"></i>
                                     Documentos adjuntos
                                     (<span x-text="modal?.archivos?.length"></span>)
                                 </p>
@@ -464,14 +472,11 @@
                                                       hover:bg-dre-50 hover:border-dre-accent/30 transition-all duration-200 group/file">
                                                 <span class="relative w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-colors mt-0.5"
                                                       :class="archivo.iconBg">
-                                                    <svg class="w-4 h-4" :class="archivo.iconText" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                                                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>
-                                                        <text x="12" y="17" text-anchor="middle" font-size="6.5" font-weight="700" stroke="none" fill="currentColor" x-text="archivo.iconLabel"></text>
-                                                    </svg>
+                                                    <i class="w-4 h-4" :class="archivo.iconText" :data-lucide="archivo.icon"></i>
                                                     <template x-if="archivo.externo">
                                                         <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-sky-500 border border-white flex items-center justify-center"
                                                               title="Enlace externo">
-                                                            <svg class="w-2 h-2 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                                            <i data-lucide="external-link" class="w-2 h-2 text-white"></i>
                                                         </span>
                                                     </template>
                                                 </span>
@@ -488,7 +493,7 @@
                                                     </span>
                                                     <span class="block text-[11px] text-gray-400 mt-0.5" x-text="archivo.fecha"></span>
                                                 </span>
-                                                <svg class="w-3.5 h-3.5 text-gray-300 group-hover/file:text-dre-accent shrink-0 transition-colors mt-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                                <i data-lucide="external-link" class="w-3.5 h-3.5 text-gray-300 group-hover/file:text-dre-accent shrink-0 transition-colors mt-1.5"></i>
                                             </a>
                                         </li>
                                     </template>
