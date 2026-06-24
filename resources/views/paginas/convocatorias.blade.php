@@ -486,12 +486,17 @@
                                                               x-text="archivo.nom">
                                                         </span>
                                                         <template x-if="archivo.nuevo">
-                                                            <span class="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 tag-nuevo-pulse">
+                                                            <span class="hidden sm:inline-flex shrink-0 items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 tag-nuevo-pulse">
                                                                 NUEVO
                                                             </span>
                                                         </template>
                                                     </span>
                                                     <span class="block text-[11px] text-gray-400 mt-0.5" x-text="archivo.fecha"></span>
+                                                    <template x-if="archivo.nuevo">
+                                                        <span class="sm:hidden inline-flex shrink-0 items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 tag-nuevo-pulse mt-1">
+                                                            NUEVO
+                                                        </span>
+                                                    </template>
                                                 </span>
                                                 <i data-lucide="external-link" class="w-3.5 h-3.5 text-gray-300 group-hover/file:text-dre-accent shrink-0 transition-colors mt-1.5"></i>
                                             </a>
