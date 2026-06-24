@@ -25,7 +25,7 @@
         {{-- ── WRAPPER ALPINE ───────────────────────────────── --}}
         <div
             x-data="{
-                view:  window.innerWidth < 640 ? 'list' : (localStorage.getItem('conv_view') || 'list'),
+                view:  localStorage.getItem('conv_view') || 'grid',
                 modal: null,
                 openModal(data)  { this.modal = data; document.body.style.overflow = 'hidden'; },
                 closeModal()     { this.modal = null; document.body.style.overflow = ''; }
@@ -41,15 +41,15 @@
                         <span class="font-display font-bold text-gray-800 text-sm uppercase tracking-wider">Filtrar Convocatorias</span>
                     </div>
                     <div class="hidden sm:flex items-center gap-1 shrink-0">
-                        <button @click="view = 'list'"
-                                :class="view === 'list' ? 'bg-dre-primary text-white shadow-sm' : 'bg-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-200'"
-                                class="p-2 rounded-lg transition-all duration-200" title="Vista lista">
-                            <i data-lucide="list" class="w-4 h-4 pointer-events-none"></i>
-                        </button>
                         <button @click="view = 'grid'"
                                 :class="view === 'grid' ? 'bg-dre-primary text-white shadow-sm' : 'bg-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-200'"
                                 class="p-2 rounded-lg transition-all duration-200" title="Vista cuadrícula">
                             <i data-lucide="layout-grid" class="w-4 h-4 pointer-events-none"></i>
+                        </button>
+                        <button @click="view = 'list'"
+                                :class="view === 'list' ? 'bg-dre-primary text-white shadow-sm' : 'bg-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-200'"
+                                class="p-2 rounded-lg transition-all duration-200" title="Vista lista">
+                            <i data-lucide="list" class="w-4 h-4 pointer-events-none"></i>
                         </button>
                     </div>
                 </div>
