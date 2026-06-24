@@ -156,7 +156,7 @@ class HomeController extends Controller
     $convocatorias = $convocatorias->orderBy('id', 'desc')->paginate(12);
 
     foreach ($convocatorias as $row) {
-        $archivoconvocatoria = ArchivoConvocatoria::where('id_convocatoria', $row->id)->get();
+        $archivoconvocatoria = ArchivoConvocatoria::where('id_convocatoria', $row->id)->orderBy('created_at', 'desc')->get();
 
          // $archivo=[];
              // foreach($archivoconvocatoria as $arch)

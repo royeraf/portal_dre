@@ -130,6 +130,28 @@
                     $ft         = $row->fecha_termino ? \Carbon\Carbon::parse($row->fecha_termino)->format('d/m/Y') : '—';
                     $nuevo      = $row->created_at && \Carbon\Carbon::parse($row->created_at)->diffInDays(now()) <= 5;
                     $finalizado = $row->fecha_termino && \Carbon\Carbon::parse($row->fecha_termino)->endOfDay()->isPast();
+                    $fileIcon = function ($nomArchivo) {
+                        $ext = strtolower(pathinfo($nomArchivo ?? '', PATHINFO_EXTENSION));
+                        if ($ext === 'pdf') {
+                            return ['label' => 'PDF', 'bg' => 'bg-red-50 border-red-100 group-hover/file:bg-red-100', 'text' => 'text-red-500'];
+                        }
+                        if (in_array($ext, ['doc', 'docx'])) {
+                            return ['label' => 'DOC', 'bg' => 'bg-blue-50 border-blue-100 group-hover/file:bg-blue-100', 'text' => 'text-blue-500'];
+                        }
+                        if (in_array($ext, ['xls', 'xlsx', 'csv'])) {
+                            return ['label' => 'XLS', 'bg' => 'bg-emerald-50 border-emerald-100 group-hover/file:bg-emerald-100', 'text' => 'text-emerald-500'];
+                        }
+                        if (in_array($ext, ['ppt', 'pptx'])) {
+                            return ['label' => 'PPT', 'bg' => 'bg-orange-50 border-orange-100 group-hover/file:bg-orange-100', 'text' => 'text-orange-500'];
+                        }
+                        if (in_array($ext, ['zip', 'rar', '7z'])) {
+                            return ['label' => 'ZIP', 'bg' => 'bg-amber-50 border-amber-100 group-hover/file:bg-amber-100', 'text' => 'text-amber-500'];
+                        }
+                        if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
+                            return ['label' => 'IMG', 'bg' => 'bg-purple-50 border-purple-100 group-hover/file:bg-purple-100', 'text' => 'text-purple-500'];
+                        }
+                        return ['label' => $ext ? strtoupper($ext) : 'DOC', 'bg' => 'bg-gray-100 border-gray-200 group-hover/file:bg-gray-200', 'text' => 'text-gray-500'];
+                    };
                     $mdata   = [
                         'tipo'        => $row->tipo,
                         'pill'        => $ts['pill'],
@@ -143,10 +165,18 @@
                         'fi'          => $fi,
                         'ft'          => $ft,
                         'descripcion' => $row->descripcion,
-                        'archivos'    => collect($row->archivos)->map(fn($a) => [
-                            'nom' => $a['nom_archivo'],
-                            'url' => $a['url_archivo'],
-                        ])->values()->toArray(),
+                        'archivos'    => collect($row->archivos)->map(function ($a) use ($fileIcon) {
+                            $icon = $fileIcon($a['nom_archivo']);
+                            return [
+                                'nom'      => $a['nom_archivo'],
+                                'url'      => $a['url_archivo'],
+                                'fecha'    => $a->created_at ? \Carbon\Carbon::parse($a->created_at)->format('d/m/Y') : null,
+                                'nuevo'    => $a->created_at && \Carbon\Carbon::parse($a->created_at)->diffInDays(now()) <= 2,
+                                'iconLabel'=> $icon['label'],
+                                'iconBg'   => $icon['bg'],
+                                'iconText' => $icon['text'],
+                            ];
+                        })->values()->toArray(),
                     ];
                 @endphp
 
@@ -427,11 +457,25 @@
                                             <a :href="archivo.url" target="_blank"
                                                class="flex items-start gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50
                                                       hover:bg-dre-50 hover:border-dre-accent/30 transition-all duration-200 group/file">
-                                                <span class="w-8 h-8 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center shrink-0 group-hover/file:bg-red-100 transition-colors mt-0.5">
-                                                    <svg class="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                                                <span class="w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-colors mt-0.5"
+                                                      :class="archivo.iconBg">
+                                                    <svg class="w-4 h-4" :class="archivo.iconText" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                                                        <text x="12" y="17" text-anchor="middle" font-size="6.5" font-weight="700" stroke="none" fill="currentColor" x-text="archivo.iconLabel"></text>
+                                                    </svg>
                                                 </span>
-                                                <span class="flex-1 min-w-0 text-xs font-medium text-gray-700 group-hover/file:text-dre-accent transition-colors break-words mt-1 leading-normal"
-                                                      x-text="archivo.nom">
+                                                <span class="flex-1 min-w-0 mt-0.5">
+                                                    <span class="flex items-center gap-1.5 flex-wrap">
+                                                        <span class="text-xs font-medium text-gray-700 group-hover/file:text-dre-accent transition-colors break-words leading-normal"
+                                                              x-text="archivo.nom">
+                                                        </span>
+                                                        <template x-if="archivo.nuevo">
+                                                            <span class="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80 tag-nuevo-pulse">
+                                                                NUEVO
+                                                            </span>
+                                                        </template>
+                                                    </span>
+                                                    <span class="block text-[11px] text-gray-400 mt-0.5" x-text="archivo.fecha"></span>
                                                 </span>
                                                 <svg class="w-3.5 h-3.5 text-gray-300 group-hover/file:text-dre-accent shrink-0 transition-colors mt-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                                             </a>
