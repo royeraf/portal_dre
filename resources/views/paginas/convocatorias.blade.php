@@ -130,8 +130,9 @@
                     $ft         = $row->fecha_termino ? \Carbon\Carbon::parse($row->fecha_termino)->format('d/m/Y') : '—';
                     $nuevo      = $row->created_at && \Carbon\Carbon::parse($row->created_at)->diffInDays(now()) <= 5;
                     $finalizado = $row->fecha_termino && \Carbon\Carbon::parse($row->fecha_termino)->endOfDay()->isPast();
-                    $fileIcon = function ($nomArchivo) {
-                        $ext = strtolower(pathinfo($nomArchivo ?? '', PATHINFO_EXTENSION));
+                    $fileIcon = function ($urlArchivo) {
+                        $path = parse_url($urlArchivo ?? '', PHP_URL_PATH) ?: '';
+                        $ext  = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                         if ($ext === 'pdf') {
                             return ['label' => 'PDF', 'bg' => 'bg-red-50 border-red-100 group-hover/file:bg-red-100', 'text' => 'text-red-500'];
                         }
@@ -150,7 +151,7 @@
                         if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
                             return ['label' => 'IMG', 'bg' => 'bg-purple-50 border-purple-100 group-hover/file:bg-purple-100', 'text' => 'text-purple-500'];
                         }
-                        return ['label' => $ext ? strtoupper($ext) : 'DOC', 'bg' => 'bg-gray-100 border-gray-200 group-hover/file:bg-gray-200', 'text' => 'text-gray-500'];
+                        return ['label' => $ext ? strtoupper($ext) : '', 'bg' => 'bg-gray-100 border-gray-200 group-hover/file:bg-gray-200', 'text' => 'text-gray-500'];
                     };
                     $mdata   = [
                         'tipo'        => $row->tipo,
@@ -166,7 +167,7 @@
                         'ft'          => $ft,
                         'descripcion' => $row->descripcion,
                         'archivos'    => collect($row->archivos)->map(function ($a) use ($fileIcon) {
-                            $icon = $fileIcon($a['nom_archivo']);
+                            $icon = $fileIcon($a['url_archivo']);
                             return [
                                 'nom'      => $a['nom_archivo'],
                                 'url'      => $a['url_archivo'],
