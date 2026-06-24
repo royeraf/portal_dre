@@ -133,25 +133,28 @@
                     $fileIcon = function ($urlArchivo) {
                         $path = parse_url($urlArchivo ?? '', PHP_URL_PATH) ?: '';
                         $ext  = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                        $host = strtolower(parse_url($urlArchivo ?? '', PHP_URL_HOST) ?: '');
+                        $appHost = strtolower(parse_url(config('app.url'), PHP_URL_HOST) ?: '');
+                        $externo = $host !== '' && !str_contains($host, 'drehuanuco.gob.pe') && $host !== $appHost;
+
                         if ($ext === 'pdf') {
-                            return ['label' => 'PDF', 'bg' => 'bg-red-50 border-red-100 group-hover/file:bg-red-100', 'text' => 'text-red-500'];
+                            $icon = ['label' => 'PDF', 'bg' => 'bg-red-50 border-red-100 group-hover/file:bg-red-100', 'text' => 'text-red-500'];
+                        } elseif (in_array($ext, ['doc', 'docx'])) {
+                            $icon = ['label' => 'DOC', 'bg' => 'bg-blue-50 border-blue-100 group-hover/file:bg-blue-100', 'text' => 'text-blue-500'];
+                        } elseif (in_array($ext, ['xls', 'xlsx', 'csv'])) {
+                            $icon = ['label' => 'XLS', 'bg' => 'bg-emerald-50 border-emerald-100 group-hover/file:bg-emerald-100', 'text' => 'text-emerald-500'];
+                        } elseif (in_array($ext, ['ppt', 'pptx'])) {
+                            $icon = ['label' => 'PPT', 'bg' => 'bg-orange-50 border-orange-100 group-hover/file:bg-orange-100', 'text' => 'text-orange-500'];
+                        } elseif (in_array($ext, ['zip', 'rar', '7z'])) {
+                            $icon = ['label' => 'ZIP', 'bg' => 'bg-amber-50 border-amber-100 group-hover/file:bg-amber-100', 'text' => 'text-amber-500'];
+                        } elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
+                            $icon = ['label' => 'IMG', 'bg' => 'bg-purple-50 border-purple-100 group-hover/file:bg-purple-100', 'text' => 'text-purple-500'];
+                        } else {
+                            $icon = ['label' => $ext ? strtoupper($ext) : '', 'bg' => 'bg-gray-100 border-gray-200 group-hover/file:bg-gray-200', 'text' => 'text-gray-500'];
                         }
-                        if (in_array($ext, ['doc', 'docx'])) {
-                            return ['label' => 'DOC', 'bg' => 'bg-blue-50 border-blue-100 group-hover/file:bg-blue-100', 'text' => 'text-blue-500'];
-                        }
-                        if (in_array($ext, ['xls', 'xlsx', 'csv'])) {
-                            return ['label' => 'XLS', 'bg' => 'bg-emerald-50 border-emerald-100 group-hover/file:bg-emerald-100', 'text' => 'text-emerald-500'];
-                        }
-                        if (in_array($ext, ['ppt', 'pptx'])) {
-                            return ['label' => 'PPT', 'bg' => 'bg-orange-50 border-orange-100 group-hover/file:bg-orange-100', 'text' => 'text-orange-500'];
-                        }
-                        if (in_array($ext, ['zip', 'rar', '7z'])) {
-                            return ['label' => 'ZIP', 'bg' => 'bg-amber-50 border-amber-100 group-hover/file:bg-amber-100', 'text' => 'text-amber-500'];
-                        }
-                        if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
-                            return ['label' => 'IMG', 'bg' => 'bg-purple-50 border-purple-100 group-hover/file:bg-purple-100', 'text' => 'text-purple-500'];
-                        }
-                        return ['label' => $ext ? strtoupper($ext) : '', 'bg' => 'bg-gray-100 border-gray-200 group-hover/file:bg-gray-200', 'text' => 'text-gray-500'];
+
+                        $icon['externo'] = $externo;
+                        return $icon;
                     };
                     $mdata   = [
                         'tipo'        => $row->tipo,
@@ -176,6 +179,7 @@
                                 'iconLabel'=> $icon['label'],
                                 'iconBg'   => $icon['bg'],
                                 'iconText' => $icon['text'],
+                                'externo'  => $icon['externo'],
                             ];
                         })->values()->toArray(),
                     ];
@@ -458,12 +462,18 @@
                                             <a :href="archivo.url" target="_blank"
                                                class="flex items-start gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50
                                                       hover:bg-dre-50 hover:border-dre-accent/30 transition-all duration-200 group/file">
-                                                <span class="w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-colors mt-0.5"
+                                                <span class="relative w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-colors mt-0.5"
                                                       :class="archivo.iconBg">
                                                     <svg class="w-4 h-4" :class="archivo.iconText" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                                                         <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>
                                                         <text x="12" y="17" text-anchor="middle" font-size="6.5" font-weight="700" stroke="none" fill="currentColor" x-text="archivo.iconLabel"></text>
                                                     </svg>
+                                                    <template x-if="archivo.externo">
+                                                        <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-sky-500 border border-white flex items-center justify-center"
+                                                              title="Enlace externo">
+                                                            <svg class="w-2 h-2 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                                        </span>
+                                                    </template>
                                                 </span>
                                                 <span class="flex-1 min-w-0 mt-0.5">
                                                     <span class="flex items-center gap-1.5 flex-wrap">
