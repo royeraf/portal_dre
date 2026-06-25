@@ -79,7 +79,7 @@
             {{-- Horario --}}
             <div class="flex items-center gap-1.5 min-w-0">
                 <i data-lucide="clock" class="w-3.5 h-3.5 text-yellow-400 shrink-0"></i>
-                <span class="hidden sm:inline truncate">HORARIO DE ATENCIÓN: Lunes - Viernes: 8:30 am - 5:30 pm</span>
+                <span class="hidden sm:inline truncate">HORARIO DE ATENCIÓN: Lunes - Viernes: 8:30 a 12:30 mañana -3:15 a 5:30 tarde</span>
                 <span class="sm:hidden text-[11px] text-white/80">L-V: 8:30 – 5:30 pm</span>
             </div>
 
@@ -93,11 +93,11 @@
                     <span class="hidden sm:inline">Intranet</span>
                 </a>
                 <span class="text-white/20">|</span>
-                <a href="https://auladre.drehuanuco.gob.pe/login/index.php"
-                   title="Aula Virtual"
+                <a href="https://convocatoria.drehuanuco.gob.pe/"
+                   title="Convocatoria On Line"
                    class="bg-yellow-500 text-black font-bold px-2 sm:px-3 py-1 rounded hover:bg-yellow-400 transition-colors flex items-center gap-1.5">
                     <i data-lucide="graduation-cap" class="w-4 h-4 shrink-0"></i>
-                    <span class="hidden sm:inline">Aula Virtual</span>
+                    <span class="hidden sm:inline">CONVOCATORIA ON LINE</span>
                 </a>
                 <a target="_blank" title="Portal de Transparencia"
                    href="https://www.transparencia.gob.pe/enlaces/pte_transparencia_enlaces.aspx?id_entidad=14163#.Y9SgbXbMLrd"
