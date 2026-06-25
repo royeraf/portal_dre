@@ -397,7 +397,7 @@
         </div>
 
         {{-- Bento-grid: gap-px sobre fondo gris = bordes 1px entre celdas --}}
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-{{ min(count($mainrightitem), 6) }}
+        <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-{{ min(count($mainrightitem), 6) }}
                     gap-px bg-gray-200 border border-gray-200">
             @foreach ($mainrightitem as $item)
                 <a href="{{ $item->url }}" title="{{ $item->nombre }}"
@@ -472,7 +472,12 @@
             <div x-show="page === {{ $ci }}" x-transition.opacity
                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 @foreach ($chunk as $item)
-                    <div class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 flex flex-col">
+                    @if($item->url != '' && $item->url != null)
+                    <a href="{{ $item->url }}" target="_blank" rel="noopener noreferrer"
+                    @else
+                    <div
+                    @endif
+                       class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 hover:border-transparent transition-all duration-300 flex flex-col">
                         {{-- Imagen con overlay --}}
                         <div class="relative h-48 sm:h-52 overflow-hidden shrink-0 skeleton img-wrap">
                             <img src="{{ asset('img/comunicados/'.$item->imagen) }}"
@@ -490,19 +495,21 @@
                             <h3 class="font-display text-gray-900 text-base font-bold leading-snug mb-4 group-hover:text-dre-accent transition-colors duration-200">
                                 {{ $item->titulo }}
                             </h3>
-                            <div class="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
-                                <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">DRE Huánuco</span>
-                                @if($item->url != '' && $item->url != null)
-                                    <a href="{{ $item->url }}" target="_blank"
-                                       class="flex items-center gap-1 text-dre-accent text-xs font-bold group-hover:gap-2 transition-all duration-200">
-                                        Ver Más <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                    </a>
-                                @endif
+                            @if($item->url != '' && $item->url != null)
+                            <div class="mt-auto pt-3 border-t border-gray-100 flex items-center justify-end">
+                                <span class="flex items-center gap-1 text-dre-accent text-xs font-bold group-hover:gap-2 transition-all duration-200">
+                                    Ver Más <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                </span>
                             </div>
+                            @endif
                         </div>
                         {{-- Barra de acento --}}
                         <div class="h-0.5 bg-dre-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left shrink-0"></div>
+                    @if($item->url != '' && $item->url != null)
+                    </a>
+                    @else
                     </div>
+                    @endif
                 @endforeach
             </div>
         @endforeach
@@ -550,7 +557,7 @@
                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 @foreach ($chunk as $item)
                     <a href="{{ route('noticia', $item->id) }}"
-                       class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-transparent transition-all duration-300 flex flex-col">
+                       class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 hover:border-transparent transition-all duration-300 flex flex-col">
                         {{-- Imagen con overlay --}}
                         <div class="relative h-48 sm:h-52 overflow-hidden shrink-0 skeleton img-wrap">
                             <img src="{{ asset('img/noticias/'.$item->img1) }}"
@@ -573,8 +580,7 @@
                             <h3 class="font-display text-gray-900 text-base font-bold leading-snug mb-4 group-hover:text-dre-accent transition-colors duration-200">
                                 {{ $item->titulo }}
                             </h3>
-                            <div class="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
-                                <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">DRE Huánuco</span>
+                            <div class="mt-auto pt-3 border-t border-gray-100 flex items-center justify-end">
                                 <span class="flex items-center gap-1 text-dre-accent text-xs font-bold group-hover:gap-2 transition-all duration-200">
                                     Leer <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                 </span>
@@ -711,10 +717,12 @@
             {{-- TikTok --}}
             <div class="md:col-span-3 min-w-0 flex flex-col">
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="font-display bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <a href="https://www.tiktok.com/@drehuanuco" target="_blank" rel="noopener noreferrer"
+                       class="font-display bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 transition-colors">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78c.29 0 .57.04.84.12v-3.5a6.37 6.37 0 0 0-.84-.05A6.34 6.34 0 0 0 3.15 15.3 6.34 6.34 0 0 0 9.49 21.65a6.34 6.34 0 0 0 6.34-6.34V9.06a8.16 8.16 0 0 0 4.77 1.52V7.13a4.82 4.82 0 0 1-1.01-.44z"/></svg>
                         TikTok
-                    </span>
+                        <svg class="w-3 h-3 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
                     <div class="flex-1 h-px bg-blue-200"></div>
                 </div>
                 <div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 min-h-[220px] sm:min-h-[300px] skeleton
@@ -735,10 +743,12 @@
             {{-- Facebook --}}
             <div class="md:col-span-3 min-w-0 flex flex-col">
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="font-display bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <a href="https://www.facebook.com/direccionregionaldeeducacion" target="_blank" rel="noopener noreferrer"
+                       class="font-display bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 transition-colors">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                         Facebook
-                    </span>
+                        <svg class="w-3 h-3 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
                     <div class="flex-1 h-px bg-blue-200"></div>
                 </div>
                 <div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 min-h-[220px] sm:min-h-[300px] skeleton

@@ -74,32 +74,35 @@
 
     {{-- Top bar --}}
     <div class="bg-dre-dark text-white text-xs">
-        <div class="max-w-screen-xl mx-auto px-4 flex items-center justify-between py-1.5 sm:py-2 gap-2">
+        <div class="max-w-screen-xl mx-auto px-4 flex items-center justify-between py-2 gap-2">
 
             {{-- Horario --}}
             <div class="flex items-center gap-1.5 min-w-0">
                 <i data-lucide="clock" class="w-3.5 h-3.5 text-yellow-400 shrink-0"></i>
-                {{-- Texto completo en sm+, abreviado en móvil --}}
                 <span class="hidden sm:inline truncate">HORARIO DE ATENCIÓN: Lunes - Viernes: 8:30 am - 5:30 pm</span>
-                <span class="sm:hidden text-[11px]">L-V: 8:30 am – 5:30 pm</span>
+                <span class="sm:hidden text-[11px] text-white/80">L-V: 8:30 – 5:30 pm</span>
             </div>
 
             {{-- Acciones --}}
-            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div class="flex items-center gap-3 shrink-0">
                 <a href="{{ route('intranet') }}"
                    @if(Auth::user() == null) @click.prevent="$dispatch('open-login')" @endif
-                   class="hover:text-yellow-400 transition-colors flex items-center gap-1">
-                    <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+                   title="Intranet"
+                   class="hover:text-yellow-400 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="log-in" class="w-4 h-4 shrink-0"></i>
                     <span class="hidden sm:inline">Intranet</span>
                 </a>
-                <span class="text-white/30 hidden sm:inline">|</span>
+                <span class="text-white/20">|</span>
                 <a href="https://auladre.drehuanuco.gob.pe/login/index.php"
-                   class="bg-yellow-500 text-black font-bold px-2 sm:px-3 py-1 rounded hover:bg-yellow-400 transition-colors flex items-center gap-1">
-                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 shrink-0"></i>
+                   title="Aula Virtual"
+                   class="bg-yellow-500 text-black font-bold px-2 sm:px-3 py-1 rounded hover:bg-yellow-400 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 shrink-0"></i>
                     <span class="hidden sm:inline">Aula Virtual</span>
                 </a>
-                <a target="_blank" href="https://www.transparencia.gob.pe/enlaces/pte_transparencia_enlaces.aspx?id_entidad=14163#.Y9SgbXbMLrd">
-                    <img src="{{ asset('img/portal.png') }}" width="120" height="32" class="h-6 sm:h-8" alt="Portal de Transparencia">
+                <a target="_blank" title="Portal de Transparencia"
+                   href="https://www.transparencia.gob.pe/enlaces/pte_transparencia_enlaces.aspx?id_entidad=14163#.Y9SgbXbMLrd"
+                   class="flex items-center hover:opacity-80 transition-opacity">
+                    <img src="{{ asset('img/portal.png') }}" width="120" height="32" class="h-6 sm:h-8 w-auto" alt="Portal de Transparencia">
                 </a>
             </div>
 
