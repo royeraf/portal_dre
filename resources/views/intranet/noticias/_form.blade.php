@@ -28,7 +28,7 @@
             <div class="form-group">
                 <label class="form-control-label" for="fechapubli">FECHA DE PUBLICACION: <span class="tx-danger">*</span></label>
                 <input class="form-control" type="date" name="fechapubli" id="fechapubli"
-                    value="{{ old('fechapubli', optional($noticia)->fechapubli ?? date('Y-m-d')) }}">
+                    value="{{ old('fechapubli', $noticia ? date('Y-m-d', strtotime($noticia->fechapubli)) : date('Y-m-d')) }}">
                 <x-input-error :messages="$errors->get('fechapubli')" class="mt-2" />
             </div>
         </div>
