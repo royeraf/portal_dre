@@ -12,8 +12,8 @@
         <!-- Bracket CSS -->
         <link rel="stylesheet" href="{{asset('plantillas/bracketplus/app/css/bracket.css')}}">
         <!-- summernote -->
-        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+        <link href="{{asset('plantillas/bracketplus/app/lib/summernote/summernote.min.css')}}" rel="stylesheet">
+        <link href="{{asset('plantillas/bracketplus/app/lib/summernote/summernote-lite.min.css')}}" rel="stylesheet">
 
         @stack('styles')
     </head>
@@ -44,8 +44,8 @@
         <script src="{{asset('plantillas/bracketplus/app/lib/select2/js/select2.min.js')}}"></script>
         <script src="{{asset('plantillas/bracketplus/app/js/bracket.js')}}"></script>
         <script src="{{asset('js/script.js')}}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+        <script src="{{asset('plantillas/bracketplus/app/lib/summernote/summernote-lite.min.js')}}"></script>
+        <script src="{{asset('plantillas/bracketplus/app/lib/bs-custom-file-input/bs-custom-file-input.min.js')}}"></script>
         
         <!-- jQuery scripts -->
         <script>
