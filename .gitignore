@@ -58,3 +58,4 @@ public.zip
 
 # Esquema de base de datos versionado con Git LFS
 !database/schema.sql
+!database/test-data.sql
