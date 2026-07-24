@@ -112,10 +112,10 @@
                             </a>
                         </li>
                         <li>
-                            <a href="https://auladre.drehuanuco.gob.pe/login/index.php" target="_blank"
+                            <a href="https://convocatoria.drehuanuco.gob.pe/" target="_blank"
                                class="text-gray-400 hover:text-yellow-400 text-sm transition-colors flex items-center gap-2 py-1.5 group">
                                 <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-dre-accent group-hover:text-yellow-400 shrink-0 transition-colors"></i>
-                                Aula Virtual
+                                CONVOCATORIA
                             </a>
                         </li>
                     </ul>
@@ -204,7 +204,7 @@
             <div class="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-1 text-xs">
                 <a href="#" class="text-gray-500 hover:text-white transition-colors">Política de Privacidad</a>
                 <span class="text-white/10 hidden md:inline">|</span>
-                <a href="#" class="text-gray-500 hover:text-white transition-colors">Términos & Condiciones</a>
+                <a href="#" class="text-gray-500 hover:text-white transition-colors">OPDI - INFORMATICA</a>
             </div>
         </div>
     </div>

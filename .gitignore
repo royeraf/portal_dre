@@ -46,7 +46,12 @@ yarn-error.log
 # Archivos temporales / empaquetados
 public.zip
 *.zip
+*.sql
+/ls
 
 # Archivos subidos por usuarios en public_html (VPS)
 /public_html/img/
 /public_html/archivos/
+/public_html/archivos
+/public_html/build/
+/public_html/build

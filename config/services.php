@@ -2,6 +2,11 @@
 
 return [
 
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+        'chatbot_model' => env('OPENAI_CHATBOT_MODEL', 'gpt-5-nano'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
