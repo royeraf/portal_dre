@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comunicado;
 use App\Models\Convocatoria;
+use App\Models\KnowledgeDocument;
 use App\Models\Noticia;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ class ChatbotController extends Controller
             return response()->json($this->localAnswer($sources));
         }
 
-        $context = $sources->map(fn (array $source) => "- {$source['title']}: {$source['summary']} ({$source['url']})")
+        $context = $sources->map(fn (array $source) => "- {$source['title']}: ".($source['context'] ?? $source['summary'])." ({$source['url']})")
             ->implode("\n");
         $history = collect($validated['history'] ?? [])
             ->map(fn (array $item) => strtoupper($item['role']).': '.$item['content'])
@@ -124,7 +125,18 @@ PROMPT;
                 'url' => route('verconvocatoria', $item),
             ]);
 
-        return $noticias->concat($comunicados)->concat($convocatorias)->unique('url')->values();
+        $knowledge = $applySearch(
+            KnowledgeDocument::query()->where('status', 'ready')->where('is_published', true),
+            ['title', 'markdown']
+        )->latest()->limit(2)->get()
+            ->map(fn ($item) => [
+                'title' => $item->title,
+                'summary' => Str::limit(preg_replace('/\s+/', ' ', $item->markdown), 240),
+                'context' => Str::limit($item->markdown, 6000),
+                'url' => route('knowledge.download', $item),
+            ]);
+
+        return $knowledge->concat($noticias)->concat($comunicados)->concat($convocatorias)->unique('url')->values();
     }
 
     private function localAnswer($sources): array

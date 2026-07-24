@@ -689,7 +689,13 @@
                     <div class="aspect-video overflow-hidden [&_iframe]:block [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0 skeleton"
                          id="videoPrincipalContainer">
                         @php $primerVideo = $VideoEmbevidos->first(); @endphp
-                        {!! $primerVideo->contenido !!}
+                        @if($primerVideo)
+                            {!! $primerVideo->contenido !!}
+                        @else
+                            <div class="h-full flex items-center justify-center bg-slate-100 text-slate-500 text-sm">
+                                No hay videos disponibles.
+                            </div>
+                        @endif
                     </div>
 
                     {{-- Playlist header bar --}}

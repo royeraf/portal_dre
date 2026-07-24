@@ -62,7 +62,7 @@
             </ul>
             </li><!-- br-menu-item -->
 
-            <!-- NUEVO MÓDULO: DIRECCIONES -->
+            <!-- NUEVO M聛0藛7DULO: DIRECCIONES -->
             <li class="br-menu-item">
             <a href="#" class="br-menu-link with-sub">
                 <i class="menu-item-icon icon ion-ios-filing-outline tx-22"></i>
@@ -70,11 +70,11 @@
             </a><!-- br-menu-link -->
             <ul class="br-menu-sub nav flex-column">
                 <li class="sub-item"><a href="{{route('admin.direcciones')}}" class="sub-link">Administrar</a></li>
-                <li class="sub-item"><a href="{{route('admin.direcciones.create')}}" class="sub-link">Nueva Dirección</a></li>
+                <li class="sub-item"><a href="{{route('admin.direcciones.create')}}" class="sub-link">Nueva Direcci篓庐n</a></li>
             </ul>
             </li><!-- br-menu-item -->
 
-            <!-- NUEVO MÓDULO: SIAGIE -->
+            <!-- NUEVO M聛0藛7DULO: SIAGIE -->
             <li class="br-menu-item">
             <a href="#" class="br-menu-link with-sub">
                 <i class="menu-item-icon icon ion-ios-school-outline tx-22"></i>
@@ -83,7 +83,7 @@
             <ul class="br-menu-sub nav flex-column">
                 <li class="sub-item"><a href="{{route('admin.siagie.reports.index')}}" class="sub-link">Panel Principal</a></li>
                 <li class="sub-item"><a href="{{route('admin.siagie.reports.create')}}" class="sub-link">Nuevo Reporte</a></li>
-                <li class="sub-item"><a href="{{route('siagie.index')}}" target="_blank" class="sub-link">Ver Página Pública</a></li>
+                <li class="sub-item"><a href="{{route('siagie.index')}}" target="_blank" class="sub-link">Ver P篓垄gina P篓虏blica</a></li>
             </ul>
             </li><!-- br-menu-item -->
             
@@ -156,6 +156,12 @@
                   <i class="menu-item-icon icon ion-easel tx-22"></i>
                   <span class="menu-item-label">Videos</span>
                 </a><!-- br-menu-link -->
+            </li>
+            <li class="br-menu-item">
+                <a href="{{ route('knowledge.index') }}" class="br-menu-link">
+                  <i class="menu-item-icon icon ion-ios-lightbulb-outline tx-22"></i>
+                  <span class="menu-item-label">Conocimiento IA</span>
+                </a>
             </li>
         </ul><!-- br-sideleft-menu -->
         <br>

@@ -14,6 +14,7 @@ use App\Http\Controllers\ComunicadoController;
 use App\Http\Controllers\MainrightController;
 use App\Http\Controllers\DocumentogestionController;
 use App\Http\Controllers\InfraestructuraController;
+use App\Http\Controllers\KnowledgeDocumentController;
 use App\Http\Controllers\PaginaWebController;
 use App\Http\Controllers\VideoEmbevidoController;
 use Illuminate\Support\Facades\Route;
@@ -177,6 +178,14 @@ Route::controller(VideoEmbevidoController::class)->group(function(){
     Route::get('videoembevido/destroy/{videoembevido}', 'destroy')->middleware(['auth', 'verified'])->name('videoembevido.destroy');
     Route::get('videoembevido/edit/{videoembevido}', 'edit')->middleware(['auth', 'verified'])->name('videoembevido.edit');
 });
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('intranet/conocimiento-ia', [KnowledgeDocumentController::class, 'index'])->name('knowledge.index');
+    Route::post('intranet/conocimiento-ia', [KnowledgeDocumentController::class, 'store'])->name('knowledge.store');
+    Route::delete('intranet/conocimiento-ia/{knowledgeDocument}', [KnowledgeDocumentController::class, 'destroy'])->name('knowledge.destroy');
+});
+
+Route::get('conocimiento-ia/{knowledgeDocument}/pdf', [KnowledgeDocumentController::class, 'download'])->name('knowledge.download');
 
 //NUEVA RUTA PARA CONVIVENCIA SIN VIOLENCIA
 use App\Http\Controllers\ConvivenciaSinViolenciaController;
