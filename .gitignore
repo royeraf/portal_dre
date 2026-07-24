@@ -55,3 +55,6 @@ public.zip
 /public_html/archivos
 /public_html/build/
 /public_html/build
+
+# Esquema de base de datos versionado con Git LFS
+!database/schema.sql
