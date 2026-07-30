@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KnowledgeDocument;
+use App\Services\KnowledgeIndexer;
 use App\Services\PdfMarkdownExtractor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -45,7 +46,20 @@ class KnowledgeDocumentController extends Controller
                 'status' => 'ready',
             ]);
 
-            return redirect()->route('knowledge.index')->with('success', 'PDF procesado y agregado al conocimiento de la IA.');
+            // Sin fragmentos indexados el chatbot no encuentra este PDF por búsqueda semántica,
+            // pero el texto ya quedó guardado, así que un fallo aquí no invalida la carga.
+            try {
+                $total = app(KnowledgeIndexer::class)->index($document);
+
+                return redirect()->route('knowledge.index')
+                    ->with('success', "PDF procesado e indexado para el asistente ({$total} fragmentos).");
+            } catch (\Throwable $indexacion) {
+                report($indexacion);
+
+                return redirect()->route('knowledge.index')
+                    ->with('error', 'El PDF se procesó, pero no se pudo indexar para la búsqueda del asistente: '
+                        .$indexacion->getMessage().' Puedes reintentar con: php artisan knowledge:index --documento='.$document->id);
+            }
         } catch (\Throwable $exception) {
             report($exception);
             $document->update([

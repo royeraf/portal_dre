@@ -11,6 +11,15 @@
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <div class="alert alert-info">
         Sube PDFs con texto seleccionable. El sistema los convierte a Markdown y el chatbot usará ese contenido como fuente institucional. Los PDFs escaneados necesitan OCR para poder leerse.

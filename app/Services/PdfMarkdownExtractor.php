@@ -37,9 +37,18 @@ class PdfMarkdownExtractor
                 continue;
             }
 
-            if (mb_strlen($block) <= 120 && preg_match('/^[\p{Lu}\d\s.,:;()\-]+$/u', $block)) {
-                $markdown[] = '## '.mb_convert_case($block, MB_CASE_TITLE, 'UTF-8');
+            // Ignore blocks that are only page numbers or short numeric artifacts.
+            if (preg_match('/^\d{1,3}$/u', $block)) {
                 continue;
+            }
+
+            if (mb_strlen($block) <= 120 && preg_match('/^[\p{Lu}\d\s.,:;()\-]+$/u', $block)) {
+                // Require at least one letter to treat as a heading (avoid page numbers).
+                if (preg_match('/\p{L}/u', $block)) {
+                    $markdown[] = '## '.mb_convert_case($block, MB_CASE_TITLE, 'UTF-8');
+                    continue;
+                }
+                // otherwise fall through to normal paragraph handling
             }
 
             $markdown[] = $block;
