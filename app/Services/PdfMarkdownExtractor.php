@@ -7,10 +7,20 @@ use Smalot\PdfParser\Parser;
 
 class PdfMarkdownExtractor
 {
+    public function __construct(private PdfOcrTranscriber $transcriber)
+    {
+    }
+
     public function extract(string $filePath, string $title): array
     {
         $pdf = (new Parser())->parseFile($filePath);
         $text = trim($pdf->getText());
+        $paginas = count($pdf->getPages());
+
+        // Las normas institucionales suelen publicarse escaneadas y no tienen capa de texto.
+        if (mb_strlen($text) < 30 && config('services.openai.ocr', true)) {
+            $text = trim($this->transcriber->transcribe($filePath, $paginas));
+        }
 
         if (mb_strlen($text) < 30) {
             throw new RuntimeException('No se pudo extraer texto. El PDF puede ser una imagen escaneada y requerir OCR.');
@@ -18,7 +28,7 @@ class PdfMarkdownExtractor
 
         return [
             'markdown' => $this->toMarkdown($text, $title),
-            'page_count' => count($pdf->getPages()),
+            'page_count' => $paginas,
         ];
     }
 

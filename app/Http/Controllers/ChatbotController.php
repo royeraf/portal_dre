@@ -46,7 +46,7 @@ class ChatbotController extends Controller
         ]);
 
         $message = trim($validated['message']);
-        $sources = $this->findSources($message);
+        $sources = $this->findSources($message, $validated['history'] ?? []);
         $apiKey = config('services.openai.key');
 
         // Sin contexto que citar el modelo respondería de memoria, y aquí no se puede
@@ -115,15 +115,28 @@ PROMPT;
         }
     }
 
-    private function findSources(string $message)
+    private function findSources(string $message, array $history = [])
     {
         $apiKey = config('services.openai.key');
-        $tokens = collect(preg_split('/[^\pL\pN]+/u', Str::lower($message)))
-            ->filter(fn (?string $token) => mb_strlen($token ?? '') >= 4)
-            ->reject(fn (string $token) => in_array(Str::ascii($token), self::PALABRAS_VACIAS, true))
-            ->unique()
-            ->take(6)
-            ->values();
+        $consulta = $message;
+        $tokens = $this->terminos($message);
+
+        // Un seguimiento como "dime qué dice ahí" no aporta ningún término propio, y uno con
+        // erratas ("que ddice ahi ps") aporta términos que no existen en ningún documento.
+        // En ambos casos hay que mirar lo que se venía conversando o el asistente responderá
+        // que no encuentra nada aunque el tema siga siendo el mismo.
+        if ($history !== [] && ($tokens->isEmpty() || !$this->terminosIndexados($tokens))) {
+            $reciente = collect($history)
+                ->map(fn ($item) => trim((string) ($item['content'] ?? '')))
+                ->filter()
+                ->take(-4)
+                ->implode("\n");
+
+            if ($reciente !== '') {
+                $consulta = $reciente."\n".$message;
+                $tokens = $this->terminos($consulta, 10);
+            }
+        }
 
         if ($tokens->isEmpty()) {
             return collect();
@@ -167,7 +180,7 @@ PROMPT;
         $knowledge = collect();
         if ($apiKey && \Schema::hasTable('ai_knowledge_chunks')) {
             try {
-                $queryEmbedding = $this->queryEmbedding($message, $apiKey);
+                $queryEmbedding = $this->queryEmbedding($consulta, $apiKey);
                 if ($queryEmbedding) {
                     $chunks = \DB::table('ai_knowledge_chunks')->whereNotNull('embedding')->get();
 
@@ -191,14 +204,81 @@ PROMPT;
                         $scores[] = ['score'=>$score,'chunk'=>$chunk];
                     }
                     usort($scores, fn($a,$b)=> $b['score']<=> $a['score']);
-                    $selected = array_slice($scores,0,6);
+
+                    // Segundo ranking por coincidencia literal. El vector de una consulta corta
+                    // con relleno ("explicame de la pisa 20") se parece más a una pregunta
+                    // genérica que al párrafo buscado, y así las siglas y nombres propios se
+                    // pierden; la búsqueda por palabra los rescata.
+                    $porPalabra = [];
+                    foreach ($scores as $s) {
+                        $texto = Str::lower(Str::ascii($s['chunk']->text));
+                        $distintos = 0;
+                        $total = 0;
+
+                        foreach ($tokens as $token) {
+                            $encontrados = substr_count($texto, Str::lower(Str::ascii($token)));
+
+                            if ($encontrados > 0) {
+                                $distintos++;
+                                $total += $encontrados;
+                            }
+                        }
+
+                        if ($distintos > 0) {
+                            $porPalabra[] = ['id' => $s['chunk']->id, 'peso' => $distintos * 1000 + $total];
+                        }
+                    }
+                    usort($porPalabra, fn($a,$b) => $b['peso'] <=> $a['peso']);
+
+                    // Fusión de rangos recíprocos: cada lista aporta 1/(60+puesto). Sumar los
+                    // puestos en vez de los puntajes evita tener que calibrar escalas distintas
+                    // (coseno de 0.2 a 0.75 frente a conteos de palabras).
+                    $fusion = [];
+                    foreach ($scores as $puesto => $s) {
+                        $fusion[$s['chunk']->id] = [
+                            'chunk' => $s['chunk'],
+                            'score' => $s['score'],
+                            'rrf' => 1 / (61 + $puesto),
+                        ];
+                    }
+                    foreach ($porPalabra as $puesto => $p) {
+                        if (isset($fusion[$p['id']])) {
+                            $fusion[$p['id']]['rrf'] += 1 / (61 + $puesto);
+                        }
+                    }
+
+                    $fusion = array_values($fusion);
+                    usort($fusion, fn($a,$b) => $b['rrf'] <=> $a['rrf']);
+                    $selected = array_slice($fusion,0,6);
 
                     // Los fragmentos elegidos suelen venir del mismo PDF y comparten URL, así que
                     // hay que unirlos en una sola fuente: si se empujan por separado, el
                     // unique('url') del final se queda con uno solo y descarta el resto.
+                    // Un segundo documento se cita solo si es casi tan pertinente como el mejor.
+                    // Sin este filtro, cualquier PDF que aporte el último fragmento aparece
+                    // como fuente de una consulta que no trata sobre él.
+                    // Nota: el umbral está calibrado con pocos documentos; conviene revisarlo
+                    // cuando el fondo documental crezca.
+                    $mejorPorDocumento = [];
+                    foreach ($selected as $s) {
+                        $documentId = $s['chunk']->document_id;
+
+                        if (!isset($mejorPorDocumento[$documentId]) || $s['score'] > $mejorPorDocumento[$documentId]) {
+                            $mejorPorDocumento[$documentId] = $s['score'];
+                        }
+                    }
+
+                    $lider = max($mejorPorDocumento);
+
                     $porDocumento = [];
                     foreach ($selected as $s) {
-                        $porDocumento[$s['chunk']->document_id][] = $s['chunk'];
+                        $documentId = $s['chunk']->document_id;
+
+                        if ($lider > 0 && ($mejorPorDocumento[$documentId] / $lider) < 0.85) {
+                            continue;
+                        }
+
+                        $porDocumento[$documentId][] = $s['chunk'];
                     }
 
                     foreach ($porDocumento as $documentId => $trozos) {
@@ -209,9 +289,14 @@ PROMPT;
                         usort($trozos, fn($a,$b) => $a->chunk_index <=> $b->chunk_index);
                         $texto = collect($trozos)
                             ->map(function ($trozo) {
-                                $encabezado = trim((string) ($trozo->heading ?? ''));
+                                // La página va en la etiqueta del fragmento: al concatenar varios,
+                                // el modelo citaba números de página de otro tramo del documento.
+                                $etiqueta = array_filter([
+                                    trim(preg_replace('/\s+/', ' ', (string) ($trozo->heading ?? ''))),
+                                    isset($trozo->page) && $trozo->page ? 'página '.$trozo->page : '',
+                                ]);
 
-                                return ($encabezado !== '' ? "[{$encabezado}] " : '').trim($trozo->text);
+                                return ($etiqueta ? '['.implode(' — ', $etiqueta).'] ' : '').trim($trozo->text);
                             })
                             ->implode("\n\n[...]\n\n");
 
@@ -243,6 +328,38 @@ PROMPT;
         }
 
         return $knowledge->concat($noticias)->concat($comunicados)->concat($convocatorias)->unique('url')->values();
+    }
+
+    /**
+     * ¿Alguno de los términos aparece en los documentos indexados? Si ninguno figura, buscar
+     * con ellos no dará nada útil (típicamente son erratas o muletillas).
+     */
+    private function terminosIndexados($tokens): bool
+    {
+        if ($tokens->isEmpty() || !\Schema::hasTable('ai_knowledge_chunks')) {
+            return false;
+        }
+
+        return \DB::table('ai_knowledge_chunks')
+            ->where(function ($query) use ($tokens) {
+                foreach ($tokens as $token) {
+                    $query->orWhere('text', 'like', "%{$token}%");
+                }
+            })
+            ->exists();
+    }
+
+    /**
+     * Términos con carga semántica de un texto, ya sin palabras vacías ni partículas cortas.
+     */
+    private function terminos(string $texto, int $maximo = 6)
+    {
+        return collect(preg_split('/[^\pL\pN]+/u', Str::lower($texto)))
+            ->filter(fn (?string $token) => mb_strlen($token ?? '') >= 4)
+            ->reject(fn (string $token) => in_array(Str::ascii($token), self::PALABRAS_VACIAS, true))
+            ->unique()
+            ->take($maximo)
+            ->values();
     }
 
     /**

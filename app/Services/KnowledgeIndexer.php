@@ -50,6 +50,7 @@ class KnowledgeIndexer
                 $filas[] = [
                     'document_id' => $document->id,
                     'heading' => $fragmento['heading'] !== '' ? Str::limit($fragmento['heading'], 180, '') : null,
+                    'page' => $fragmento['page'],
                     'text' => $fragmento['text'],
                     'embedding' => json_encode($vectores[$i]),
                     'chunk_index' => count($filas),
@@ -77,13 +78,15 @@ class KnowledgeIndexer
     }
 
     /**
-     * @return array<int, array{heading: string, text: string}>
+     * @return array<int, array{heading: string, page: int|null, text: string}>
      */
     private function fragmentar(string $markdown): array
     {
         $fragmentos = [];
         $actual = '';
         $encabezado = '';
+        $pagina = null;
+        $paginaDelFragmento = null;
 
         foreach (preg_split('/\n{2,}/', $markdown) as $bloque) {
             $bloque = trim($bloque);
@@ -93,8 +96,18 @@ class KnowledgeIndexer
             }
 
             if (Str::startsWith($bloque, '#')) {
+                // El OCR marca cada página con "## Pagina N". Es un marcador, no un título:
+                // se anota la página y no se arrastra como encabezado del fragmento.
+                if (preg_match('/^#+\s*p[aá]gina\s+(\d+)/iu', $bloque, $m)) {
+                    $pagina = (int) $m[1];
+
+                    continue;
+                }
+
                 $encabezado = trim(ltrim($bloque, '# '));
             }
+
+            $paginaDelFragmento ??= $pagina;
 
             // Un bloque muy largo produciría un fragmento cuyo embedding mezcla demasiados
             // temas y deja de parecerse a ninguna consulta concreta.
@@ -102,14 +115,15 @@ class KnowledgeIndexer
                 $actual .= ($actual === '' ? '' : "\n\n").$pieza;
 
                 if (mb_strlen($actual) >= self::TAMANO_CHUNK) {
-                    $fragmentos[] = ['heading' => $encabezado, 'text' => $actual];
+                    $fragmentos[] = ['heading' => $encabezado, 'page' => $paginaDelFragmento, 'text' => $actual];
                     $actual = '';
+                    $paginaDelFragmento = null;
                 }
             }
         }
 
         if (trim($actual) !== '') {
-            $fragmentos[] = ['heading' => $encabezado, 'text' => $actual];
+            $fragmentos[] = ['heading' => $encabezado, 'page' => $paginaDelFragmento, 'text' => $actual];
         }
 
         return $fragmentos;
