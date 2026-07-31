@@ -90,6 +90,7 @@
     background: rgba(255,255,255,.08);
 }
 .dre-chatbot__seal svg { width: 25px; height: 25px; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.dre-chatbot__seal img { display: block; width: 34px; height: 34px; object-fit: contain; }
 .dre-chatbot__eyebrow { margin: 0 0 2px; color: #c8d9ec; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .dre-chatbot__identity h2 { margin: 0; color: #fff; font-family: 'Winky Rough', Rubik, sans-serif; font-size: 19px; font-weight: 700; line-height: 1.1; }
 .dre-chatbot__header-actions { display: flex; gap: 3px; }
@@ -575,6 +576,7 @@
 .dre-chatbot__welcome-close:hover { color: #082b55; }
 .dre-chatbot__welcome-tail { position: absolute; right: -7px; bottom: 20px; width: 13px; height: 13px; border-top: 1px solid #ced9e5; border-right: 1px solid #ced9e5; background: #fff; transform: rotate(45deg); }
 
+/* El personaje va suelto sobre la página: sin círculo, sin borde y sin sombra. */
 .dre-chatbot__launcher {
     position: relative;
     display: grid;
@@ -582,17 +584,18 @@
     height: 66px;
     min-height: 0;
     place-items: center;
-    border: 3px solid #fff;
+    border: 0;
     border-radius: 50%;
     padding: 0;
     color: #fff;
-    background: #075093;
-    box-shadow: 0 12px 32px rgba(4, 42, 81, .32), 0 0 0 1px rgba(7,80,147,.12);
+    background: transparent;
+    box-shadow: none;
 }
-.dre-chatbot__launcher:hover { background: #063d70; transform: translateY(-3px); }
-.dre-chatbot__launcher-ring { position: absolute; inset: -6px; z-index: -1; border: 1px solid rgba(7,80,147,.19); border-radius: 50%; }
+.dre-chatbot__launcher:hover { background: transparent; transform: translateY(-3px); }
 .dre-chatbot__launcher-icon { display: grid; place-items: center; }
 .dre-chatbot__launcher-icon svg { width: 31px; height: 31px; stroke: currentColor; stroke-width: 1.55; stroke-linecap: round; }
+/* El personaje es una ilustración de cuerpo entero: necesita más área que un icono de línea. */
+.dre-chatbot__launcher-icon img { display: block; width: 54px; height: 54px; object-fit: contain; }
 .dre-chatbot__launcher-badge {
     position: absolute;
     right: -3px;
@@ -775,15 +778,20 @@
 .dre-chatbot__welcome-tail { border-color: #dedede; }
 
 .dre-chatbot__launcher {
-    width: 60px;
-    height: 60px;
-    border: 2px solid #fff;
+    width: 104px;
+    height: 104px;
+    border: 0;
     color: #fff;
-    background: #212121;
-    box-shadow: 0 10px 28px rgba(0,0,0,.25);
+    background: transparent;
+    box-shadow: none;
 }
-.dre-chatbot__launcher:hover { background: #075093; }
+.dre-chatbot__launcher:hover { background: transparent; }
 .dre-chatbot__launcher-icon svg { width: 28px; height: 28px; stroke-width: 1.55; }
+/* Sin círculo detrás, el personaje ocupa toda la caja del botón. */
+.dre-chatbot__launcher-icon img { width: 104px; height: 104px; }
+/* La burbuja se aparta para dejar sitio al personaje, que ahora es más ancho.
+   El hueco resultante (18px) es el mismo que tenía el diseño original. */
+.dre-chatbot__welcome { right: 122px; }
 .dre-chatbot__launcher-status { top: 1px; right: 2px; width: 10px; height: 10px; }
 .dre-chatbot__launcher-badge { display: none; }
 
@@ -792,7 +800,9 @@
     .dre-chatbot__welcome { right: 70px; width: min(250px, calc(100vw - 92px)); }
     .dre-chatbot__header { min-height: 72px; }
     .dre-chatbot__identity h2 { font-size: 15px; }
-    .dre-chatbot__launcher { width: 56px; height: 56px; }
+    .dre-chatbot__launcher { width: 84px; height: 84px; }
+    .dre-chatbot__launcher-icon img { width: 84px; height: 84px; }
+    .dre-chatbot__welcome { right: 100px; width: min(230px, calc(100vw - 120px)); }
 }
 
 /* Alignment pass: every conversational element shares one content grid. */
@@ -872,4 +882,33 @@
 
 @media (prefers-reduced-motion: reduce) {
     .dre-chatbot__typing::after { display: none; }
+}
+
+/* ── Animación del Negrito en el lanzador ─────────────────────
+   El personaje es un danzante de los Negritos de Huánuco, así que se balancea
+   en vez de flotar: el pivote va en los pies para que el giro parezca un paso
+   de danza y no un globo a la deriva. Se anima el <img>, no el botón, porque
+   el botón ya usa transform en :hover y se pisarían. */
+@keyframes dre-negrito-baile {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25%      { transform: translateY(-5px) rotate(-3.5deg); }
+    50%      { transform: translateY(0) rotate(0deg); }
+    75%      { transform: translateY(-5px) rotate(3.5deg); }
+}
+
+.dre-chatbot__launcher-icon img {
+    transform-origin: 50% 88%;
+    animation: dre-negrito-baile 2.8s ease-in-out infinite;
+    will-change: transform;
+}
+
+/* Al pasar el ratón se anima más rápido: responde sin sacudir la página. */
+.dre-chatbot__launcher:hover .dre-chatbot__launcher-icon img { animation-duration: 1.2s; }
+
+/* Con el chat abierto el lanzador se oculta, pero si alguien lo muestra por CSS
+   no tiene sentido que siga bailando de fondo. */
+.dre-chatbot[data-open="true"] .dre-chatbot__launcher-icon img { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+    .dre-chatbot__launcher-icon img { animation: none; }
 }

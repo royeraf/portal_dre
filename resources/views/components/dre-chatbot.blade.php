@@ -3,7 +3,7 @@
         <header class="dre-chatbot__header">
             <div class="dre-chatbot__identity">
                 <span class="dre-chatbot__seal" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none"><path d="m12 3-1.2 3.4A6.8 6.8 0 0 1 6.5 10L3 11l3.5 1a6.8 6.8 0 0 1 4.3 3.6L12 19l1.2-3.4a6.8 6.8 0 0 1 4.3-3.6l3.5-1-3.5-1a6.8 6.8 0 0 1-4.3-3.6L12 3Z"/><path d="m19 17-.5 1.2a2.8 2.8 0 0 1-1.3 1.3L16 20l1.2.5a2.8 2.8 0 0 1 1.3 1.3L19 23l.5-1.2a2.8 2.8 0 0 1 1.3-1.3L22 20l-1.2-.5a2.8 2.8 0 0 1-1.3-1.3L19 17Z"/></svg>
+                    <img src="{{ asset('img/iconchat.svg') }}" alt="" width="34" height="34" loading="lazy" decoding="async">
                 </span>
                 <div>
                     <h2>Asistente DRE</h2>
@@ -63,9 +63,8 @@
     </div>
 
     <button type="button" class="dre-chatbot__launcher" data-chat-open aria-label="Abrir orientación ciudadana">
-        <span class="dre-chatbot__launcher-ring"></span>
         <span class="dre-chatbot__launcher-icon">
-            <svg viewBox="0 0 24 24" fill="none"><path d="m12 3-1.2 3.4A6.8 6.8 0 0 1 6.5 10L3 11l3.5 1a6.8 6.8 0 0 1 4.3 3.6L12 19l1.2-3.4a6.8 6.8 0 0 1 4.3-3.6l3.5-1-3.5-1a6.8 6.8 0 0 1-4.3-3.6L12 3Z"/></svg>
+            <img src="{{ asset('img/iconchat.svg') }}" alt="" width="54" height="54" decoding="async">
         </span>
         <span class="dre-chatbot__launcher-status" aria-hidden="true"></span>
     </button>
