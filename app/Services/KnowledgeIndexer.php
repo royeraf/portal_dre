@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\KnowledgeDocument;
+use App\Support\OpenAi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -165,9 +166,8 @@ class KnowledgeIndexer
      */
     private function embeddings(array $textos, string $apiKey): array
     {
-        $respuesta = Http::timeout(60)
+        $respuesta = OpenAi::http(60)
             ->retry(2, 500)
-            ->withToken($apiKey)
             ->post('https://api.openai.com/v1/embeddings', [
                 'model' => self::MODELO,
                 'input' => array_values($textos),

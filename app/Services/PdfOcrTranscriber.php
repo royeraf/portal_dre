@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
+use App\Support\OpenAi;
 use RuntimeException;
 
 /**
@@ -57,8 +57,7 @@ class PdfOcrTranscriber
 
     private function subir(string $filePath, string $apiKey): string
     {
-        $respuesta = Http::timeout(300)
-            ->withToken($apiKey)
+        $respuesta = OpenAi::http(300)
             ->attach('file', file_get_contents($filePath), basename($filePath))
             ->post('https://api.openai.com/v1/files', ['purpose' => 'user_data']);
 
@@ -71,8 +70,7 @@ class PdfOcrTranscriber
 
     private function pedir(string $fileId, string $apiKey, string $instruccion): string
     {
-        $respuesta = Http::timeout(900)
-            ->withToken($apiKey)
+        $respuesta = OpenAi::http(900)
             ->post('https://api.openai.com/v1/responses', [
                 'model' => config('services.openai.ocr_model', 'gpt-5.6-luna'),
                 'input' => [[
@@ -98,7 +96,7 @@ class PdfOcrTranscriber
     {
         // El PDF ya está guardado en el servidor: no hay motivo para dejar copias en la API.
         try {
-            Http::timeout(30)->withToken($apiKey)->delete('https://api.openai.com/v1/files/'.$fileId);
+            OpenAi::http(30)->delete('https://api.openai.com/v1/files/'.$fileId);
         } catch (\Throwable $e) {
             report($e);
         }

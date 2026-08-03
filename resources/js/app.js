@@ -241,6 +241,22 @@ function initDreChatbot() {
             .filter((item) => item.content);
     }
 
+    // Identificador aleatorio de conversación. La ruta del chat no usa sesión de servidor,
+    // así que sin esto el registro no permite seguir un hilo de preguntas. No identifica
+    // a la persona: se descarta al cerrar la pestaña.
+    function conversationId() {
+        try {
+            let id = window.sessionStorage.getItem('dre-chat-conv');
+            if (!id) {
+                id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+                window.sessionStorage.setItem('dre-chat-conv', id);
+            }
+            return id;
+        } catch (_) {
+            return null;
+        }
+    }
+
     async function sendMessage(raw) {
         const message = raw.trim();
         if (message.length < 2 || busy) return;
@@ -257,7 +273,7 @@ function initDreChatbot() {
             const response = await fetch(root.dataset.endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify({ message, history: priorHistory }),
+                body: JSON.stringify({ message, history: priorHistory, conversacion: conversationId() }),
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(data.message || data.error || 'No pude procesar la consulta.');

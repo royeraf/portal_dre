@@ -47,8 +47,12 @@ class PdfMarkdownExtractor
                 continue;
             }
 
-            // Ignore blocks that are only page numbers or short numeric artifacts.
-            if (preg_match('/^\d{1,3}$/u', $block)) {
+            // Un bloque que solo contiene un número es el folio de la página. Descartarlo
+            // dejaba al asistente sin forma de citar página en los PDFs con capa de texto;
+            // se conserva como marcador explícito, el mismo formato que emite el OCR.
+            if (preg_match('/^(\d{1,3})$/u', $block, $folio)) {
+                $markdown[] = '## Pagina '.$folio[1];
+
                 continue;
             }
 

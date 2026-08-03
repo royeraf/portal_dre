@@ -183,6 +183,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('intranet/conocimiento-ia', [KnowledgeDocumentController::class, 'index'])->name('knowledge.index');
     Route::post('intranet/conocimiento-ia', [KnowledgeDocumentController::class, 'store'])->name('knowledge.store');
     Route::delete('intranet/conocimiento-ia/{knowledgeDocument}', [KnowledgeDocumentController::class, 'destroy'])->name('knowledge.destroy');
+    Route::get('intranet/consultas-asistente', [\App\Http\Controllers\ChatbotLogController::class, 'index'])->name('chatbot.log');
 });
 
 Route::get('conocimiento-ia/{knowledgeDocument}/pdf', [KnowledgeDocumentController::class, 'download'])->name('knowledge.download');
