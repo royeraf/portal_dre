@@ -639,19 +639,20 @@
     min-height: 76px;
     padding: 13px 14px 13px 15px;
     color: #fff;
-    background: #212121;
+    background: linear-gradient(135deg, #082b55 0%, #075093 100%);
 }
 .dre-chatbot__header::before,
 .dre-chatbot__header::after { display: none; }
 .dre-chatbot__identity { gap: 11px; }
 .dre-chatbot__seal {
-    width: 42px;
-    height: 42px;
-    border: 1px solid rgba(255,255,255,.16);
-    border-radius: 13px;
+    width: 56px;
+    height: 56px;
+    border: 0;
+    border-radius: 0;
     color: #fff;
-    background: #075093;
+    background: transparent;
 }
+.dre-chatbot__seal img { width: 54px; height: 54px; }
 .dre-chatbot__seal svg { width: 23px; height: 23px; stroke-width: 1.65; }
 .dre-chatbot__identity h2 { color: #fff; font-family: Rubik, ui-sans-serif, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -.015em; }
 .dre-chatbot__availability { margin-top: 4px; color: #bdbdbd; font-size: 10px; font-weight: 500; }
@@ -680,14 +681,14 @@
 }
 .dre-chatbot__message { align-items: flex-start; gap: 10px; margin-bottom: 20px; }
 .dre-chatbot__avatar {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
     border: 0;
-    border-radius: 9px;
-    color: #fff;
-    background: #212121;
+    border-radius: 0;
+    color: #075093;
+    background: transparent;
 }
-.dre-chatbot__avatar svg { width: 16px; height: 16px; }
+.dre-chatbot__avatar img { display: block; width: 34px; height: 34px; object-fit: contain; }
 .dre-chatbot__bubble {
     max-width: calc(100% - 40px);
     padding: 2px 2px 2px 0;
@@ -733,6 +734,15 @@
 .dre-chatbot__suggestions button:hover { border-color: #b8b8b8; color: #111; background: #f7f7f7; }
 .dre-chatbot__links { margin-left: 38px; }
 .dre-chatbot__link { border-color: #e0e0e0; border-radius: 10px; color: #075093; font-weight: 600; }
+.dre-chatbot__link:hover { border-color: #aac6df; background: #f4f8fc; }
+.dre-chatbot__link:focus-visible,
+.dre-chatbot__suggestions button:focus-visible,
+.dre-chatbot__header-actions button:focus-visible,
+.dre-chatbot__launcher:focus-visible,
+.dre-chatbot__welcome button:focus-visible {
+    outline: 3px solid rgba(242, 195, 34, .72);
+    outline-offset: 2px;
+}
 
 .dre-chatbot__composer {
     margin: 0 12px;
@@ -756,7 +766,7 @@
     height: 38px;
     border-radius: 12px;
     color: #fff;
-    background: #212121;
+    background: #075093;
 }
 .dre-chatbot__send:hover { color: #fff; background: #075093; transform: none; }
 .dre-chatbot__send svg { width: 17px; height: 17px; }
@@ -814,7 +824,7 @@
 .dre-chatbot__messages { padding-right: 18px; padding-left: 18px; }
 .dre-chatbot__message--assistant {
     display: grid;
-    grid-template-columns: 28px minmax(0, 1fr);
+    grid-template-columns: 34px minmax(0, 1fr);
     align-items: start;
     column-gap: 11px;
 }
@@ -839,8 +849,8 @@
     text-align: left;
 }
 .dre-chatbot__suggestions {
-    width: calc(100% - 39px);
-    margin: 0 0 18px 39px;
+    width: calc(100% - 45px);
+    margin: 0 0 18px 45px;
 }
 .dre-chatbot__suggestions button {
     display: flex;
@@ -851,15 +861,20 @@
     justify-content: flex-start;
     line-height: 1.25;
 }
-.dre-chatbot__links { width: calc(100% - 39px); margin-left: 39px; }
+.dre-chatbot__links { width: calc(100% - 45px); margin-left: 45px; }
 .dre-chatbot__message--user .dre-chatbot__bubble { white-space: pre-wrap; }
 .dre-chatbot__bubble--dynamic { white-space: pre-wrap !important; }
 
 @media (max-width: 540px) {
-    .dre-chatbot[data-open="true"] { top: 8px; right: 8px; bottom: 8px; left: 8px; }
+    .dre-chatbot[data-open="true"] {
+        top: max(8px, env(safe-area-inset-top));
+        right: max(8px, env(safe-area-inset-right));
+        bottom: max(8px, env(safe-area-inset-bottom));
+        left: max(8px, env(safe-area-inset-left));
+    }
     .dre-chatbot[data-open="true"] .dre-chatbot__panel { width: 100%; height: 100%; }
     .dre-chatbot__messages { padding: 22px 16px 16px; }
-    .dre-chatbot__suggestions { width: calc(100% - 39px); }
+    .dre-chatbot__suggestions { width: calc(100% - 45px); }
     .dre-chatbot__suggestions button { max-width: 100%; }
 }
 
@@ -911,4 +926,107 @@
 
 @media (prefers-reduced-motion: reduce) {
     .dre-chatbot__launcher-icon img { animation: none; }
+}
+
+/* Movimiento sutil de la identidad del asistente. */
+@keyframes dre-chat-logo-float {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-2px) rotate(1.5deg); }
+}
+
+@keyframes dre-chat-avatar-in {
+    0% { opacity: 0; transform: scale(.72) rotate(-8deg); }
+    65% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes dre-chat-thinking {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-3px) rotate(2deg); }
+}
+
+.dre-chatbot__seal img {
+    transform-origin: 50% 82%;
+    animation: dre-chat-logo-float 3.2s ease-in-out infinite;
+}
+
+.dre-chatbot__avatar img {
+    transform-origin: 50% 82%;
+    animation: dre-chat-avatar-in .42s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.dre-chatbot__message--loading .dre-chatbot__avatar img {
+    animation: dre-chat-thinking 1.05s ease-in-out infinite;
+}
+
+/* Las fuentes se despliegan en vez de aparecer de golpe al terminar la respuesta. */
+@keyframes dre-chat-links-expand {
+    from { max-height: 0; opacity: 0; transform: translateY(-7px); }
+    to { max-height: 240px; opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dre-chat-link-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dre-chatbot__links--entering {
+    overflow: hidden;
+    animation: dre-chat-links-expand .48s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.dre-chatbot__links--entering .dre-chatbot__link {
+    animation: dre-chat-link-in .34s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.dre-chatbot__links--entering .dre-chatbot__link:nth-child(2) { animation-delay: .08s !important; }
+.dre-chatbot__links--entering .dre-chatbot__link:nth-child(3) { animation-delay: .16s !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    .dre-chatbot__seal img,
+    .dre-chatbot__avatar img,
+    .dre-chatbot__message--loading .dre-chatbot__avatar img,
+    .dre-chatbot__links--entering,
+    .dre-chatbot__links--entering .dre-chatbot__link { animation: none; }
+}
+
+/* Entrada ligada al scroll solo para tarjetas de acción y fuentes. El texto de
+   la conversación nunca se difumina ni pierde contraste al quedar junto al
+   borde inferior del panel. */
+@keyframes dre-chat-scroll-reveal {
+    from {
+        opacity: .3;
+        transform: translateY(9px) scale(.985);
+        filter: blur(1px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@supports (animation-timeline: view()) {
+    /* La primera aparición de fuentes conserva su despliegue escalonado. Cuando
+       vuelven a entrar al área visible, cada tarjeta responde al scroll. Las
+       sugerencias iniciales usan el mismo tratamiento porque también son cards. */
+    .dre-chatbot__links:not(.dre-chatbot__links--entering) .dre-chatbot__link,
+    .dre-chatbot__suggestions button {
+        animation-name: dre-chat-scroll-reveal;
+        animation-duration: 1ms;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 80%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dre-chatbot__links .dre-chatbot__link,
+    .dre-chatbot__suggestions button {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        animation: none !important;
+    }
 }

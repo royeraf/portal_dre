@@ -20,8 +20,17 @@ class OpenAi
      */
     public static function http(int $timeout = 45): PendingRequest
     {
+        $options = ['curl' => [CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4]];
+        $caBundle = config('services.openai.ca_bundle');
+
+        // Algunas instalaciones de PHP en Windows no traen un almacén de certificados.
+        // Se permite indicar un CA bundle local sin desactivar la validación TLS.
+        if (is_string($caBundle) && $caBundle !== '' && is_file($caBundle)) {
+            $options['verify'] = $caBundle;
+        }
+
         return Http::timeout($timeout)
-            ->withOptions(['curl' => [CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4]])
+            ->withOptions($options)
             ->withToken((string) config('services.openai.key'));
     }
 }

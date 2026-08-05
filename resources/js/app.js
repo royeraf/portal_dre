@@ -103,9 +103,11 @@ function initDreChatbot() {
     const form = root.querySelector('[data-chat-form]');
     const input = root.querySelector('[data-chat-input]');
     const send = root.querySelector('.dre-chatbot__send');
+    const launcher = root.querySelector('[data-chat-open]');
+    const status = root.querySelector('[data-chat-status]');
     let suggestions = root.querySelector('[data-chat-suggestions]');
     const initialMessagesMarkup = messages.innerHTML;
-    const storageKey = 'dre-huanuco-chat-v1';
+    const storageKey = 'dre-huanuco-chat-v2';
     let busy = false;
     let welcomeAnimated = false;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -114,6 +116,7 @@ function initDreChatbot() {
     const setOpen = (open) => {
         root.dataset.open = open ? 'true' : 'false';
         panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+        launcher.setAttribute('aria-expanded', open ? 'true' : 'false');
         if (open) {
             window.setTimeout(() => {
                 input.focus();
@@ -164,7 +167,13 @@ function initDreChatbot() {
             const avatar = document.createElement('div');
             avatar.className = 'dre-chatbot__avatar';
             avatar.setAttribute('aria-hidden', 'true');
-            avatar.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="m12 3-1.2 3.4A6.8 6.8 0 0 1 6.5 10L3 11l3.5 1a6.8 6.8 0 0 1 4.3 3.6L12 19l1.2-3.4a6.8 6.8 0 0 1 4.3-3.6l3.5-1-3.5-1a6.8 6.8 0 0 1-4.3-3.6L12 3Z"/></svg>';
+            const avatarImage = document.createElement('img');
+            avatarImage.src = root.querySelector('.dre-chatbot__seal img')?.src || '/img/iconchat.svg';
+            avatarImage.alt = '';
+            avatarImage.width = 34;
+            avatarImage.height = 34;
+            avatarImage.decoding = 'async';
+            avatar.appendChild(avatarImage);
             article.appendChild(avatar);
         }
 
@@ -185,10 +194,18 @@ function initDreChatbot() {
         return { article, bubble };
     }
 
+    function setBusy(isBusy, announcement = '') {
+        busy = isBusy;
+        send.disabled = isBusy;
+        messages.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+        status.textContent = announcement;
+    }
+
     function appendLinks(links = []) {
         if (!Array.isArray(links) || links.length === 0) return;
         const group = document.createElement('div');
         group.className = 'dre-chatbot__links';
+        if (!reducedMotion) group.classList.add('dre-chatbot__links--entering');
         links.slice(0, 3).forEach((link) => {
             if (!link?.url || !link?.title) return;
             const anchor = document.createElement('a');
@@ -200,7 +217,14 @@ function initDreChatbot() {
             group.appendChild(anchor);
         });
         messages.appendChild(group);
-        scrollToEnd();
+        if (reducedMotion) {
+            scrollToEnd();
+        } else {
+            window.requestAnimationFrame(() => {
+                messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
+            });
+            window.setTimeout(() => group.classList.remove('dre-chatbot__links--entering'), 700);
+        }
     }
 
     function appendError(text) {
@@ -233,6 +257,7 @@ function initDreChatbot() {
 
     function history() {
         return Array.from(messages.querySelectorAll('.dre-chatbot__message'))
+            .filter((item) => item.querySelector('.dre-chatbot__bubble--dynamic'))
             .slice(-8)
             .map((item) => ({
                 role: item.classList.contains('dre-chatbot__message--user') ? 'user' : 'assistant',
@@ -261,44 +286,105 @@ function initDreChatbot() {
         const message = raw.trim();
         if (message.length < 2 || busy) return;
         const priorHistory = history();
-        busy = true;
-        send.disabled = true;
+        setBusy(true, 'Consultando fuentes oficiales.');
         input.value = '';
         input.style.height = '44px';
         suggestions?.remove();
         createMessage('user', message);
         const loading = createMessage('assistant', '', true);
+        // Guardar inmediatamente la pregunta: si el ciudadano cambia de página mientras
+        // llega la respuesta, al volver seguirá viendo al menos el mensaje que envió.
+        saveSession();
 
         try {
-            const response = await fetch(root.dataset.endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify({ message, history: priorHistory, conversacion: conversationId() }),
-            });
-            const data = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(data.message || data.error || 'No pude procesar la consulta.');
+              const response = await fetch(root.dataset.endpoint, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                  body: JSON.stringify({
+                      message,
+                      history: priorHistory,
+                      conversacion: conversationId(),
+                      page: { path: window.location.pathname, title: document.title },
+                  }),
+              });
+              const data = await response.json().catch(() => ({}));
+              if (!response.ok) {
+                  const messageByStatus = {
+                      422: 'Revisa la consulta e intenta nuevamente.',
+                      429: 'Has enviado varias consultas seguidas. Espera un minuto antes de continuar.',
+                      500: 'El asistente no está disponible en este momento. Intenta nuevamente en unos segundos.',
+                  };
+                  throw new Error(messageByStatus[response.status] || data.message || data.error || 'No pude procesar la consulta.');
+              }
             loading.article.classList.remove('dre-chatbot__message--loading');
             await typeAnswer(loading.bubble, data.answer || 'No encontré una respuesta disponible.');
             appendLinks(data.links);
+            status.textContent = 'Respuesta recibida.';
             saveSession();
         } catch (error) {
             loading.article.remove();
             appendError(error instanceof Error ? error.message : 'El asistente no está disponible en este momento.');
+            status.textContent = 'No se pudo obtener una respuesta.';
+            saveSession();
         } finally {
             busy = false;
             send.disabled = false;
+            messages.setAttribute('aria-busy', 'false');
             input.focus();
         }
     }
 
+    function savedEntries() {
+        return Array.from(messages.children).slice(-30).map((item) => {
+            if (item.classList.contains('dre-chatbot__message')) {
+                return {
+                    type: 'message',
+                    role: item.classList.contains('dre-chatbot__message--user') ? 'user' : 'assistant',
+                    content: item.querySelector('.dre-chatbot__bubble')?.textContent?.trim() || '',
+                };
+            }
+
+            if (item.classList.contains('dre-chatbot__links')) {
+                return {
+                    type: 'links',
+                    links: Array.from(item.querySelectorAll('a')).map((link) => ({
+                        title: link.textContent?.trim() || '',
+                        url: link.href,
+                    })),
+                };
+            }
+
+            if (item.classList.contains('dre-chatbot__error')) {
+                return { type: 'error', content: item.textContent?.trim() || '' };
+            }
+
+            return null;
+        }).filter(Boolean);
+    }
+
     function saveSession() {
         try {
-            const saved = Array.from(messages.querySelectorAll('.dre-chatbot__message')).slice(-20).map((item) => ({
-                role: item.classList.contains('dre-chatbot__message--user') ? 'user' : 'assistant',
-                content: item.querySelector('.dre-chatbot__bubble')?.textContent || '',
+            window.sessionStorage.setItem(storageKey, JSON.stringify({
+                open: root.dataset.open === 'true',
+                entries: savedEntries(),
             }));
-            window.sessionStorage.setItem(storageKey, JSON.stringify({ open: root.dataset.open === 'true', messages: saved }));
         } catch (_) {}
+    }
+
+    function restoreSession(saved) {
+        const entries = Array.isArray(saved?.entries) ? saved.entries : [];
+        const hasConversation = entries.some((entry) => entry?.type === 'message' && entry.role === 'user');
+        if (!hasConversation) return;
+
+        messages.innerHTML = '';
+        entries.forEach((entry) => {
+            if (entry?.type === 'message' && entry.content) createMessage(entry.role, entry.content);
+            if (entry?.type === 'links') appendLinks(entry.links);
+            if (entry?.type === 'error' && entry.content) appendError(entry.content);
+        });
+        suggestions = null;
+        welcomeAnimated = true;
+        scrollToEnd();
     }
 
     function bindSuggestions() {
@@ -309,7 +395,10 @@ function initDreChatbot() {
 
     function resetConversation() {
         if (busy) return;
-        window.sessionStorage.removeItem(storageKey);
+        try {
+            window.sessionStorage.removeItem(storageKey);
+            window.sessionStorage.removeItem('dre-chat-conv');
+        } catch (_) {}
         messages.innerHTML = initialMessagesMarkup;
         suggestions = messages.querySelector('[data-chat-suggestions]');
         welcomeAnimated = false;
@@ -321,14 +410,17 @@ function initDreChatbot() {
         animateWelcomeMessage();
     }
 
-    root.querySelector('[data-chat-open]').addEventListener('click', () => setOpen(true));
+    launcher.addEventListener('click', () => setOpen(true));
     root.querySelector('[data-chat-open-message]')?.addEventListener('click', () => setOpen(true));
     root.querySelector('[data-chat-greeting-close]')?.addEventListener('click', () => {
         const greeting = root.querySelector('[data-chat-greeting]');
         if (greeting) greeting.hidden = true;
         try { window.sessionStorage.setItem('dre-chat-greeting-closed', '1'); } catch (_) {}
     });
-    root.querySelector('[data-chat-close]').addEventListener('click', () => setOpen(false));
+    root.querySelector('[data-chat-close]').addEventListener('click', () => {
+        setOpen(false);
+        launcher.focus();
+    });
     root.querySelector('[data-chat-reset]').addEventListener('click', resetConversation);
     bindSuggestions();
     form.addEventListener('submit', (event) => {
@@ -345,9 +437,20 @@ function initDreChatbot() {
         input.style.height = '44px';
         input.style.height = `${Math.min(input.scrollHeight, 118)}px`;
     });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && root.dataset.open === 'true') {
+            setOpen(false);
+            launcher.focus();
+        }
+    });
+    // `pagehide` se dispara tanto al navegar a otra sección como al usar atrás/adelante.
+    // sessionStorage pertenece a la pestaña y al mismo dominio, por eso conserva el chat
+    // entre páginas sin dejar conversaciones guardadas permanentemente en el equipo.
+    window.addEventListener('pagehide', saveSession);
 
     try {
         const saved = JSON.parse(window.sessionStorage.getItem(storageKey) || 'null');
+        restoreSession(saved);
         if (saved?.open) setOpen(true);
         if (window.sessionStorage.getItem('dre-chat-greeting-closed') === '1') {
             const greeting = root.querySelector('[data-chat-greeting]');

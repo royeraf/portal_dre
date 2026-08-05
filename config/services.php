@@ -5,6 +5,8 @@ return [
     'openai' => [
         'key' => env('OPENAI_API_KEY'),
         'chatbot_model' => env('OPENAI_CHATBOT_MODEL', 'gpt-5-nano'),
+        'chatbot_reasoning' => env('OPENAI_CHATBOT_REASONING', 'medium'),
+        'ca_bundle' => env('OPENAI_CA_BUNDLE'),
 
         // Transcripción de PDFs escaneados. Se puede apagar para controlar el gasto:
         // sin esto, las normas publicadas como imagen quedan fuera del asistente.
