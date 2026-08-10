@@ -16,8 +16,8 @@ return [
         // Techo de tokens por día para el chat público. El endpoint está abierto a
         // internet: sin un tope, un script puede agotar el presupuesto en una tarde.
         // Al superarlo el asistente sigue respondiendo, pero con enlaces en vez de IA.
-        // 0 = sin límite.
-        'limite_diario_tokens' => (int) env('OPENAI_LIMITE_DIARIO_TOKENS', 0),
+        // 0 = sin límite (no recomendado en producción).
+        'limite_diario_tokens' => (int) env('OPENAI_LIMITE_DIARIO_TOKENS', 500000),
     ],
 
     /*

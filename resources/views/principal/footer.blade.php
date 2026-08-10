@@ -202,8 +202,6 @@
                 <span class="text-gray-400">DRE Huánuco</span>
             </p>
             <div class="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-1 text-xs">
-                <a href="#" class="text-gray-500 hover:text-white transition-colors">Política de Privacidad</a>
-                <span class="text-white/10 hidden md:inline">|</span>
                 <a href="#" class="text-gray-500 hover:text-white transition-colors">OPDI - INFORMATICA</a>
             </div>
         </div>

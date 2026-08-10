@@ -10,6 +10,7 @@
             ['Consultas (30 días)', $resumen['ultimos30'], 'primary'],
             ['Total histórico', $resumen['total'], 'secondary'],
             ['Sin fuente encontrada', $resumen['sin_fuentes'], 'warning'],
+            ['Piden aclaración', $resumen['aclaraciones'], 'secondary'],
             ['Con error', $resumen['errores'], 'danger'],
             ['Tokens (30 días)', number_format($resumen['tokens']), 'info'],
             ['Latencia media', $resumen['ms_medio'] . ' ms', 'success'],
@@ -26,14 +27,14 @@
     </div>
 
     <div class="alert alert-info">
-        Los fallos de contenido —una cita de página equivocada, una respuesta que se sale del documento— no generan errores
-        y no aparecen en el log del sistema. Revisar esta lista es la única forma de detectarlos.
-        <strong>Las preguntas «sin fuente encontrada» indican qué documentos convendría cargar.</strong>
+        Las consultas se guardan con datos personales comunes ocultos y se eliminan automáticamente después de
+        {{ config('chatbot.retention_days') }} días. Este registro es solo para auditoría de calidad y está restringido.
+        <strong>No copies ni uses su contenido para una finalidad distinta.</strong>
     </div>
 
     <div class="mb-3">
         <a href="{{ route('chatbot.log') }}" class="btn btn-sm {{ $origen ? 'btn-outline-secondary' : 'btn-secondary' }}">Todas</a>
-        @foreach(['modelo' => 'Respondidas por la IA', 'sin_fuentes' => 'Sin fuente', 'error' => 'Con error', 'limite_diario' => 'Tope de gasto', 'sin_api_key' => 'Sin API key'] as $clave => $etiqueta)
+        @foreach(['modelo' => 'Respondidas por la IA', 'respaldo_error_modelo' => 'Error de IA', 'respaldo_limite_diario' => 'Tope de gasto', 'respaldo_sin_api' => 'Sin API key'] as $clave => $etiqueta)
             <a href="{{ route('chatbot.log', ['origen' => $clave]) }}"
                class="btn btn-sm {{ $origen === $clave ? 'btn-secondary' : 'btn-outline-secondary' }}">{{ $etiqueta }}</a>
         @endforeach

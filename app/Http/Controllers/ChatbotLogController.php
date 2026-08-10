@@ -26,10 +26,9 @@ class ChatbotLogController extends Controller
             'resumen' => [
                 'total' => DB::table('chatbot_consultas')->count(),
                 'ultimos30' => DB::table('chatbot_consultas')->where('created_at', '>=', $desde)->count(),
-                // "sin_fuentes" es la señal útil: son preguntas que el fondo documental
-                // no cubre, o sea qué habría que cargar a continuación.
-                'sin_fuentes' => DB::table('chatbot_consultas')->where('origen', 'sin_fuentes')->count(),
-                'errores' => DB::table('chatbot_consultas')->where('origen', 'error')->count(),
+                'sin_fuentes' => DB::table('chatbot_consultas')->where('estado', 'not_found')->count(),
+                'aclaraciones' => DB::table('chatbot_consultas')->where('estado', 'clarification')->count(),
+                'errores' => DB::table('chatbot_consultas')->where('origen', 'like', 'respaldo_%')->count(),
                 'tokens' => DB::table('chatbot_consultas')->where('created_at', '>=', $desde)
                     ->sum(DB::raw('COALESCE(tokens_entrada,0) + COALESCE(tokens_salida,0)')),
                 'ms_medio' => (int) DB::table('chatbot_consultas')->where('origen', 'modelo')->avg('ms'),

@@ -21,9 +21,12 @@ class KnowledgeDocument extends Model
         'error_message',
         'is_published',
         'uploaded_by',
+        'published_at',
+        'published_by',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'published_at' => 'datetime',
     ];
 }

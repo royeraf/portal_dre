@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\KnowledgeDocument;
 use App\Services\KnowledgeIndexer;
 use App\Services\PdfMarkdownExtractor;
+use App\Services\PdfSecurityScanner;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class KnowledgeDocumentController extends Controller
@@ -20,14 +22,22 @@ class KnowledgeDocumentController extends Controller
         ]);
     }
 
-    public function store(Request $request, PdfMarkdownExtractor $extractor): RedirectResponse
-    {
+    public function store(
+        Request $request,
+        PdfMarkdownExtractor $extractor,
+        PdfSecurityScanner $scanner
+    ): RedirectResponse {
         $validated = $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
             'pdf' => ['required', 'file', 'mimes:pdf', 'max:20480'],
         ]);
 
         $file = $validated['pdf'];
+        try {
+            $scanner->assertSafe($file);
+        } catch (\RuntimeException $exception) {
+            throw ValidationException::withMessages(['pdf' => $exception->getMessage()]);
+        }
         $filename = Str::uuid()->toString().'.pdf';
         $path = $file->storeAs('ai-knowledge/pdfs', $filename, 'local');
         $document = KnowledgeDocument::create([
@@ -35,6 +45,7 @@ class KnowledgeDocumentController extends Controller
             'original_filename' => $file->getClientOriginalName(),
             'pdf_path' => $path,
             'status' => 'processing',
+            'is_published' => false,
             'uploaded_by' => $request->user()->id,
         ]);
 
@@ -79,9 +90,29 @@ class KnowledgeDocumentController extends Controller
         return redirect()->route('knowledge.index')->with('success', 'Documento eliminado del conocimiento de la IA.');
     }
 
+    public function publish(Request $request, KnowledgeDocument $knowledgeDocument): RedirectResponse
+    {
+        abort_unless($knowledgeDocument->status === 'ready', 422, 'Solo se puede publicar un documento procesado.');
+
+        $publish = $request->boolean('publish');
+        $knowledgeDocument->update([
+            'is_published' => $publish,
+            'published_at' => $publish ? now() : null,
+            'published_by' => $publish ? $request->user()->id : null,
+        ]);
+
+        return redirect()->route('knowledge.index')->with(
+            'success',
+            $publish ? 'Documento aprobado y publicado para el asistente.' : 'Documento retirado del conocimiento publicado.'
+        );
+    }
+
     public function download(KnowledgeDocument $knowledgeDocument)
     {
-        abort_unless($knowledgeDocument->status === 'ready' && $knowledgeDocument->is_published, 404);
+        abort_unless($knowledgeDocument->status === 'ready', 404);
+        if (! $knowledgeDocument->is_published) {
+            abort_unless(request()->user()?->can('manage-ai-knowledge'), 404);
+        }
         abort_unless(Storage::disk('local')->exists($knowledgeDocument->pdf_path), 404);
 
         return Storage::disk('local')->download($knowledgeDocument->pdf_path, $knowledgeDocument->original_filename);

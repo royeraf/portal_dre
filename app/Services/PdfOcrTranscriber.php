@@ -25,7 +25,7 @@ class PdfOcrTranscriber
     {
         $apiKey = config('services.openai.key');
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             throw new RuntimeException('Falta OPENAI_API_KEY: no se puede transcribir un PDF escaneado.');
         }
 
@@ -59,9 +59,13 @@ class PdfOcrTranscriber
     {
         $respuesta = OpenAi::http(300)
             ->attach('file', file_get_contents($filePath), basename($filePath))
-            ->post('https://api.openai.com/v1/files', ['purpose' => 'user_data']);
+            ->post('https://api.openai.com/v1/files', [
+                'purpose' => 'user_data',
+                'expires_after[anchor]' => 'created_at',
+                'expires_after[seconds]' => (int) config('chatbot.ocr_file_expiry_seconds', 3600),
+            ]);
 
-        if (!$respuesta->successful()) {
+        if (! $respuesta->successful()) {
             throw new RuntimeException('No se pudo subir el PDF para transcribir: '.$respuesta->body());
         }
 
@@ -73,6 +77,7 @@ class PdfOcrTranscriber
         $respuesta = OpenAi::http(900)
             ->post('https://api.openai.com/v1/responses', [
                 'model' => config('services.openai.ocr_model', 'gpt-5.6-luna'),
+                'store' => false,
                 'input' => [[
                     'role' => 'user',
                     'content' => [
@@ -83,7 +88,7 @@ class PdfOcrTranscriber
                 'max_output_tokens' => 32000,
             ]);
 
-        if (!$respuesta->successful()) {
+        if (! $respuesta->successful()) {
             throw new RuntimeException('Falló la transcripción ('.$respuesta->status().'): '.$respuesta->body());
         }
 
@@ -96,7 +101,13 @@ class PdfOcrTranscriber
     {
         // El PDF ya está guardado en el servidor: no hay motivo para dejar copias en la API.
         try {
-            OpenAi::http(30)->delete('https://api.openai.com/v1/files/'.$fileId);
+            $respuesta = OpenAi::http(30)
+                ->retry(2, 400)
+                ->delete('https://api.openai.com/v1/files/'.$fileId);
+
+            if (! $respuesta->successful() && $respuesta->status() !== 404) {
+                throw new RuntimeException('No se pudo eliminar el archivo temporal de OCR: '.$respuesta->status());
+            }
         } catch (\Throwable $e) {
             report($e);
         }

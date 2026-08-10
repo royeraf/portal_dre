@@ -1,24 +1,28 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ArchivoController;
-use App\Http\Controllers\SliderController;
-use App\Http\Controllers\NoticiaController;
-use App\Http\Controllers\PopupController;
-use App\Http\Controllers\DirectorioController;
-use App\Http\Controllers\ConvocatoriaController;
-use App\Http\Controllers\ImagenEventoController;
+use App\Http\Controllers\ChatbotLogController;
 use App\Http\Controllers\ComunicadoController;
-use App\Http\Controllers\MainrightController;
+use App\Http\Controllers\ConvivenciaSinViolenciaController;
+use App\Http\Controllers\ConvocatoriaController;
+use App\Http\Controllers\DireccionController;
+use App\Http\Controllers\DirectorioController;
 use App\Http\Controllers\DocumentogestionController;
+use App\Http\Controllers\EPRController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImagenEventoController;
 use App\Http\Controllers\InfraestructuraController;
 use App\Http\Controllers\KnowledgeDocumentController;
+use App\Http\Controllers\MainrightController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\NoticiaController;
 use App\Http\Controllers\PaginaWebController;
+use App\Http\Controllers\PopupController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SiagieController;
+use App\Http\Controllers\SliderController;
 use App\Http\Controllers\VideoEmbevidoController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SiagieController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +49,6 @@ Route::get('/allnoticias', [HomeController::class, 'allnoticias'])->name('allnot
 Route::get('/galeriaimagenes', [HomeController::class, 'galeria'])->name('galerias');
 Route::get('/convocatoriaweb', [HomeController::class, 'convocatoriaweb'])->name('convocatoriaweb');
 
-
 Route::get('/verconvocatoria/{convocatoria}', [HomeController::class, 'verconvocatoria'])->name('verconvocatoria');
 Route::get('/comunicadosall', [HomeController::class, 'comunicadosall'])->name('comunicadosall');
 Route::get('/documentosdegestionweb', [HomeController::class, 'documentosdegestionweb'])->name('documentosdegestionweb');
@@ -56,7 +59,7 @@ Route::get('/paginas/{pagina}', [HomeController::class, 'showpaginaweb'])->name(
 
 Route::get('menus/paginaweb/{pagina}', [MenuController::class, 'showpaginaweb'])->name('menus.showpaginaweb');
 
-Route::controller(MenuController::class)->middleware(['auth', 'verified'])->group(function(){
+Route::controller(MenuController::class)->middleware(['auth', 'verified'])->group(function () {
     Route::get('menus', 'index')->name('menu');
     Route::get('menus/edit/{menu}', 'edit')->name('menu.edit');
     Route::get('menus/create', 'create')->name('formregistro');
@@ -69,14 +72,14 @@ Route::controller(MenuController::class)->middleware(['auth', 'verified'])->grou
     Route::delete('menus/submenu/{submenu}', 'submenudestroy')->name('submenu.destroy');
     Route::post('menus/paginawebstore', 'paginawebstore')->name('pagina.paginawebstore');
 });
-Route::controller(ArchivoController::class)->group(function(){
+Route::controller(ArchivoController::class)->group(function () {
     Route::get('archivos/inicio', 'index')->middleware(['auth', 'verified'])->name('archivo');
     Route::get('archivos/{archivo}', 'destroy')->middleware(['auth', 'verified'])->name('archivos.destroy');
     Route::get('archivos/edit/{archivo}', 'edit')->middleware(['auth', 'verified'])->name('archivos.edit');
     Route::post('archivos/store', 'store')->middleware(['auth', 'verified'])->name('archivos.store');
     Route::put('archivos/update/{archivo}', 'update')->middleware(['auth', 'verified'])->name('archivos.update');
 });
-Route::controller(SliderController::class)->middleware(['auth', 'verified'])->group(function(){
+Route::controller(SliderController::class)->middleware(['auth', 'verified'])->group(function () {
     Route::get('slider/create', 'create')->name('slide.create');
     Route::post('slider/store', 'store')->name('slide.store');
     Route::get('slider/edit/{slider}', 'edit')->name('slide.edit');
@@ -84,7 +87,7 @@ Route::controller(SliderController::class)->middleware(['auth', 'verified'])->gr
     Route::get('slider/{slider}', 'destroy')->name('slide.destroy');
     Route::get('slider/{menu}', 'show');
 });
-Route::controller(NoticiaController::class)->group(function(){
+Route::controller(NoticiaController::class)->group(function () {
     Route::get('noticias', 'index')->middleware(['auth', 'verified'])->name('noticias');
     Route::get('noticias/create', 'create')->middleware(['auth', 'verified'])->name('noticias.create');
     Route::post('noticias/store', 'store')->middleware(['auth', 'verified'])->name('noticias.store');
@@ -93,7 +96,7 @@ Route::controller(NoticiaController::class)->group(function(){
     Route::put('noticias/update/{noticia}', 'update')->middleware(['auth', 'verified'])->name('noticias.update');
     Route::get('noticias/show/{noticia}', 'show')->middleware(['auth', 'verified'])->name('noticias.show');
 });
-Route::controller(PopupController::class)->group(function(){
+Route::controller(PopupController::class)->group(function () {
     Route::get('popup', 'index')->middleware(['auth', 'verified'])->name('popup');
     Route::get('popup/create', 'create')->middleware(['auth', 'verified'])->name('popup.create');
     Route::post('popup/store', 'store')->middleware(['auth', 'verified'])->name('popup.store');
@@ -104,7 +107,7 @@ Route::controller(PopupController::class)->group(function(){
     Route::put('popup/update/{popup}', 'update')->middleware(['auth', 'verified'])->name('popup.update');
     Route::get('popup/show/{popup}', 'show')->middleware(['auth', 'verified'])->name('show');
 });
-Route::controller(ComunicadoController::class)->group(function(){
+Route::controller(ComunicadoController::class)->group(function () {
     Route::get('comunicado', 'index')->middleware(['auth', 'verified'])->name('comunicado');
     Route::get('comunicado/create', 'create')->middleware(['auth', 'verified'])->name('comunicado.create');
     Route::post('comunicado/store', 'store')->middleware(['auth', 'verified'])->name('comunicado.store');
@@ -113,7 +116,7 @@ Route::controller(ComunicadoController::class)->group(function(){
     Route::put('comunicado/update/{comunicado}', 'update')->middleware(['auth', 'verified'])->name('comunicado.update');
     Route::get('comunicado/show/{comunicado}', 'show')->middleware(['auth', 'verified'])->name('comunicado.show');
 });
-Route::controller(DirectorioController::class)->group(function(){
+Route::controller(DirectorioController::class)->group(function () {
     Route::get('directorio', 'index')->middleware(['auth', 'verified'])->name('directorio');
     Route::get('directorio/create', 'create')->middleware(['auth', 'verified'])->name('directorio.create');
     Route::post('directorio/store', 'store')->middleware(['auth', 'verified'])->name('directorio.store');
@@ -121,7 +124,7 @@ Route::controller(DirectorioController::class)->group(function(){
     Route::get('directorio/edit/{directorio}', 'edit')->middleware(['auth', 'verified'])->name('directorio.edit');
     Route::put('directorio/update/{directorio}', 'update')->middleware(['auth', 'verified'])->name('directorio.update');
 });
-Route::controller(ConvocatoriaController::class)->group(function(){
+Route::controller(ConvocatoriaController::class)->group(function () {
     Route::get('convocatoria', 'index')->middleware(['auth', 'verified'])->name('convocatoria');
     Route::get('convocatoria/create', 'create')->middleware(['auth', 'verified'])->name('convocatoria.create');
     Route::post('convocatoria/store', 'store')->middleware(['auth', 'verified'])->name('convocatoria.store');
@@ -134,7 +137,7 @@ Route::controller(ConvocatoriaController::class)->group(function(){
     Route::get('convocatoria/editarchivo/{archivoconvocatoria}', 'archivoedit')->middleware(['auth', 'verified'])->name('archivo.convocatoria.edit');
     Route::post('convocatoria/archivo/store/{convocatoria}', 'archivocstore')->middleware(['auth', 'verified'])->name('archivo.convocatoria.store');
 });
-Route::controller(ImagenEventoController::class)->group(function(){
+Route::controller(ImagenEventoController::class)->group(function () {
     Route::get('galeria', 'index')->middleware(['auth', 'verified'])->name('galeria');
     Route::get('galeria/create', 'create')->middleware(['auth', 'verified'])->name('galeria.create');
     Route::post('galeria/store', 'store')->middleware(['auth', 'verified'])->name('galeria.store');
@@ -146,12 +149,12 @@ Route::controller(ImagenEventoController::class)->group(function(){
     Route::get('galeria/agregarimagen/{galeria}', 'agregarimagen')->middleware(['auth', 'verified'])->name('galeria.agregarimagen');
     Route::post('galeria/storeimagen', 'storeimagen')->middleware(['auth', 'verified'])->name('galeria.storeimagen');
 });
-Route::controller(MainrightController::class)->group(function(){
+Route::controller(MainrightController::class)->group(function () {
     Route::get('mainright', 'index')->middleware(['auth', 'verified'])->name('mainright');
     Route::post('mainright/store', 'store')->middleware(['auth', 'verified'])->name('mainright.store');
     Route::get('mainright/{mainright}', 'destroy')->middleware(['auth', 'verified'])->name('mainright.destroy');
 });
-Route::controller(DocumentogestionController::class)->group(function(){
+Route::controller(DocumentogestionController::class)->group(function () {
     Route::get('Documentogestion', 'index')->middleware(['auth', 'verified'])->name('Documentogestion');
     Route::post('Documentogestion/store', 'store')->middleware(['auth', 'verified'])->name('Documentogestion.store');
     Route::get('Documentogestion/{Documentogestion}', 'destroy')->middleware(['auth', 'verified'])->name('Documentogestion.destroy');
@@ -159,19 +162,19 @@ Route::controller(DocumentogestionController::class)->group(function(){
     Route::get('Documentogestion/show/{Documentogestion}', 'show')->middleware(['auth', 'verified'])->name('Documentogestion.show');
     Route::post('archivoDocumentogestion/store/{Documentogestion}', 'store2')->middleware(['auth', 'verified'])->name('archivoDocumentogestion.store');
 });
-Route::controller(InfraestructuraController::class)->group(function(){
+Route::controller(InfraestructuraController::class)->group(function () {
     Route::get('Infraestructura', 'index')->middleware(['auth', 'verified'])->name('Infraestructura');
     Route::post('Infraestructura/store', 'store')->middleware(['auth', 'verified'])->name('infraestructura.store');
     Route::get('Infraestructura/{infraestructura}', 'destroy')->middleware(['auth', 'verified'])->name('infraestructura.destroy');
 });
-Route::controller(PaginaWebController::class)->group(function(){
+Route::controller(PaginaWebController::class)->group(function () {
     Route::get('PaginaWeb', 'index')->middleware(['auth', 'verified'])->name('paginawebadmin');
     Route::post('PaginaWeb/store', 'store')->middleware(['auth', 'verified'])->name('paginaweb.store');
     Route::put('paginas/update/{pagina}', 'update')->middleware(['auth', 'verified'])->name('paginaweb.update');
     Route::get('paginas/destroy/{pagina}', 'destroy')->middleware(['auth', 'verified'])->name('pagina.destroy');
     Route::get('paginas/edit/{pagina}', 'edit')->middleware(['auth', 'verified'])->name('pagina.edit');
 });
-Route::controller(VideoEmbevidoController::class)->group(function(){
+Route::controller(VideoEmbevidoController::class)->group(function () {
     Route::get('videoembevido', 'create')->middleware(['auth', 'verified'])->name('videoembevido');
     Route::post('videoembevido/store', 'store')->middleware(['auth', 'verified'])->name('videoembevido.store');
     Route::put('videoembevido/update/{videoembevido}', 'update')->middleware(['auth', 'verified'])->name('videoembevido.update');
@@ -179,18 +182,20 @@ Route::controller(VideoEmbevidoController::class)->group(function(){
     Route::get('videoembevido/edit/{videoembevido}', 'edit')->middleware(['auth', 'verified'])->name('videoembevido.edit');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'can:manage-ai-knowledge'])->group(function () {
     Route::get('intranet/conocimiento-ia', [KnowledgeDocumentController::class, 'index'])->name('knowledge.index');
     Route::post('intranet/conocimiento-ia', [KnowledgeDocumentController::class, 'store'])->name('knowledge.store');
+    Route::patch('intranet/conocimiento-ia/{knowledgeDocument}/publicacion', [KnowledgeDocumentController::class, 'publish'])->name('knowledge.publish');
     Route::delete('intranet/conocimiento-ia/{knowledgeDocument}', [KnowledgeDocumentController::class, 'destroy'])->name('knowledge.destroy');
-    Route::get('intranet/consultas-asistente', [\App\Http\Controllers\ChatbotLogController::class, 'index'])->name('chatbot.log');
+});
+
+Route::middleware(['auth', 'verified', 'can:view-chatbot-logs'])->group(function () {
+    Route::get('intranet/consultas-asistente', [ChatbotLogController::class, 'index'])->name('chatbot.log');
 });
 
 Route::get('conocimiento-ia/{knowledgeDocument}/pdf', [KnowledgeDocumentController::class, 'download'])->name('knowledge.download');
 
-//NUEVA RUTA PARA CONVIVENCIA SIN VIOLENCIA
-use App\Http\Controllers\ConvivenciaSinViolenciaController;
-
+// NUEVA RUTA PARA CONVIVENCIA SIN VIOLENCIA
 Route::get('convivenciasinviolencia', [ConvivenciaSinViolenciaController::class, 'index'])->name('convivenciasinviolencia');
 
 Route::get('prueba', [MenuController::class, 'prueba'])->name('prueba');
@@ -203,9 +208,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//Nuevo módulo de direcciones y áreas
-use App\Http\Controllers\DireccionController;
-
+// Nuevo módulo de direcciones y áreas
 // Rutas públicas para direcciones
 Route::get('/direcciones/{direccion}', [DireccionController::class, 'show'])->name('direcciones.show');
 Route::get('/direcciones/{direccion}/{area}', [DireccionController::class, 'show'])->name('direcciones.area');
@@ -220,11 +223,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('admin/direcciones/{direccion}/edit', [DireccionController::class, 'edit'])->name('admin.direcciones.edit');
     Route::put('admin/direcciones/{direccion}', [DireccionController::class, 'update'])->name('admin.direcciones.update');
     Route::get('admin/direcciones/{direccion}/destroy', [DireccionController::class, 'destroy'])->name('admin.direcciones.destroy');
-    
+
     // Direcciones - Gestión de contenido web
     Route::get('admin/direcciones/{direccion}/contenido', [DireccionController::class, 'adminContenido'])->name('admin.direcciones.contenido');
     Route::put('admin/direcciones/{direccion}/contenido', [DireccionController::class, 'updateContenido'])->name('admin.direcciones.contenido.update');
-    
+
     // Áreas de direcciones
     Route::get('admin/direcciones/{direccion}/areas', [DireccionController::class, 'adminAreas'])->name('admin.direcciones.areas');
     Route::post('admin/direcciones/{direccion}/areas', [DireccionController::class, 'storeArea'])->name('admin.areas.store');
@@ -243,32 +246,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/admin/eventos/{evento}/archivo/{numeroArchivo}', [DireccionController::class, 'eliminarArchivoEvento'])->name('admin.eventos.eliminar-archivo');
 });
 
-    // Rutas para EPR
-    Route::get('/epr', [App\Http\Controllers\EPRController::class, 'index'])->name('epr.index');
-    Route::get('/epr/pdf/{id}', [App\Http\Controllers\EPRController::class, 'showPdf'])->name('epr.pdf');
-    Route::get('/epr/serve/{id}', [App\Http\Controllers\EPRController::class, 'servePdf'])->name('epr.serve');
-    Route::get('/epr/download/{id}', [App\Http\Controllers\EPRController::class, 'downloadPdf'])->name('epr.download');
+// Rutas para EPR
+Route::get('/epr', [EPRController::class, 'index'])->name('epr.index');
+Route::get('/epr/pdf/{id}', [EPRController::class, 'showPdf'])->name('epr.pdf');
+Route::get('/epr/serve/{id}', [EPRController::class, 'servePdf'])->name('epr.serve');
+Route::get('/epr/download/{id}', [EPRController::class, 'downloadPdf'])->name('epr.download');
 
-    // Rutas públicas SIAGIE
-    Route::get('siagie', [SiagieController::class, 'index'])->name('siagie.index');
-    Route::get('siagie/{slug}', [SiagieController::class, 'showReport'])->name('siagie.show');
+// Rutas públicas SIAGIE
+Route::get('siagie', [SiagieController::class, 'index'])->name('siagie.index');
+Route::get('siagie/{slug}', [SiagieController::class, 'showReport'])->name('siagie.show');
 
-    // Rutas admin SIAGIE (protegidas)
-    Route::prefix('intranet/siagie')->name('admin.siagie.')->middleware(['auth'])->group(function () {
-        // ⭐ RUTAS ESTÁTICAS PRIMERO
-        Route::get('reports', [SiagieController::class, 'reportsIndex'])->name('reports.index');
-        Route::get('reports/create', [SiagieController::class, 'create'])->name('reports.create');
-        
-        // ⭐ API AJAX (antes de las rutas con parámetros dinámicos)
-        Route::get('api/reports/{slug}/details', [SiagieController::class, 'getReportDetails'])->name('api.report-details');
-        
-        // ⭐ RUTAS CON PARÁMETROS AL FINAL
-        Route::get('reports/{report}/edit', [SiagieController::class, 'editReport'])->name('reports.edit');
-        Route::post('reports', [SiagieController::class, 'storeReport'])->name('reports.store');
-        Route::put('reports/{report}', [SiagieController::class, 'updateReport'])->name('reports.update');
-        Route::post('reports/{report}/toggle-publish', [SiagieController::class, 'togglePublish'])->name('reports.toggle-publish');
-        Route::delete('reports/{report}', [SiagieController::class, 'destroyReport'])->name('reports.destroy');
-    });
+// Rutas admin SIAGIE (protegidas)
+Route::prefix('intranet/siagie')->name('admin.siagie.')->middleware(['auth'])->group(function () {
+    // ⭐ RUTAS ESTÁTICAS PRIMERO
+    Route::get('reports', [SiagieController::class, 'reportsIndex'])->name('reports.index');
+    Route::get('reports/create', [SiagieController::class, 'create'])->name('reports.create');
+
+    // ⭐ API AJAX (antes de las rutas con parámetros dinámicos)
+    Route::get('api/reports/{slug}/details', [SiagieController::class, 'getReportDetails'])->name('api.report-details');
+
+    // ⭐ RUTAS CON PARÁMETROS AL FINAL
+    Route::get('reports/{report}/edit', [SiagieController::class, 'editReport'])->name('reports.edit');
+    Route::post('reports', [SiagieController::class, 'storeReport'])->name('reports.store');
+    Route::put('reports/{report}', [SiagieController::class, 'updateReport'])->name('reports.update');
+    Route::post('reports/{report}/toggle-publish', [SiagieController::class, 'togglePublish'])->name('reports.toggle-publish');
+    Route::delete('reports/{report}', [SiagieController::class, 'destroyReport'])->name('reports.destroy');
+});
 // CSRF token fresco para el modal de login (no cacheable)
 Route::get('/csrf-token', function () {
     return response()->json(['token' => csrf_token()])
@@ -277,8 +280,13 @@ Route::get('/csrf-token', function () {
 
 // OPcache reset — protegido con hash del APP_KEY, solo para deploy
 Route::get('/_flush/{token}', function (string $token) {
-    if (!hash_equals(hash('sha256', config('app.key')), $token)) abort(404);
-    if (function_exists('opcache_reset')) opcache_reset();
+    if (! hash_equals(hash('sha256', config('app.key')), $token)) {
+        abort(404);
+    }
+    if (function_exists('opcache_reset')) {
+        opcache_reset();
+    }
+
     return 'OK';
 });
 

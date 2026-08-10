@@ -22,7 +22,9 @@
     @endif
 
     <div class="alert alert-info">
-        Sube PDFs con texto seleccionable. El sistema los convierte a Markdown y el chatbot usará ese contenido como fuente institucional. Los PDFs escaneados necesitan OCR para poder leerse.
+        Los PDFs se analizan y convierten a Markdown, pero <strong>no se publican automáticamente</strong>.
+        Revisa el contenido extraído y apruébalo antes de incorporarlo a las respuestas del asistente.
+        No cargues documentos con datos personales que no sean necesarios para la finalidad institucional.
     </div>
 
     <form method="POST" action="{{ route('knowledge.store') }}" enctype="multipart/form-data" class="form-layout form-layout-4">
@@ -55,6 +57,7 @@
                     <th>Estado</th>
                     <th>Páginas</th>
                     <th>Markdown</th>
+                    <th>Publicación</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -85,9 +88,27 @@
                                 -
                             @endif
                         </td>
+                        <td>
+                            @if($document->is_published)
+                                <span class="badge badge-success">Publicado</span>
+                                @if($document->published_at)
+                                    <div class="tx-11 text-muted mt-1">{{ $document->published_at->format('d/m/Y H:i') }}</div>
+                                @endif
+                            @else
+                                <span class="badge badge-secondary">Borrador</span>
+                            @endif
+                        </td>
                         <td class="text-nowrap">
                             @if($document->status === 'ready')
-                                <a class="btn btn-sm btn-outline-primary" href="{{ route('knowledge.download', $document) }}"><i class="fas fa-file-pdf"></i></a>
+                                <a class="btn btn-sm btn-outline-primary" href="{{ route('knowledge.download', $document) }}" aria-label="Revisar PDF"><i class="fas fa-file-pdf"></i></a>
+                                <form method="POST" action="{{ route('knowledge.publish', $document) }}" class="d-inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="hidden" name="publish" value="{{ $document->is_published ? 0 : 1 }}">
+                                    <button class="btn btn-sm {{ $document->is_published ? 'btn-outline-warning' : 'btn-success' }}" type="submit">
+                                        {{ $document->is_published ? 'Retirar' : 'Aprobar' }}
+                                    </button>
+                                </form>
                             @endif
                             <form method="POST" action="{{ route('knowledge.destroy', $document) }}" class="d-inline" onsubmit="return confirm('¿Eliminar este PDF y su conocimiento extraído?')">
                                 @csrf
@@ -97,7 +118,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="text-center text-muted">Aún no hay documentos cargados.</td></tr>
+                    <tr><td colspan="6" class="text-center text-muted">Aún no hay documentos cargados.</td></tr>
                 @endforelse
             </tbody>
         </table>

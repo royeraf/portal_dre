@@ -157,12 +157,22 @@
                   <span class="menu-item-label">Videos</span>
                 </a><!-- br-menu-link -->
             </li>
-            <li class="br-menu-item">
-                <a href="{{ route('knowledge.index') }}" class="br-menu-link">
-                  <i class="menu-item-icon icon ion-ios-lightbulb-outline tx-22"></i>
-                  <span class="menu-item-label">Conocimiento IA</span>
-                </a>
-            </li>
+            @can('manage-ai-knowledge')
+                <li class="br-menu-item">
+                    <a href="{{ route('knowledge.index') }}" class="br-menu-link">
+                      <i class="menu-item-icon icon ion-ios-lightbulb-outline tx-22"></i>
+                      <span class="menu-item-label">Conocimiento IA</span>
+                    </a>
+                </li>
+            @endcan
+            @can('view-chatbot-logs')
+                <li class="br-menu-item">
+                    <a href="{{ route('chatbot.log') }}" class="br-menu-link">
+                      <i class="menu-item-icon icon ion-ios-chatboxes-outline tx-22"></i>
+                      <span class="menu-item-label">Auditoría del asistente</span>
+                    </a>
+                </li>
+            @endcan
         </ul><!-- br-sideleft-menu -->
         <br>
         </div><!-- br-sideleft -->

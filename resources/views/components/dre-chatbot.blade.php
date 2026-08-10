@@ -1,5 +1,5 @@
-<div class="dre-chatbot" id="dre-chatbot" data-endpoint="{{ route('api.chat') }}" data-open="false">
-    <section class="dre-chatbot__panel" id="dre-chatbot-panel" role="dialog" aria-label="Asistente virtual DRE Huánuco" aria-hidden="true">
+<div class="dre-chatbot" id="dre-chatbot" data-endpoint="{{ route('api.chat') }}" data-reset-endpoint="{{ route('api.chat.delete') }}" data-open="false">
+    <section class="dre-chatbot__panel" id="dre-chatbot-panel" role="dialog" aria-modal="true" aria-label="Asistente virtual DRE Huánuco" aria-hidden="true">
         <header class="dre-chatbot__header">
             <div class="dre-chatbot__identity">
                 <span class="dre-chatbot__seal" aria-hidden="true">
@@ -22,10 +22,10 @@
 
         <div class="dre-chatbot__notice">
             <span>Información oficial</span>
-            El asistente puede cometer errores. Verifica datos importantes.
+            Asistente con IA. No envíes datos personales. Verifica datos importantes.
         </div>
 
-        <div class="dre-chatbot__messages" data-chat-messages aria-live="polite" aria-busy="false">
+        <div class="dre-chatbot__messages" data-chat-messages aria-busy="false">
             <article class="dre-chatbot__message dre-chatbot__message--assistant">
                 <div class="dre-chatbot__avatar" aria-hidden="true">
                     <img src="{{ asset('img/iconchat.svg') }}" alt="" width="34" height="34" decoding="async">
@@ -49,7 +49,7 @@
                 <svg viewBox="0 0 24 24" fill="none"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/></svg>
             </button>
         </form>
-        <span class="sr-only" data-chat-status aria-live="polite"></span>
+        <span class="sr-only" data-chat-status aria-live="polite" aria-atomic="true"></span>
         <p class="dre-chatbot__fineprint">Verifica los requisitos y plazos en la publicación oficial.</p>
     </section>
 

@@ -110,18 +110,58 @@ function initDreChatbot() {
     const storageKey = 'dre-huanuco-chat-v2';
     let busy = false;
     let welcomeAnimated = false;
+    let previousActiveElement = null;
+    let inertedElements = [];
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const scrollToEnd = () => { messages.scrollTop = messages.scrollHeight; };
+
+    const setOutsideInert = (enabled) => {
+        if (!enabled) {
+            inertedElements.forEach(({ element, inert, ariaHidden }) => {
+                element.inert = inert;
+                if (ariaHidden === null) element.removeAttribute('aria-hidden');
+                else element.setAttribute('aria-hidden', ariaHidden);
+            });
+            inertedElements = [];
+            return;
+        }
+
+        let current = root;
+        while (current?.parentElement) {
+            Array.from(current.parentElement.children).forEach((element) => {
+                if (element === current || element.contains(root)) return;
+                inertedElements.push({
+                    element,
+                    inert: element.inert,
+                    ariaHidden: element.getAttribute('aria-hidden'),
+                });
+                element.inert = true;
+                element.setAttribute('aria-hidden', 'true');
+            });
+            current = current.parentElement;
+        }
+    };
+
     const setOpen = (open) => {
+        const wasOpen = root.dataset.open === 'true';
         root.dataset.open = open ? 'true' : 'false';
         panel.setAttribute('aria-hidden', open ? 'false' : 'true');
         launcher.setAttribute('aria-expanded', open ? 'true' : 'false');
-        if (open) {
+        if (open && !wasOpen) {
+            previousActiveElement = document.activeElement;
+            setOutsideInert(true);
             window.setTimeout(() => {
                 input.focus();
                 animateWelcomeMessage();
             }, 180);
+        } else if (!open && wasOpen) {
+            setOutsideInert(false);
+            if (previousActiveElement instanceof HTMLElement && document.contains(previousActiveElement)) {
+                previousActiveElement.focus();
+            } else {
+                launcher.focus();
+            }
         }
         saveSession();
     };
@@ -214,6 +254,8 @@ function initDreChatbot() {
             anchor.target = '_blank';
             anchor.rel = 'noopener noreferrer';
             anchor.textContent = link.title;
+            anchor.title = `${link.title} (se abre en una pestaña nueva)`;
+            anchor.setAttribute('aria-label', `${link.title}, abrir fuente en una pestaña nueva`);
             group.appendChild(anchor);
         });
         messages.appendChild(group);
@@ -242,6 +284,7 @@ function initDreChatbot() {
             return;
         }
 
+        bubble.setAttribute('aria-hidden', 'true');
         bubble.textContent = '';
         bubble.classList.add('dre-chatbot__typing');
         const delay = chars.length > 900 ? 5 : chars.length > 500 ? 7 : 11;
@@ -253,12 +296,16 @@ function initDreChatbot() {
             await new Promise((resolve) => window.setTimeout(resolve, delay));
         }
         bubble.classList.remove('dre-chatbot__typing');
+        bubble.removeAttribute('aria-hidden');
     }
 
     function history() {
         return Array.from(messages.querySelectorAll('.dre-chatbot__message'))
             .filter((item) => item.querySelector('.dre-chatbot__bubble--dynamic'))
-            .slice(-8)
+            // Veinte mensajes (diez intercambios completos aproximadamente) permiten
+            // continuar una consulta tras navegar o hacer varios seguimientos cortos.
+            // El servidor vuelve a seleccionar solo el tramo relevante para buscar.
+            .slice(-20)
             .map((item) => ({
                 role: item.classList.contains('dre-chatbot__message--user') ? 'user' : 'assistant',
                 content: item.querySelector('.dre-chatbot__bubble')?.textContent?.trim() || '',
@@ -319,7 +366,7 @@ function initDreChatbot() {
             loading.article.classList.remove('dre-chatbot__message--loading');
             await typeAnswer(loading.bubble, data.answer || 'No encontré una respuesta disponible.');
             appendLinks(data.links);
-            status.textContent = 'Respuesta recibida.';
+            status.textContent = `Respuesta del asistente: ${data.answer || 'No encontré una respuesta disponible.'}`;
             saveSession();
         } catch (error) {
             loading.article.remove();
@@ -335,7 +382,10 @@ function initDreChatbot() {
     }
 
     function savedEntries() {
-        return Array.from(messages.children).slice(-30).map((item) => {
+        // Además de los 20 mensajes se conservan sus grupos de enlaces y posibles errores.
+        // Cincuenta nodos siguen siendo pequeños para sessionStorage y evitan cortar una
+        // tarjeta de fuente al cambiar de página.
+        return Array.from(messages.children).slice(-50).map((item) => {
             if (item.classList.contains('dre-chatbot__message')) {
                 return {
                     type: 'message',
@@ -393,12 +443,22 @@ function initDreChatbot() {
         });
     }
 
-    function resetConversation() {
+    async function resetConversation() {
         if (busy) return;
+        let id = null;
         try {
+            id = window.sessionStorage.getItem('dre-chat-conv');
             window.sessionStorage.removeItem(storageKey);
             window.sessionStorage.removeItem('dre-chat-conv');
         } catch (_) {}
+
+        if (id && root.dataset.resetEndpoint) {
+            fetch(root.dataset.resetEndpoint, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                body: JSON.stringify({ conversacion: id }),
+            }).catch(() => {});
+        }
         messages.innerHTML = initialMessagesMarkup;
         suggestions = messages.querySelector('[data-chat-suggestions]');
         welcomeAnimated = false;
@@ -419,7 +479,6 @@ function initDreChatbot() {
     });
     root.querySelector('[data-chat-close]').addEventListener('click', () => {
         setOpen(false);
-        launcher.focus();
     });
     root.querySelector('[data-chat-reset]').addEventListener('click', resetConversation);
     bindSuggestions();
@@ -438,9 +497,28 @@ function initDreChatbot() {
         input.style.height = `${Math.min(input.scrollHeight, 118)}px`;
     });
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && root.dataset.open === 'true') {
+        if (root.dataset.open !== 'true') return;
+
+        if (event.key === 'Escape') {
             setOpen(false);
-            launcher.focus();
+            return;
+        }
+
+        if (event.key === 'Tab') {
+            const focusable = Array.from(panel.querySelectorAll(
+                'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            )).filter((element) => !element.hidden && element.getClientRects().length > 0);
+            if (focusable.length === 0) return;
+
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
         }
     });
     // `pagehide` se dispara tanto al navegar a otra sección como al usar atrás/adelante.
