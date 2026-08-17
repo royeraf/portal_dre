@@ -12,6 +12,11 @@
 @endpush
 @endif
 
+@push('styles')
+<link rel="dns-prefetch" href="https://www.facebook.com">
+<link rel="preconnect" href="https://static.xx.fbcdn.net" crossorigin>
+@endpush
+
 @section('content')
 
 {{-- ── NEWS TICKER ──────────────────────────────────────────── --}}
@@ -686,10 +691,22 @@
 
                     {{-- Embed --}}
                     <?php foreach ($VideoEmbevidos as $video) { $video->contenido_base64 = base64_encode($video->contenido); } ?>
-                    <div class="aspect-video overflow-hidden [&_iframe]:block [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0 skeleton"
+                    @php $primerVideo = $VideoEmbevidos->first(); @endphp
+                    <div class="aspect-video overflow-hidden relative [&_iframe]:block [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0"
                          id="videoPrincipalContainer">
-                        @php $primerVideo = $VideoEmbevidos->first(); @endphp
-                        {!! $primerVideo->contenido !!}
+                        <button type="button" id="videoFacade"
+                                data-video-base64="{{ $primerVideo->contenido_base64 }}"
+                                aria-label="Reproducir: {{ $primerVideo->titulo }}"
+                                class="absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-2
+                                       bg-gradient-to-br from-blue-600 to-blue-800 text-white group cursor-pointer">
+                            <span class="w-14 h-14 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors
+                                         flex items-center justify-center backdrop-blur-sm">
+                                <svg class="w-6 h-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </span>
+                            <span class="absolute bottom-0 inset-x-0 px-3 py-2 text-xs font-semibold text-left bg-black/40 truncate">
+                                {{ $primerVideo->titulo }}
+                            </span>
+                        </button>
                     </div>
 
                     {{-- Playlist header bar --}}
@@ -999,23 +1016,32 @@
 document.addEventListener('DOMContentLoaded', function () {
     var listaVideos = document.getElementById('listaVideos');
     var videoPrincipalContainer = document.getElementById('videoPrincipalContainer');
+    var videoFacade = document.getElementById('videoFacade');
 
-    function removeVideoSkeleton() {
+    function cargarVideo(base64) {
+        videoPrincipalContainer.classList.add('skeleton');
+        videoPrincipalContainer.innerHTML = atob(base64);
         var iframe = videoPrincipalContainer.querySelector('iframe');
-        if (iframe) iframe.addEventListener('load', function() {
+        if (!iframe) {
             videoPrincipalContainer.classList.remove('skeleton');
+            return;
+        }
+        var done = function () { videoPrincipalContainer.classList.remove('skeleton'); };
+        iframe.addEventListener('load', done);
+        // Facebook a veces no dispara 'load' de forma fiable; evita un skeleton permanente.
+        setTimeout(done, 4000);
+    }
+
+    if (videoFacade) {
+        videoFacade.addEventListener('click', function () {
+            cargarVideo(videoFacade.getAttribute('data-video-base64'));
         });
     }
 
     if (listaVideos && videoPrincipalContainer) {
-        removeVideoSkeleton();
         listaVideos.addEventListener('click', function (e) {
             var li = e.target.closest('li[data-video-base64]');
-            if (li) {
-                videoPrincipalContainer.classList.add('skeleton');
-                videoPrincipalContainer.innerHTML = atob(li.getAttribute('data-video-base64'));
-                removeVideoSkeleton();
-            }
+            if (li) cargarVideo(li.getAttribute('data-video-base64'));
         });
     }
 });
