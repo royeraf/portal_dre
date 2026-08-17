@@ -16,11 +16,12 @@
             </div><!-- col-4 -->
             <div class="col">
                 <div class="form-group">
-                    <label class="form-control-label" for="nom_archivo">Archivo: <span class="tx-danger">*</span></label>
+                    <label class="form-control-label" for="nom_archivo">Archivo (máx. 10 MB):</label>
                     <div class="custom-file">
                         <input type="file" id="file" name="file" class="custom-file-input">
                         <label class="custom-file-label"></label>
-                    </div>                    
+                    </div>
+                    <x-input-error :messages="$errors->get('file')" class="mt-2" />
                 </div>
             </div>
             <div class="col-lg-4">

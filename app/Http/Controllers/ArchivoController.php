@@ -7,11 +7,14 @@ use Illuminate\Http\Request;
 class ArchivoController extends Controller
 {
     public function index(){
-        $data['archivos']=Archivo::paginate(10);
+        $data['archivos']=Archivo::orderByDesc('created_at')->orderByDesc('id')->paginate(10);
         return view('intranet/archivos/create', $data);
     }
     public function store(Request $request){
-        $request->validate(['file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip|max:10240']);
+        $request->validate(
+            ['file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip|max:10240'],
+            ['file.max' => 'El archivo no debe superar los 10 MB.']
+        );
         $archivo = new Archivo();
         $archivo->nombre=$request->nombre;
         $archivo->categoria=$request->categoria;
@@ -43,7 +46,10 @@ class ArchivoController extends Controller
         return view('intranet/archivos/edit', $data);
     }
     public function update(Request $request, Archivo $archivo){
-        $request->validate(['file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip|max:10240']);
+        $request->validate(
+            ['file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip|max:10240'],
+            ['file.max' => 'El archivo no debe superar los 10 MB.']
+        );
         $archivo->nombre = $request->nombre;
         $archivo->categoria = $request->categoria;
 
