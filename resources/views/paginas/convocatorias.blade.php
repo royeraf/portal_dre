@@ -186,7 +186,7 @@
                 @endphp
 
                 <article class="group bg-white rounded-2xl overflow-hidden flex flex-col
-                                border transition-all duration-300 ease-out hover:-translate-y-1.5
+                                border transition-all duration-300 ease-out
                                 {{ $abierto 
                                    ? 'border-emerald-200 shadow-[0_4px_24px_-4px_rgba(16,185,129,0.06)] hover:border-emerald-400 hover:shadow-[0_20px_48px_-10px_rgba(16,185,129,0.14)]' 
                                    : 'border-gray-200 shadow-[0_4px_24px_-4px_rgba(1,48,114,0.04)] hover:border-dre-accent/30 hover:shadow-[0_20px_48px_-10px_rgba(1,48,114,0.10)]' }}">
