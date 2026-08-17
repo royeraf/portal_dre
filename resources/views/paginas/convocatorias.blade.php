@@ -128,7 +128,7 @@
                     $detail     = $row->descripcion || count($row->archivos) > 0;
                     $fi         = $row->fecha_inicio  ? \Carbon\Carbon::parse($row->fecha_inicio)->format('d/m/Y')  : '—';
                     $ft         = $row->fecha_termino ? \Carbon\Carbon::parse($row->fecha_termino)->format('d/m/Y') : '—';
-                    $nuevo      = $row->created_at && \Carbon\Carbon::parse($row->created_at)->diffInDays(now()) <= 5;
+                    $nuevo      = $row->created_at && \Carbon\Carbon::parse($row->created_at)->startOfDay()->diffInDays(now()->startOfDay()) <= 5;
                     $finalizado = $row->fecha_termino && \Carbon\Carbon::parse($row->fecha_termino)->endOfDay()->isPast();
                     $fileIcon = function ($urlArchivo) {
                         $path = parse_url($urlArchivo ?? '', PHP_URL_PATH) ?: '';
@@ -175,7 +175,7 @@
                                 'nom'      => $a['nom_archivo'],
                                 'url'      => $a['url_archivo'],
                                 'fecha'    => $a->created_at ? \Carbon\Carbon::parse($a->created_at)->format('d/m/Y') : null,
-                                'nuevo'    => $a->created_at && \Carbon\Carbon::parse($a->created_at)->diffInDays(now()) <= 2,
+                                'nuevo'    => $a->created_at && \Carbon\Carbon::parse($a->created_at)->startOfDay()->diffInDays(now()->startOfDay()) <= 2,
                                 'icon'     => $icon['icon'],
                                 'iconBg'   => $icon['bg'],
                                 'iconText' => $icon['text'],
