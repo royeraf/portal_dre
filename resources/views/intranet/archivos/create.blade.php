@@ -62,6 +62,8 @@
                     <td class="border border-slate-500">{{ $item->nombre }}</td>
                     <td class="border border-slate-500">
                         <a href="{{asset('archivos/'.$item->link)}}">{{asset('archivos/'.$item->link)}}</a>
+                        <button type="button" class="btn btn-link btn-sm p-0 ml-2 copiar-link" data-link="{{asset('archivos/'.$item->link)}}" title="Copiar enlace"><i class="fas fa-copy"></i></button>
+                        <a href="{{asset('archivos/'.$item->link)}}" target="_blank" rel="noopener" class="ml-2" title="Abrir en pestaña nueva"><i class="fas fa-external-link-alt"></i></a>
                     </td>
                     <td class="border border-slate-500">{{ $item->categoria }}</td>
                     <td class="border border-slate-500">
