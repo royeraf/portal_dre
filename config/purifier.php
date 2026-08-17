@@ -46,8 +46,8 @@ return [
         // Perfil para embeds de video (solo iframes de fuentes confiables)
         'video_embed' => [
             'HTML.SafeIframe'      => true,
-            'URI.SafeIframeRegexp' => '%^(https?:)?//(www\.youtube\.com/embed/|www\.youtube-nocookie\.com/embed/|player\.vimeo\.com/video/|www\.google\.com/maps/embed)%',
-            'HTML.Allowed'         => 'iframe[src|width|height|frameborder|allowfullscreen|title|style]',
+            'URI.SafeIframeRegexp' => '%^(https?:)?//(www\.youtube\.com/embed/|www\.youtube-nocookie\.com/embed/|player\.vimeo\.com/video/|www\.google\.com/maps/embed|www\.facebook\.com/plugins/)%',
+            'HTML.Allowed'         => 'iframe[src|width|height|frameborder|allowfullscreen|title|style|scrolling|allow]',
             'AutoFormat.RemoveEmpty' => true,
         ],
         'test'    => [
@@ -107,6 +107,7 @@ return [
             ],
             'attributes' => [
                 ['iframe', 'allowfullscreen', 'Bool'],
+                ['iframe', 'allow', 'Text'],
                 ['table', 'height', 'Text'],
                 ['td', 'border', 'Text'],
                 ['th', 'border', 'Text'],
