@@ -482,7 +482,7 @@
                     @else
                     <div
                     @endif
-                       class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 hover:border-transparent transition-all duration-300 flex flex-col">
+                       class="group relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 shadow-md hover:border-dre-accent hover:shadow-[0_0_0_4px_rgba(0,105,217,0.15)] transition-all duration-300 ease-out flex flex-col">
                         {{-- Imagen con overlay --}}
                         <div class="relative h-48 sm:h-52 overflow-hidden shrink-0 skeleton img-wrap">
                             <img src="{{ asset('img/comunicados/'.$item->imagen) }}"
@@ -562,7 +562,7 @@
                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 @foreach ($chunk as $item)
                     <a href="{{ route('noticia', $item->id) }}"
-                       class="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl hover:-translate-y-1 hover:border-transparent transition-all duration-300 flex flex-col">
+                       class="group relative bg-white rounded-2xl overflow-hidden border-2 border-gray-100 shadow-md hover:border-dre-accent hover:shadow-[0_0_0_4px_rgba(0,105,217,0.15)] transition-all duration-300 ease-out flex flex-col">
                         {{-- Imagen con overlay --}}
                         <div class="relative h-48 sm:h-52 overflow-hidden shrink-0 skeleton img-wrap">
                             <img src="{{ asset('img/noticias/'.$item->img1) }}"
