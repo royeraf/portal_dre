@@ -3,6 +3,9 @@
         <h2><i class="far fa-clone"></i> GALERIA DE VIDEOS
 
     </x-slot>
+    <style>
+        .video-preview-cell iframe { width: 100% !important; height: 100% !important; border: 0; }
+    </style>
     <h6 class="br-section-label">Registro</h6>
     <form action="{{ route('videoembevido.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -53,7 +56,11 @@
                     <tr>
                         <td class="border border-slate-500">{{ $item->id }}</td>
                         <td class="border border-slate-500">{{ $item->titulo }}</td>
-                        <td class="border border-slate-500">{{ $item->contenido }}</td>
+                        <td class="border border-slate-500">
+                            <div class="video-preview-cell" style="width:220px;height:130px;overflow:hidden;position:relative;background:#000;">
+                                {!! $item->contenido !!}
+                            </div>
+                        </td>
                         <td class="border border-slate-500">{{ $item->created_at }}</td>
                         <td class="border border-slate-500">
                             <div class="btn-group" role="group" aria-label="Basic example">
