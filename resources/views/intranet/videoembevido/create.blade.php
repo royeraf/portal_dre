@@ -58,7 +58,7 @@
                         <td class="border border-slate-500">{{ $item->titulo }}</td>
                         <td class="border border-slate-500">
                             <div class="video-preview-cell" style="width:220px;height:130px;overflow:hidden;position:relative;background:#000;">
-                                {!! $item->contenido !!}
+                                {!! \Mews\Purifier\Facades\Purifier::clean($item->contenido, 'video_embed') !!}
                             </div>
                         </td>
                         <td class="border border-slate-500">{{ $item->created_at }}</td>
