@@ -13,6 +13,7 @@ class VideoEmbevidoController extends Controller
         return view('intranet/videoembevido/create', $data);
     }
     public function store(Request $request){
+        $request->validate(['titulo' => 'required|string|max:255', 'contenido' => 'required|string']);
         $videoempbevido = new VideoEmbevido();
         $videoempbevido->titulo = $request->titulo;
         $videoempbevido->contenido=Purifier::clean($request->contenido, 'video_embed');
@@ -28,6 +29,7 @@ class VideoEmbevidoController extends Controller
         return view('intranet/videoembevido/edit', $data);
     }
     public function update(Request $request, VideoEmbevido $videoembevido){
+        $request->validate(['titulo' => 'required|string|max:255', 'contenido' => 'required|string']);
         $videoembevido->titulo=$request->titulo;
         $videoembevido->contenido=Purifier::clean($request->contenido, 'video_embed');
         $videoembevido->save();

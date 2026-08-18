@@ -13,7 +13,7 @@
             <div class="col-lg-10">
                 <div class="form-group">
                     <label class="form-control-label" for="titulo">Titulo: <span class="tx-danger">*</span></label>
-                    <input class="form-control" type="text" name="titulo" id="titulo" :value="old('titulo')" placeholder="Nombre">
+                    <input class="form-control" type="text" name="titulo" id="titulo" :value="old('titulo')" placeholder="Nombre" required>
                     <x-input-error :messages="$errors->get('titulo')" class="mt-2" />
                 </div>
             </div>
@@ -28,7 +28,8 @@
         <div class="row">
             <div class="col">
                 <label class="form-control-label" for="contenido">CONTENIDO <span class="tx-danger">*</span></label>
-                <textarea name="contenido" id="contenido" class="form-control" rows="5" placeholder="Contenido de Embevido"></textarea>
+                <textarea name="contenido" id="contenido" class="form-control" rows="5" placeholder="Contenido de Embevido" required></textarea>
+                <x-input-error :messages="$errors->get('contenido')" class="mt-2" />
                 <br>
             </div>
         </div>
