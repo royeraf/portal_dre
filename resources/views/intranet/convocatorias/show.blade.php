@@ -48,8 +48,11 @@
                     <td class="border border-slate-500">{{ $item->etapa }}</td>
                     <td class="border border-slate-500">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <a href="{{ route('archivo.convocatoria.destroy', $item->id) }}" class="btn btn-danger btn-sm eliminar" title="Eliminar"><i class="fas fa-trash"></i></a>
-                            <a href="{{route('archivo.convocatoria.edit', $item->id)}}" class="btn btn-warning btn-sm" title="Editar"><i class="icon ion-edit"></i></a>
+                            <form method="POST" action="{{ route('archivo.convocatoria.destroy', $item) }}" class="d-inline" onsubmit="return confirm('¿Eliminar este archivo de la convocatoria?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            </form>
                         </div>
                     </td>
                 </tr>

@@ -10,12 +10,16 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('chatbot:purge-logs')->dailyAt('02:30')->withoutOverlapping();
+        $documents = escapeshellarg(public_path('archivos'));
+        $schedule
+            ->command("knowledge:import-directory {$documents} --limit=5 --index --only-referenced")
+            ->everyTenMinutes()
+            ->withoutOverlapping(120);
     }
 
     /**

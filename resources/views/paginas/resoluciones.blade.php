@@ -37,7 +37,7 @@
               </tr>
             </thead>
             <tbody>
-                @foreach ($resoluciones as $key => $registro)
+                @forelse ($resoluciones as $key => $registro)
                 <tr>
                     <th scope="row">{{ $loop->iteration }}</th>
                     <td>{{$registro->x_numero}}</td>
@@ -47,7 +47,13 @@
                     <td></td>
                     <td class="h3"><a href="https://digital.drehuanuco.gob.pe/storage/ArchivosPDF/{{$registro->x_archivo}}"><i class="fas fa-file-pdf"></i></a></td>
                 </tr>                
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">
+                        No hay resoluciones disponibles en este momento.
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
           </table>
     </div>

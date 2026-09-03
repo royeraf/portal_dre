@@ -1,6 +1,7 @@
 # Dependencias
 /node_modules
 /vendor
+/tmp/
 
 # Build
 /public/build
@@ -13,6 +14,7 @@
 .env.backup
 .env.production
 .phpunit.result.cache
+/.phpunit.cache/
 Homestead.json
 Homestead.yaml
 auth.json
@@ -30,6 +32,8 @@ yarn-error.log
 /.agents
 
 # Archivos subidos por usuarios (contenido dinámico)
+/public/archivos/*
+!/public/archivos/.htaccess
 /public/img/noticias/*
 /public/img/slider/*
 /public/img/popup/*
@@ -46,7 +50,16 @@ yarn-error.log
 # Archivos temporales / empaquetados
 public.zip
 *.zip
+*.sql
+/ls
 
 # Archivos subidos por usuarios en public_html (VPS)
 /public_html/img/
 /public_html/archivos/
+/public_html/archivos
+/public_html/build/
+/public_html/build
+
+# Esquema de base de datos versionado con Git LFS
+!database/schema.sql
+!database/test-data.sql

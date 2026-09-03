@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 use App\Models\Convocatoria;
 use App\Models\ArchivoConvocatoria;
+use App\Services\PortalDocumentStorage;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ConvocatoriaController extends Controller
 {
@@ -56,11 +58,26 @@ class ConvocatoriaController extends Controller
         $archivoconvocatoria->delete();
         return redirect()->route('convocatoria.show', $idconvocatoria);
     }
-    public function archivocstore(Convocatoria $convocatoria, Request $request){
+    public function archivocstore(Convocatoria $convocatoria, Request $request, PortalDocumentStorage $storage){
+        $validated = $request->validate([
+            'nom_archivo' => ['required', 'string', 'max:500'],
+            'etapa' => ['required', 'in:INSCRIPCION,CURRICULAR,ENTREVISTA,FINAL'],
+            'url_archivo' => ['nullable', 'string', 'max:1000', 'required_without:file'],
+            'file' => ['nullable', 'file', 'mimes:pdf', 'max:20480', 'required_without:url_archivo'],
+        ]);
+
+        try {
+            $url = $request->hasFile('file')
+                ? $storage->storePdf($request->file('file'))
+                : trim((string) $validated['url_archivo']);
+        } catch (\RuntimeException $exception) {
+            throw ValidationException::withMessages(['file' => $exception->getMessage()]);
+        }
+
         $archivoconvocatoria = new ArchivoConvocatoria();
-        $archivoconvocatoria->nom_archivo = $request->nom_archivo;
-        $archivoconvocatoria->url_archivo = $request->url_archivo;    
-        $archivoconvocatoria->etapa = $request->etapa;
+        $archivoconvocatoria->nom_archivo = $validated['nom_archivo'];
+        $archivoconvocatoria->url_archivo = $url;
+        $archivoconvocatoria->etapa = $validated['etapa'];
         $archivoconvocatoria->id_convocatoria = $convocatoria->id;
         $archivoconvocatoria->save();
         return redirect()->route('convocatoria.show', $convocatoria->id);   

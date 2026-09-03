@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::before(fn (User $user) => $user->hasRole('admin') ? true : null);
+        Gate::define('manage-ai-knowledge', fn (User $user) => $user->hasRole('ai_manager'));
+        Gate::define('view-chatbot-logs', fn (User $user) => $user->hasRole('auditor'));
     }
 }

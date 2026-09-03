@@ -58,6 +58,8 @@ return [
 
     'asset_url' => env('ASSET_URL'),
 
+    'domain' => env('APP_DOMAIN', 'drehuanuco.gob.pe'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -69,7 +71,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'America/Lima'),
 
     /*
     |--------------------------------------------------------------------------

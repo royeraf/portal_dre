@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Menu;
 use App\Models\Slider;
 use App\Models\Noticia;
@@ -194,9 +195,14 @@ class HomeController extends Controller
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
         $data['comunicados']=Comunicado::orderBy('created_at', 'desc')->take(10)->get();
-        $registros=Documentogestion::orderBy('id', 'asc')->get();
+        $registros = Schema::hasTable('documentodegestion')
+            ? Documentogestion::orderBy('id', 'asc')->get()
+            : collect();
+        $tieneArchivos = Schema::hasTable('archivodocumentogestion');
         foreach($registros as $row){
-            $archivoconvocatoria = Archivodocumentogestion::where('id_documentogestion', $row->id)->get();
+            $archivoconvocatoria = $tieneArchivos
+                ? Archivodocumentogestion::where('id_documentogestion', $row->id)->get()
+                : collect();
             $row['archivos'] = $archivoconvocatoria;
         }
         $data['registros']=$registros;
@@ -205,13 +211,20 @@ class HomeController extends Controller
     public function infraestructura(){
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        $data['registros']=Infraestructura::orderBy('created_at', 'desc')->take(10)->get();
+        $data['registros'] = Schema::hasTable('infraestructura')
+            ? Infraestructura::orderBy('created_at', 'desc')->take(10)->get()
+            : collect();
         return view('paginas/infraestructura', $data);
     }
     public function infraestructuragaleria(){
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        $data['registros']=Infraestructura::orderBy('created_at', 'desc')->paginate(12);
+        $data['registros'] = Schema::hasTable('infraestructura')
+            ? Infraestructura::orderBy('created_at', 'desc')->paginate(12)
+            : new \Illuminate\Pagination\LengthAwarePaginator([], 0, 12, (int) request()->query('page', 1), [
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]);
         return view('paginas/infraestructuragaleria', $data);
     }
     public function showpaginaweb(Pagina $pagina){
@@ -225,11 +238,15 @@ class HomeController extends Controller
     public function resoluciones(){
         $menus=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
         $submenus= Menu::whereNotNull('categoriamenu')->get();
-        $resoluciones= Resolucion::with('tipo:id,x_resoluciontipos')
-        ->where('x_estado', 'PUBLICO GENERAL')
-        ->where('l_activo', 'S')
-        ->orderBy('x_fecha', 'desc')
-        ->paginate(10);
+        try {
+            $resoluciones = Resolucion::with('tipo:id,x_resoluciontipos')
+                ->where('x_estado', 'PUBLICO GENERAL')
+                ->where('l_activo', 'S')
+                ->orderBy('x_fecha', 'desc')
+                ->paginate(10);
+        } catch (\Throwable $exception) {
+            $resoluciones = collect();
+        }
         $data['menus']=$menus;
         $data['submenus']=$submenus;
         $data['resoluciones']=$resoluciones;

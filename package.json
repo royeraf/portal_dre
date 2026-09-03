@@ -5,20 +5,20 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@tailwindcss/forms": "^0.5.2",
-        "alpinejs": "^3.4.2",
-        "autoprefixer": "^10.4.2",
-        "axios": "^1.1.2",
-        "esbuild": "^0.27.4",
-        "laravel-vite-plugin": "^0.7.2",
-        "lodash": "^4.17.19",
-        "postcss": "^8.4.6",
-        "tailwindcss": "^3.1.0",
-        "vite": "^4.0.0"
+        "@tailwindcss/forms": "^0.5.11",
+        "alpinejs": "^3.16.0",
+        "autoprefixer": "^10.5.4",
+        "axios": "^1.19.0",
+        "esbuild": "^0.28.2",
+        "laravel-vite-plugin": "^3.1.3",
+        "lodash": "^4.18.1",
+        "postcss": "^8.5.26",
+        "tailwindcss": "^3.4.19",
+        "vite": "^8.2.1"
     },
     "dependencies": {
-        "@alpinejs/collapse": "^3.15.9",
-        "@alpinejs/intersect": "^3.15.9",
-        "lucide": "^1.7.0"
+        "@alpinejs/collapse": "^3.16.0",
+        "@alpinejs/intersect": "^3.16.0",
+        "lucide": "^1.31.0"
     }
 }

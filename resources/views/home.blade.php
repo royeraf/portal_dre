@@ -277,10 +277,12 @@
 
         {{-- Controls --}}
         <button @click="current = (current - 1 + total) % total"
+                type="button" aria-label="Novedad anterior"
                 class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors z-10">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
         <button @click="current = (current + 1) % total"
+                type="button" aria-label="Novedad siguiente"
                 class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors z-10">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
@@ -289,6 +291,7 @@
         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
             @foreach($sliders as $i => $row)
                 <button @click="current = {{ $i }}"
+                        type="button" aria-label="Mostrar novedad {{ $i + 1 }}"
                         :class="current === {{ $i }} ? 'bg-yellow-400 w-6' : 'bg-white/60 w-2'"
                         class="h-2 rounded-full transition-all duration-300"></button>
             @endforeach
@@ -459,6 +462,7 @@
             <div class="hidden sm:block flex-1 h-px bg-blue-200"></div>
             <div class="ml-auto flex items-center gap-1.5">
                 <button @click="page = (page - 1 + pages) % pages"
+                        type="button" aria-label="Comunicados anteriores"
                         class="w-8 h-8 rounded-full border-2 border-dre-accent text-dre-accent flex items-center justify-center hover:bg-dre-accent hover:text-white transition-all duration-200">
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                 </button>
@@ -466,6 +470,7 @@
                     <span x-text="page + 1"></span>/<span x-text="pages"></span>
                 </span>
                 <button @click="page = (page + 1) % pages"
+                        type="button" aria-label="Comunicados siguientes"
                         class="w-8 h-8 rounded-full border-2 border-dre-accent text-dre-accent flex items-center justify-center hover:bg-dre-accent hover:text-white transition-all duration-200">
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
@@ -542,6 +547,7 @@
                 </a>
                 <div class="flex items-center gap-1.5">
                     <button @click="page = (page - 1 + pages) % pages"
+                            type="button" aria-label="Noticias anteriores"
                             class="w-8 h-8 rounded-full border-2 border-dre-accent text-dre-accent flex items-center justify-center hover:bg-dre-accent hover:text-white transition-all duration-200">
                         <i data-lucide="chevron-left" class="w-4 h-4"></i>
                     </button>
@@ -549,6 +555,7 @@
                         <span x-text="page + 1"></span>/<span x-text="pages"></span>
                     </span>
                     <button @click="page = (page + 1) % pages"
+                            type="button" aria-label="Noticias siguientes"
                             class="w-8 h-8 rounded-full border-2 border-dre-accent text-dre-accent flex items-center justify-center hover:bg-dre-accent hover:text-white transition-all duration-200">
                         <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </button>
@@ -694,6 +701,7 @@
                     @php $primerVideo = $VideoEmbevidos->first(); @endphp
                     <div class="aspect-video overflow-hidden relative [&_iframe]:block [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0"
                          id="videoPrincipalContainer">
+                        @if($primerVideo)
                         <button type="button" id="videoFacade"
                                 data-video-base64="{{ $primerVideo->contenido_base64 }}"
                                 aria-label="Reproducir: {{ $primerVideo->titulo }}"
@@ -707,6 +715,11 @@
                                 {{ $primerVideo->titulo }}
                             </span>
                         </button>
+                        @else
+                            <div class="h-full flex items-center justify-center bg-slate-100 text-slate-500 text-sm">
+                                No hay videos disponibles.
+                            </div>
+                        @endif
                     </div>
 
                     {{-- Playlist header bar --}}
@@ -805,6 +818,7 @@
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0"
      @open-comunicados.window="open = true"
+     @dre-chatbot-opened.window="open = false"
      class="fixed inset-0 z-[9998] flex items-center sm:items-stretch justify-center bg-black/60 py-4 px-3 sm:py-6 sm:px-4"
      @click.self="open = false">
 
@@ -898,6 +912,7 @@
 
                 {{-- Flechas de navegación --}}
                 <button x-show="total > 1" @click="slide = (slide - 1 + total) % total" type="button"
+                        aria-label="Comunicado anterior"
                         class="absolute left-2 top-1/2 -translate-y-1/2 z-20
                                bg-black/40 hover:bg-black/60 active:bg-black/70
                                text-white w-10 h-10 rounded-full
@@ -905,6 +920,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
                 <button x-show="total > 1" @click="slide = (slide + 1) % total" type="button"
+                        aria-label="Comunicado siguiente"
                         class="absolute right-2 top-1/2 -translate-y-1/2 z-20
                                bg-black/40 hover:bg-black/60 active:bg-black/70
                                text-white w-10 h-10 rounded-full
@@ -916,6 +932,7 @@
                 <div x-show="total > 1" class="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-20">
                     @foreach($imagenes as $ri => $row)
                         <button @click="slide = {{ $ri }}" type="button"
+                                aria-label="Mostrar comunicado {{ $ri + 1 }}"
                                 class="w-2 h-2 rounded-full transition-all"
                                 :class="slide === {{ $ri }} ? 'bg-white scale-125' : 'bg-white/50'">
                         </button>

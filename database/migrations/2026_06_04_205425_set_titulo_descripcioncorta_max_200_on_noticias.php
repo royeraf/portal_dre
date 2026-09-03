@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up()
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         // SQL directo porque doctrine/dbal no está instalado (requerido para ->change()).
         DB::statement('ALTER TABLE noticias MODIFY titulo VARCHAR(200) NOT NULL');
         DB::statement('ALTER TABLE noticias MODIFY descripcioncorta VARCHAR(200) NOT NULL');
@@ -24,6 +28,10 @@ return new class extends Migration
      */
     public function down()
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         DB::statement('ALTER TABLE noticias MODIFY titulo VARCHAR(55) NOT NULL');
         DB::statement('ALTER TABLE noticias MODIFY descripcioncorta VARCHAR(70) NOT NULL');
     }

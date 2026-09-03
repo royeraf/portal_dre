@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 use App\Models\Documentogestion;
 use App\Models\Archivodocumentogestion;
+use App\Services\PortalDocumentStorage;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class DocumentogestionController extends Controller
 {
@@ -17,10 +19,24 @@ class DocumentogestionController extends Controller
         $documentogestion->save();
         return redirect()->route('Documentogestion');
     }
-    public function store2(Request $request, Documentogestion $Documentogestion){
+    public function store2(Request $request, Documentogestion $Documentogestion, PortalDocumentStorage $storage){
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:255'],
+            'url_archivo' => ['nullable', 'string', 'max:1000', 'required_without:file'],
+            'file' => ['nullable', 'file', 'mimes:pdf', 'max:20480', 'required_without:url_archivo'],
+        ]);
+
+        try {
+            $url = $request->hasFile('file')
+                ? $storage->storePdf($request->file('file'))
+                : trim((string) $validated['url_archivo']);
+        } catch (\RuntimeException $exception) {
+            throw ValidationException::withMessages(['file' => $exception->getMessage()]);
+        }
+
         $archivodocumentogestion = new Archivodocumentogestion();
-        $archivodocumentogestion->nombre = $request->nombre;
-        $archivodocumentogestion->url_archivo = $request->url_archivo;
+        $archivodocumentogestion->nombre = $validated['nombre'];
+        $archivodocumentogestion->url_archivo = $url;
         $archivodocumentogestion->id_documentogestion = $Documentogestion->id;
         $archivodocumentogestion->save();
         return redirect()->route('Documentogestion.show', $Documentogestion);

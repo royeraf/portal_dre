@@ -44,6 +44,16 @@ return [
             'throw' => false,
         ],
 
+        // PDFs que el CMS publica directamente en /archivos. Mantenerlos en un disco
+        // separado permite simular la carga en pruebas y evita nombres construidos a mano.
+        'portal_documents' => [
+            'driver' => 'local',
+            'root' => public_path('archivos'),
+            'url' => env('APP_URL').'/archivos',
+            'visibility' => 'public',
+            'throw' => true,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

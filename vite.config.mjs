@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
                     'resources/css/app.css',
                     'resources/js/app.js',
                 ],
-                // On VPS set VITE_PUBLIC_DIR=../public_html in .env
+                // En el VPS se puede definir VITE_PUBLIC_DIR=../public_html.
                 publicDirectory: env.VITE_PUBLIC_DIR ?? 'public',
                 refresh: true,
             }),
