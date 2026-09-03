@@ -520,6 +520,69 @@ class ChatbotTest extends TestCase
         $this->assertSame('https://drehuanuco.gob.pe/verconvocatoria/9001', $result['links'][0]['url']);
     }
 
+    public function test_chatbot_selects_one_result_when_latest_convocatoria_is_singular(): void
+    {
+        $method = new \ReflectionMethod(ChatbotController::class, 'respuestaDatosPortal');
+        $sources = collect([
+            ['type' => 'convocatoria', 'title' => 'Convocatoria más reciente', 'url' => 'https://example.test/1', 'deadline_status' => 'cerrada', 'ends_at' => '22/07/2026'],
+            ['type' => 'convocatoria', 'title' => 'Convocatoria anterior', 'url' => 'https://example.test/2', 'deadline_status' => 'cerrada', 'ends_at' => '02/07/2026'],
+            ['type' => 'convocatoria', 'title' => 'Otra convocatoria', 'url' => 'https://example.test/3', 'deadline_status' => 'cerrada', 'ends_at' => '30/06/2026'],
+        ]);
+
+        $singular = $method->invoke(app(ChatbotController::class), '¿Cuál es la convocatoria más reciente?', $sources);
+        $plural = $method->invoke(app(ChatbotController::class), 'Muéstrame las últimas convocatorias', $sources);
+
+        $this->assertCount(1, $singular['links']);
+        $this->assertSame('Convocatoria más reciente', $singular['links'][0]['title']);
+        $this->assertCount(3, $plural['links']);
+    }
+
+    public function test_chatbot_uses_a_compound_process_number_as_an_exact_identifier(): void
+    {
+        $method = new \ReflectionMethod(ChatbotController::class, 'respuestaDatosPortal');
+        $sources = collect([
+            ['type' => 'convocatoria', 'title' => 'CAS TEMPORAL N° 014-2026-DRE-HCO', 'url' => 'https://example.test/14', 'deadline_status' => 'vigente', 'ends_at' => '21/08/2026'],
+            ['type' => 'convocatoria', 'title' => 'Convocatoria CAS temporal N°0011-2026', 'url' => 'https://example.test/11', 'deadline_status' => 'cerrada', 'ends_at' => '22/07/2026'],
+            ['type' => 'convocatoria', 'title' => 'CONVOCATORIA CAS TEMPORAL N° 03-2026', 'url' => 'https://example.test/3', 'deadline_status' => 'cerrada', 'ends_at' => '13/03/2026'],
+        ]);
+
+        $deadline = $method->invoke(
+            app(ChatbotController::class),
+            'Me interesa la CAS temporal 014-2026, ¿hasta cuándo puedo postular?',
+            $sources
+        );
+        $requirements = $method->invoke(
+            app(ChatbotController::class),
+            '¿Qué requisitos pide la CAS 014-2026?',
+            $sources
+        );
+
+        $this->assertCount(1, $deadline['links']);
+        $this->assertSame('CAS TEMPORAL N° 014-2026-DRE-HCO', $deadline['links'][0]['title']);
+        $this->assertStringContainsString('21/08/2026', $deadline['answer']);
+        $this->assertCount(1, $requirements['links']);
+        $this->assertStringContainsString('bases y archivos', $requirements['answer']);
+    }
+
+    public function test_chatbot_keeps_the_named_convocatoria_in_a_follow_up(): void
+    {
+        $method = new \ReflectionMethod(ChatbotController::class, 'respuestaDatosPortal');
+        $sources = collect([
+            ['type' => 'convocatoria', 'title' => 'Convocatoria CAS temporal N°0011-2026', 'url' => 'https://example.test/1', 'deadline_status' => 'cerrada', 'ends_at' => '22/07/2026'],
+            ['type' => 'convocatoria', 'title' => 'Convocatoria CAS temporal N°03-2026', 'url' => 'https://example.test/2', 'deadline_status' => 'cerrada', 'ends_at' => '13/03/2026'],
+        ]);
+        $history = [
+            ['role' => 'user', 'content' => '¿Cuál es la convocatoria más reciente?'],
+            ['role' => 'assistant', 'content' => 'Convocatoria CAS temporal N°0011-2026: plazo cerrado el 22/07/2026.'],
+        ];
+
+        $result = $method->invoke(app(ChatbotController::class), '¿Y cómo postulo?', $sources, $history);
+
+        $this->assertCount(1, $result['links']);
+        $this->assertSame('Convocatoria CAS temporal N°0011-2026', $result['links'][0]['title']);
+        $this->assertStringContainsString('ya está cerrado', $result['answer']);
+    }
+
     public function test_chatbot_returns_recovered_sources_for_varied_access_requests(): void
     {
         $method = new \ReflectionMethod(ChatbotController::class, 'respuestaDatosPortal');
@@ -745,6 +808,89 @@ class ChatbotTest extends TestCase
         } finally {
             \Schema::dropIfExists('convocatoria');
         }
+    }
+
+    public function test_chatbot_prioritizes_the_exact_portal_deadline_even_when_the_model_is_enabled(): void
+    {
+        \Schema::create('convocatoria', function ($table) {
+            $table->unsignedBigInteger('id')->primary();
+            $table->string('titulo');
+            $table->text('descripcion')->nullable();
+            $table->string('tipo')->nullable();
+            $table->boolean('es_activo')->default(true);
+            $table->date('fecha_inicio')->nullable();
+            $table->date('fecha_termino')->nullable();
+        });
+        \DB::table('convocatoria')->insert([
+            'id' => 9001,
+            'titulo' => 'Convocatoria de prueba',
+            'descripcion' => 'Proceso institucional vigente.',
+            'tipo' => 'PRUEBA',
+            'es_activo' => 1,
+            'fecha_inicio' => '2026-08-04',
+            'fecha_termino' => '2026-09-03',
+        ]);
+
+        try {
+            \Illuminate\Support\Carbon::setTestNow('2026-08-11 12:00:00');
+            config(['services.openai.key' => 'test-key']);
+            Http::fake();
+
+            $response = $this->postJson('/api/chat', [
+                'message' => '¿Hasta cuándo está vigente la convocatoria de prueba?',
+                'history' => [],
+            ]);
+
+            $response->assertOk();
+            $this->assertStringContainsString('Convocatoria de prueba', $response->json('answer'));
+            $this->assertStringContainsString('03/09/2026', $response->json('answer'));
+            $this->assertSame('Convocatoria de prueba', $response->json('links.0.title'));
+            Http::assertNothingSent();
+        } finally {
+            \Illuminate\Support\Carbon::setTestNow();
+            \Schema::dropIfExists('convocatoria');
+        }
+    }
+
+    public function test_chatbot_does_not_request_the_title_again_when_a_named_publication_does_not_exist(): void
+    {
+        config(['services.openai.key' => 'test-key']);
+        Http::fake();
+
+        $response = $this->postJson('/api/chat', [
+            'message' => '¿Hasta cuándo está vigente la convocatoria de prueba?',
+            'history' => [],
+        ]);
+
+        $response->assertOk();
+        $this->assertStringContainsString('No encontré una convocatoria publicada', $response->json('answer'));
+        $this->assertStringNotContainsString('Indícame el nombre', $response->json('answer'));
+        $this->assertStringContainsString('/convocatoriaweb', $response->json('links.0.url'));
+        Http::assertNothingSent();
+    }
+
+    public function test_known_navigation_routes_bypass_the_model_even_when_it_is_enabled(): void
+    {
+        config(['services.openai.key' => 'test-key']);
+        Http::fake();
+
+        $cases = [
+            ['¿Dónde veo documentos de gestión?', '/documentosdegestionweb'],
+            ['Necesito descargar el FUT', '/documentosdegestionweb'],
+            ['¿Cómo presento un documento a mesa de partes?', 'digital.regionhuanuco.gob.pe/registro/mesa-partes-virtual/57'],
+        ];
+
+        foreach ($cases as [$message, $expectedUrl]) {
+            $response = $this->postJson('/api/chat', [
+                'message' => $message,
+                'history' => [],
+            ]);
+
+            $response->assertOk();
+            $this->assertStringContainsString($expectedUrl, $response->json('links.0.url'), $message);
+        }
+
+        Http::assertNothingSent();
     }
 
     public function test_chatbot_understands_colloquial_peruvian_contact_questions(): void
@@ -1065,6 +1211,15 @@ class ChatbotTest extends TestCase
             $terms->invoke($controller, 'noticias y comunicados')
         );
         $this->assertCount(3, $comparison);
+
+        $documentQuery = $filter->invoke(
+            $controller,
+            $sources->push(['type' => 'documento', 'title' => 'ROF vigente']),
+            $terms->invoke($controller, 'funciones del ROF vigente de la DRE Huánuco'),
+            'funciones del ROF vigente de la DRE Huánuco'
+        );
+        $this->assertCount(1, $documentQuery);
+        $this->assertSame('documento', $documentQuery->first()['type']);
     }
 
     public function test_chatbot_does_not_search_random_sources_for_a_generic_request(): void
@@ -1132,6 +1287,92 @@ class ChatbotTest extends TestCase
         $this->assertTrue($method->invoke($controller, '/noticia/15'));
         $this->assertTrue($method->invoke($controller, '/verconvocatoria/9'));
         $this->assertTrue($method->invoke($controller, '/conocimiento-ia/3/pdf'));
+    }
+
+    public function test_chatbot_uses_the_exact_old_news_page_even_after_a_recent_news_query(): void
+    {
+        \Schema::create('noticias', function ($table) {
+            $table->unsignedBigInteger('id')->primary();
+            $table->string('titulo');
+            $table->text('descripcioncorta')->nullable();
+            $table->longText('contenido')->nullable();
+            $table->unsignedTinyInteger('activo')->default(1);
+            $table->date('fechapubli')->nullable();
+            $table->timestamps();
+        });
+
+        \DB::table('noticias')->insert([
+            [
+                'id' => 18,
+                'titulo' => 'DRE ATIENDE DEMANDAS DE SUTEP HUÁNUCO',
+                'descripcioncorta' => 'La DRE atendió las demandas presentadas por el sindicato magisterial.',
+                'contenido' => '<p>Se acordaron capacitaciones permanentes.</p><p>La reunión concluyó con la firma del acta.</p>',
+                'activo' => 1,
+                'fechapubli' => '2023-02-02',
+            ],
+            [
+                'id' => 99,
+                'titulo' => 'Noticia educativa reciente de la DRE Huánuco',
+                'descripcioncorta' => 'Publicación reciente.',
+                'contenido' => 'Contenido reciente que no corresponde a SUTEP.',
+                'activo' => 1,
+                'fechapubli' => '2026-08-10',
+            ],
+        ]);
+
+        $method = new \ReflectionMethod(ChatbotController::class, 'findSources');
+        $sources = $method->invoke(
+            app(ChatbotController::class),
+            'DRE ATIENDE DEMANDAS DE SUTEP HUÁNUCO',
+            [
+                ['role' => 'user', 'content' => 'Últimas noticias educativas'],
+                ['role' => 'assistant', 'content' => 'Encontré una noticia educativa reciente.'],
+            ],
+            '/noticia/18'
+        );
+
+        $this->assertCount(1, $sources);
+        $this->assertSame(18, $sources->first()['record_id']);
+        $this->assertStringContainsString('capacitaciones permanentes. La reunión', $sources->first()['context']);
+
+        $latest = $method->invoke(
+            app(ChatbotController::class),
+            'Últimas noticias educativas',
+            [],
+            '/noticia/18'
+        );
+        $this->assertSame(99, $latest->first()['record_id']);
+    }
+
+    public function test_chatbot_summarizes_the_news_named_by_the_user_from_its_verified_content(): void
+    {
+        $method = new \ReflectionMethod(ChatbotController::class, 'respuestaDatosPortal');
+        $result = $method->invoke(app(ChatbotController::class), 'DRE ATIENDE DEMANDAS DE SUTEP HUÁNUCO', collect([
+            [
+                'type' => 'noticia',
+                'title' => 'DRE ATIENDE DEMANDAS DE SUTEP HUÁNUCO',
+                'context' => 'Publicada el 02/02/2023. Se atendieron las demandas y la reunión concluyó con la firma del acta.',
+                'url' => '/noticia/18',
+                'published_at' => '02/02/2023',
+            ],
+        ]));
+
+        $this->assertStringContainsString('firma del acta', $result['answer']);
+        $this->assertSame('/noticia/18', $result['links'][0]['url']);
+    }
+
+    public function test_open_chatbot_keeps_the_portal_interactive_and_avoids_stacked_modals(): void
+    {
+        $javascript = file_get_contents(resource_path('js/app.js'));
+        $component = file_get_contents(resource_path('views/components/dre-chatbot.blade.php'));
+        $home = file_get_contents(resource_path('views/home.blade.php'));
+
+        $this->assertStringNotContainsString('element.inert = true', $javascript);
+        $this->assertStringNotContainsString("event.key === 'Tab'", $javascript);
+        $this->assertStringContainsString("new CustomEvent('dre-chatbot-opened')", $javascript);
+        $this->assertStringContainsString("window.addEventListener('open-comunicados', () => setOpen(false))", $javascript);
+        $this->assertStringContainsString('aria-modal="false"', $component);
+        $this->assertStringContainsString('@dre-chatbot-opened.window="open = false"', $home);
     }
 
     public function test_chatbot_never_attaches_links_to_an_answer_that_admits_missing_support(): void
@@ -1233,6 +1474,181 @@ class ChatbotTest extends TestCase
             if ($path) {
                 $this->assertStringContainsString($path, $response->json('links.0.url'), $message);
             }
+        }
+    }
+
+    public function test_chatbot_reports_when_no_current_jobs_exist_in_colloquial_peruvian_language(): void
+    {
+        $response = $this->postJson('/api/chat', [
+            'message' => 'oe mano, hay chamba vigente ahorita?',
+            'history' => [],
+        ]);
+
+        $response->assertOk();
+        $this->assertSame(
+            'No hay convocatorias publicadas con plazo vigente en este momento.',
+            $response->json('answer')
+        );
+        $this->assertSame([], $response->json('links'));
+    }
+
+    public function test_document_validity_does_not_turn_a_rof_link_request_into_a_job_search(): void
+    {
+        $method = new \ReflectionMethod(ChatbotController::class, 'respuestaDatosPortal');
+        $sources = collect([
+            [
+                'type' => 'documento',
+                'title' => 'ROF vigente de la DRE Huánuco',
+                'url' => 'https://example.test/rof.pdf',
+            ],
+            [
+                'type' => 'convocatoria',
+                'title' => 'Convocatoria CAS anterior',
+                'url' => 'https://example.test/convocatoria',
+                'deadline_status' => 'cerrada',
+                'ends_at' => '22/07/2026',
+            ],
+        ]);
+
+        $result = $method->invoke(
+            app(ChatbotController::class),
+            'pásame el enlace oficial del ROF vigente',
+            $sources
+        );
+
+        $this->assertStringContainsString('fuente oficial', $result['answer']);
+        $this->assertCount(1, $result['links']);
+        $this->assertSame('ROF vigente de la DRE Huánuco', $result['links'][0]['title']);
+    }
+
+    public function test_chatbot_answers_the_exact_total_instead_of_listing_three_news_items(): void
+    {
+        \Schema::create('noticias', function ($table) {
+            $table->id();
+            $table->string('titulo');
+            $table->text('descripcioncorta')->nullable();
+            $table->text('contenido')->nullable();
+            $table->boolean('activo')->default(true);
+            $table->date('fechapubli')->nullable();
+            $table->timestamps();
+        });
+
+        try {
+            foreach (range(1, 4) as $index) {
+                \DB::table('noticias')->insert([
+                    'titulo' => 'Noticia '.$index,
+                    'descripcioncorta' => 'Resumen '.$index,
+                    'contenido' => 'Contenido '.$index,
+                    'activo' => $index === 4 ? 0 : 1,
+                    'fechapubli' => now()->subDays($index)->toDateString(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            foreach (['ya cuantas noticias hay?', '¿Cuál es el número total de noticias?'] as $message) {
+                $response = $this->postJson('/api/chat', [
+                    'message' => $message,
+                    'history' => [],
+                    'page' => ['path' => '/allnoticias', 'title' => 'Noticias'],
+                ]);
+
+                $response->assertOk();
+                $this->assertSame('Actualmente, el portal tiene 3 noticias publicadas.', $response->json('answer'));
+                $this->assertStringContainsString('/allnoticias', $response->json('links.0.url'));
+                $this->assertStringNotContainsString('Noticias encontradas', $response->json('answer'));
+            }
+        } finally {
+            \Schema::dropIfExists('noticias');
+        }
+    }
+
+    public function test_chatbot_uses_page_or_conversation_context_for_short_count_follow_ups(): void
+    {
+        \Schema::create('noticias', function ($table) {
+            $table->id();
+            $table->string('titulo');
+            $table->boolean('activo')->default(true);
+            $table->date('fechapubli')->nullable();
+            $table->timestamps();
+        });
+
+        try {
+            \DB::table('noticias')->insert([
+                ['titulo' => 'Primera', 'activo' => 1, 'fechapubli' => now(), 'created_at' => now(), 'updated_at' => now()],
+                ['titulo' => 'Segunda', 'activo' => 1, 'fechapubli' => now(), 'created_at' => now(), 'updated_at' => now()],
+            ]);
+
+            $fromPage = $this->postJson('/api/chat', [
+                'message' => '¿y cuántas hay?',
+                'history' => [],
+                'page' => ['path' => '/allnoticias', 'title' => 'Noticias'],
+            ]);
+            $fromPage->assertOk()->assertJsonPath('answer', 'Actualmente, el portal tiene 2 noticias publicadas.');
+
+            $fromHistory = $this->postJson('/api/chat', [
+                'message' => '¿y en total cuántas hay?',
+                'history' => [
+                    ['role' => 'user', 'content' => 'Muéstrame las últimas noticias'],
+                    ['role' => 'assistant', 'content' => 'Estas son las noticias más recientes.'],
+                ],
+            ]);
+            $fromHistory->assertOk()->assertJsonPath('answer', 'Actualmente, el portal tiene 2 noticias publicadas.');
+        } finally {
+            \Schema::dropIfExists('noticias');
+        }
+    }
+
+    public function test_news_search_ranks_against_every_matching_active_record_before_limiting_sources(): void
+    {
+        \Schema::create('noticias', function ($table) {
+            $table->id();
+            $table->string('titulo');
+            $table->text('descripcioncorta')->nullable();
+            $table->text('contenido')->nullable();
+            $table->boolean('activo')->default(true);
+            $table->date('fechapubli')->nullable();
+            $table->timestamps();
+        });
+
+        try {
+            \DB::table('noticias')->insert([
+                [
+                    'titulo' => 'DRE atiende demandas de SUTEP Huánuco',
+                    'descripcioncorta' => 'Reunión con representantes del SUTEP.',
+                    'contenido' => 'La DRE Huánuco atendió las demandas y firmó un acta.',
+                    'activo' => 1,
+                    'fechapubli' => '2023-02-02',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+            ]);
+            foreach (range(1, 5) as $index) {
+                \DB::table('noticias')->insert([
+                    'titulo' => 'Actividad reciente de la DRE Huánuco '.$index,
+                    'descripcioncorta' => 'Información institucional reciente.',
+                    'contenido' => 'Contenido general de Huánuco.',
+                    'activo' => 1,
+                    'fechapubli' => now()->subDays($index)->toDateString(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            $method = new \ReflectionMethod(ChatbotController::class, 'findSources');
+            $sources = $method->invoke(
+                app(ChatbotController::class),
+                'noticia SUTEP Huánuco',
+                [],
+                '/allnoticias'
+            );
+
+            $this->assertTrue($sources->contains(
+                fn (array $source) => $source['title'] === 'DRE atiende demandas de SUTEP Huánuco'
+            ));
+            $this->assertSame('DRE atiende demandas de SUTEP Huánuco', $sources->first()['title']);
+        } finally {
+            \Schema::dropIfExists('noticias');
         }
     }
 }

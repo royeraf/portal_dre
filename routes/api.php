@@ -27,6 +27,10 @@ Route::delete('/chat/conversation', [ChatbotController::class, 'deleteConversati
     ->middleware('throttle:10,1')
     ->name('api.chat.delete');
 
+Route::post('/chat/feedback', [ChatbotController::class, 'feedback'])
+    ->middleware('throttle:30,1')
+    ->name('api.chat.feedback');
+
 // <?php
 
 // use Illuminate\Http\Request;

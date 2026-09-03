@@ -801,6 +801,7 @@
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0"
      @open-comunicados.window="open = true"
+     @dre-chatbot-opened.window="open = false"
      class="fixed inset-0 z-[9998] flex items-center sm:items-stretch justify-center bg-black/60 py-4 px-3 sm:py-6 sm:px-4"
      @click.self="open = false">
 

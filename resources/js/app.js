@@ -111,37 +111,9 @@ function initDreChatbot() {
     let busy = false;
     let welcomeAnimated = false;
     let previousActiveElement = null;
-    let inertedElements = [];
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const scrollToEnd = () => { messages.scrollTop = messages.scrollHeight; };
-
-    const setOutsideInert = (enabled) => {
-        if (!enabled) {
-            inertedElements.forEach(({ element, inert, ariaHidden }) => {
-                element.inert = inert;
-                if (ariaHidden === null) element.removeAttribute('aria-hidden');
-                else element.setAttribute('aria-hidden', ariaHidden);
-            });
-            inertedElements = [];
-            return;
-        }
-
-        let current = root;
-        while (current?.parentElement) {
-            Array.from(current.parentElement.children).forEach((element) => {
-                if (element === current || element.contains(root)) return;
-                inertedElements.push({
-                    element,
-                    inert: element.inert,
-                    ariaHidden: element.getAttribute('aria-hidden'),
-                });
-                element.inert = true;
-                element.setAttribute('aria-hidden', 'true');
-            });
-            current = current.parentElement;
-        }
-    };
 
     const setOpen = (open) => {
         const wasOpen = root.dataset.open === 'true';
@@ -150,13 +122,15 @@ function initDreChatbot() {
         launcher.setAttribute('aria-expanded', open ? 'true' : 'false');
         if (open && !wasOpen) {
             previousActiveElement = document.activeElement;
-            setOutsideInert(true);
+            // El asistente es un panel flotante, no un modal: el portal debe seguir
+            // siendo navegable con mouse, tacto y teclado mientras permanece abierto.
+            // El evento también evita apilarlo sobre el popup modal de comunicados.
+            window.dispatchEvent(new CustomEvent('dre-chatbot-opened'));
             window.setTimeout(() => {
                 input.focus();
                 animateWelcomeMessage();
             }, 180);
         } else if (!open && wasOpen) {
-            setOutsideInert(false);
             if (previousActiveElement instanceof HTMLElement && document.contains(previousActiveElement)) {
                 previousActiveElement.focus();
             } else {
@@ -277,6 +251,51 @@ function initDreChatbot() {
         scrollToEnd();
     }
 
+    function appendFeedback() {
+        if (!root.dataset.feedbackEndpoint) return;
+
+        const group = document.createElement('div');
+        group.className = 'dre-chatbot__feedback';
+        const prompt = document.createElement('span');
+        prompt.textContent = '¿Te sirvió esta respuesta?';
+        group.appendChild(prompt);
+
+        [
+            { useful: true, symbol: '👍', label: 'Sí, fue útil' },
+            { useful: false, symbol: '👎', label: 'No fue útil' },
+        ].forEach(({ useful, symbol, label }) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = symbol;
+            button.title = label;
+            button.setAttribute('aria-label', label);
+            button.addEventListener('click', async () => {
+                const buttons = group.querySelectorAll('button');
+                buttons.forEach((item) => { item.disabled = true; });
+
+                try {
+                    const response = await fetch(root.dataset.feedbackEndpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        body: JSON.stringify({ conversacion: conversationId(), util: useful }),
+                    });
+                    if (!response.ok) throw new Error('feedback');
+                    group.textContent = useful
+                        ? 'Gracias. Tu valoración ayuda a mejorar el asistente.'
+                        : 'Gracias. Revisaremos esta respuesta para corregirla.';
+                    status.textContent = 'Valoración registrada.';
+                } catch (_) {
+                    buttons.forEach((item) => { item.disabled = false; });
+                    status.textContent = 'No se pudo registrar la valoración. Intenta nuevamente.';
+                }
+            });
+            group.appendChild(button);
+        });
+
+        messages.appendChild(group);
+        scrollToEnd();
+    }
+
     async function typeAnswer(bubble, answer) {
         const chars = Array.from(answer || '');
         if (reducedMotion) {
@@ -308,7 +327,7 @@ function initDreChatbot() {
             .slice(-20)
             .map((item) => ({
                 role: item.classList.contains('dre-chatbot__message--user') ? 'user' : 'assistant',
-                content: item.querySelector('.dre-chatbot__bubble')?.textContent?.trim() || '',
+                content: Array.from(item.querySelector('.dre-chatbot__bubble')?.textContent?.trim() || '').slice(0, 12000).join(''),
             }))
             .filter((item) => item.content);
     }
@@ -333,6 +352,7 @@ function initDreChatbot() {
         const message = raw.trim();
         if (message.length < 2 || busy) return;
         const priorHistory = history();
+        messages.querySelectorAll('.dre-chatbot__feedback').forEach((item) => item.remove());
         setBusy(true, 'Consultando fuentes oficiales.');
         input.value = '';
         input.style.height = '44px';
@@ -343,9 +363,12 @@ function initDreChatbot() {
         // llega la respuesta, al volver seguirá viendo al menos el mensaje que envió.
         saveSession();
 
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 90000);
         try {
               const response = await fetch(root.dataset.endpoint, {
                   method: 'POST',
+                  signal: controller.signal,
                   headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                   body: JSON.stringify({
                       message,
@@ -366,14 +389,20 @@ function initDreChatbot() {
             loading.article.classList.remove('dre-chatbot__message--loading');
             await typeAnswer(loading.bubble, data.answer || 'No encontré una respuesta disponible.');
             appendLinks(data.links);
+            appendFeedback();
             status.textContent = `Respuesta del asistente: ${data.answer || 'No encontré una respuesta disponible.'}`;
             saveSession();
         } catch (error) {
             loading.article.remove();
-            appendError(error instanceof Error ? error.message : 'El asistente no está disponible en este momento.');
+            const errorMessage = error?.name === 'AbortError'
+                ? 'La respuesta tardó demasiado. Puedes volver a enviar tu consulta.'
+                : (error instanceof Error ? error.message : 'El asistente no está disponible en este momento.');
+            appendError(errorMessage);
+            if (!input.value) input.value = message;
             status.textContent = 'No se pudo obtener una respuesta.';
             saveSession();
         } finally {
+            window.clearTimeout(timeout);
             busy = false;
             send.disabled = false;
             messages.setAttribute('aria-busy', 'false');
@@ -481,6 +510,7 @@ function initDreChatbot() {
         setOpen(false);
     });
     root.querySelector('[data-chat-reset]').addEventListener('click', resetConversation);
+    window.addEventListener('open-comunicados', () => setOpen(false));
     bindSuggestions();
     form.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -504,22 +534,7 @@ function initDreChatbot() {
             return;
         }
 
-        if (event.key === 'Tab') {
-            const focusable = Array.from(panel.querySelectorAll(
-                'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
-            )).filter((element) => !element.hidden && element.getClientRects().length > 0);
-            if (focusable.length === 0) return;
-
-            const first = focusable[0];
-            const last = focusable[focusable.length - 1];
-            if (event.shiftKey && document.activeElement === first) {
-                event.preventDefault();
-                last.focus();
-            } else if (!event.shiftKey && document.activeElement === last) {
-                event.preventDefault();
-                first.focus();
-            }
-        }
+        // No se atrapa Tab: al no ser modal, la persona puede pasar del chat al portal.
     });
     // `pagehide` se dispara tanto al navegar a otra sección como al usar atrás/adelante.
     // sessionStorage pertenece a la pestaña y al mismo dominio, por eso conserva el chat

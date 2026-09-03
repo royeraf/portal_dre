@@ -26,7 +26,11 @@
                     <td class="border border-slate-500">{{ $item->estado }}</td>
                     <td class="border border-slate-500">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <a href="{{ route('convocatoria.destroy', $item->id) }}" class="btn btn-danger btn-sm eliminar" title="Eliminar"><i class="fas fa-trash"></i></a>
+                            <form method="POST" action="{{ route('convocatoria.destroy', $item) }}" class="d-inline" onsubmit="return confirm('¿Eliminar esta convocatoria y todos sus archivos?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            </form>
                             <a href="{{route('convocatoria.edit', $item->id)}}" class="btn btn-warning btn-sm" title="Editar"><i class="icon ion-edit"></i></a>
                             <a href="{{route('convocatoria.show', $item->id)}}" class="btn btn-primary btn-sm" title="Mostrar"><i class="fa fa-eye"></i></a>
                         </div>

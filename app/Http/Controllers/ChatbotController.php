@@ -22,7 +22,7 @@ class ChatbotController extends Controller
      */
     private const PALABRAS_VACIAS = [
         'algo', 'algun', 'alguna', 'algunas', 'alguno', 'algunos', 'ante', 'antes', 'aqui',
-        'ahora', 'bueno', 'mira',
+        'ahora', 'ahorita', 'bueno', 'mira',
         'abre', 'abrir', 'ayuda', 'ayudar', 'busca', 'buscar', 'buscando',
         'buenas', 'buenos', 'cada', 'como', 'con', 'contra', 'cual', 'cuales', 'cualquier',
         'dias', 'noches', 'saludos', 'tardes',
@@ -53,9 +53,8 @@ class ChatbotController extends Controller
             'message' => ['required', 'string', 'min:2', 'max:1600'],
             'history' => ['sometimes', 'array', 'max:20'],
             'history.*.role' => ['required_with:history', 'in:user,assistant'],
-            // Debe aceptar el mismo tamaño que una consulta válida; de otro modo una
-            // pregunta de 1 600 caracteres funciona una vez y rompe el siguiente turno.
-            'history.*.content' => ['required_with:history', 'string', 'max:1600'],
+            // El historial contiene respuestas, que pueden superar el límite de una pregunta.
+            'history.*.content' => ['required_with:history', 'string', 'max:12000'],
             'conversacion' => ['sometimes', 'nullable', 'string', 'max:64'],
             'page' => ['sometimes', 'array'],
             'page.path' => ['sometimes', 'string', 'max:255', 'regex:/^\/[A-Za-z0-9_\-\/]*$/'],
@@ -68,24 +67,108 @@ class ChatbotController extends Controller
         $messageForProvider = PersonalDataRedactor::redact($message);
         $historyForProvider = PersonalDataRedactor::history($history);
 
-        // La seguridad sí se resuelve antes del modelo. El resto de intenciones debe
-        // interpretarlas el asistente por significado y contexto, no mediante una lista
-        // creciente de frases exactas en PHP.
+        // La seguridad y la navegación hacia secciones oficiales se resuelven antes del
+        // modelo. Son resultados deterministas: no tiene sentido pagar latencia ni permitir
+        // que una respuesta generativa omita o sustituya una ruta que el portal ya conoce.
         if ($respuestaSeguridad = $this->respuestaSeguridad($message)) {
             $this->registrar($request, $message, $respuestaSeguridad, 'seguridad', $inicio);
 
             return response()->json($respuestaSeguridad);
         }
 
+        if ($respuestaNavegacion = $this->respuestaNavegacion($message, $history)) {
+            $this->registrar($request, $message, $respuestaNavegacion, 'navegacion', $inicio);
+
+            return response()->json($respuestaNavegacion);
+        }
+
+        // Los datos institucionales estructurados no requieren recuperación semántica ni
+        // generación. Resolverlos aquí reduce latencia, evita coste y permite combinar
+        // ubicación, horario y contacto sin depender de cómo clasifique el modelo.
+        if ($respuestaContacto = $this->respuestaContactoBasico($message, $history)) {
+            $this->registrar($request, $message, $respuestaContacto, 'contacto', $inicio);
+
+            return response()->json($respuestaContacto);
+        }
+
         $page = $validated['page'] ?? [];
+
+        if ($history === [] && ! $this->paginaTieneRegistroEspecifico($page['path'] ?? '')) {
+            if (preg_match('/^(?:y )?(?:hasta cuando|cuando vence|cuando termina|cuando cierra)$/', $this->normalizarMensaje($message))) {
+                return response()->json(['answer' => '¿De qué convocatoria o trámite necesitas saber el plazo? Indícame su nombre o número para verificarlo.', 'links' => []]);
+            }
+        }
+
+        // Los conteos son datos estructurados del portal y deben calcularse sobre la tabla
+        // completa, no sobre las tres fuentes que se muestran como vista previa. Resolverlos
+        // aquí evita respuestas como «Noticias encontradas» cuando la persona preguntó
+        // «¿cuántas noticias hay?».
+        if ($respuestaConteo = $this->respuestaConteoPortal(
+            $message,
+            $history,
+            $page['path'] ?? ''
+        )) {
+            $this->registrar($request, $message, $respuestaConteo, 'conteo_portal', $inicio);
+
+            return response()->json($respuestaConteo);
+        }
+
         try {
-            $sources = $this->findSources($message, $history, $page['path'] ?? '');
+            $ordinalSources = $this->fuentesOrdinales($message, $history);
+            if ($ordinalSources !== null && $ordinalSources->isEmpty()) {
+                return response()->json(['answer' => 'No puedo identificar esa posición en el último listado. Indícame el título de la publicación que necesitas.', 'links' => []]);
+            }
+            $sources = $ordinalSources ?? $this->findSources($message, $history, $page['path'] ?? '');
         } catch (\Throwable $exception) {
             // Una tabla temporalmente ausente o una caída de base de datos no debe convertir
             // el widget público en un error 500. La respuesta sin fuentes es más segura que
             // improvisar, y el detalle técnico queda registrado para corregirlo.
             report($exception);
             $sources = collect();
+        }
+
+        // Los datos estructurados del portal (plazos, estados, fechas y enlaces) ya fueron
+        // verificados contra la base de datos. Responderlos antes de llamar al modelo evita
+        // que una convocatoria inequívoca vuelva a tratarse como ambigua o que se altere
+        // una fecha exacta. El modelo conserva la interpretación de conversación y de las
+        // consultas institucionales que no tengan una respuesta determinista aquí.
+        if ($sources->isNotEmpty()
+            && ($respuestaPortal = $this->respuestaDatosPortal($message, $sources, $history))) {
+            $this->registrar($request, $message, $respuestaPortal, 'datos_portal', $inicio);
+
+            return response()->json($respuestaPortal);
+        }
+
+        // Si la persona identificó una sección pública concreta y la búsqueda no devolvió
+        // ningún registro, ya conocemos el resultado verificable: no existe una publicación
+        // coincidente. Pedir otra vez el nombre (que ya fue escrito) produce un bucle y crea
+        // la falsa expectativa de que el modelo podrá encontrar datos ausentes del portal.
+        $temasPublicacion = $this->temasExplicitosMensaje($message)
+            ->intersect(['convocatoria', 'noticia', 'comunicado']);
+        $tokensActuales = $this->terminos($message, 10);
+        $temaPublicacion = $temasPublicacion->contains(
+            fn (string $tema) => $this->terminosEspecificosCategoria($tokensActuales, $tema)->isNotEmpty()
+        );
+
+        if ($sources->isEmpty()
+            && $temasPublicacion->contains('convocatoria')
+            && $this->consultaConvocatoriasVigentes($message)
+            && $this->terminosEspecificosCategoria($tokensActuales, 'convocatoria')->isEmpty()) {
+            $respuestaSinVigentes = [
+                'answer' => 'No hay convocatorias publicadas con plazo vigente en este momento.',
+                'links' => [],
+            ];
+            $this->registrar($request, $message, $respuestaSinVigentes, 'datos_portal', $inicio);
+
+            return response()->json($respuestaSinVigentes);
+        }
+
+        if ($sources->isEmpty() && $temaPublicacion) {
+            $respuestaSinFuentes = $this->respuestaDirecta($message, $history)
+                ?: $this->respuestaSinFuentes($message);
+            $this->registrar($request, $message, $respuestaSinFuentes, 'sin_fuentes_portal', $inicio);
+
+            return response()->json($respuestaSinFuentes);
         }
 
         $apiKey = config('services.openai.key');
@@ -140,9 +223,12 @@ class ChatbotController extends Controller
                     'store' => false,
                     'instructions' => $instructions,
                     'input' => $input,
+                    // Agrupa solicitudes con el mismo prefijo estable para mejorar el uso
+                    // de la caché del proveedor sin mezclar conversaciones ni guardar estado.
+                    'prompt_cache_key' => config('services.openai.chatbot_prompt_cache_key', 'dre-huanuco-chatbot-v1'),
                     'safety_identifier' => hash_hmac(
                         'sha256',
-                        ($validated['conversacion'] ?? '').'|'.($request->ip() ?? '').'|'.Str::limit((string) $request->userAgent(), 120, ''),
+                        (string) ($validated['conversacion'] ?? 'visitante-anonimo'),
                         (string) config('app.key', 'dre-chatbot')
                     ),
                     'reasoning' => ['effort' => config('services.openai.chatbot_reasoning', 'medium')],
@@ -199,6 +285,16 @@ class ChatbotController extends Controller
                 ->unique()
                 ->take(3);
 
+            // Una afirmación que el propio modelo clasifica como respaldada debe señalar
+            // al menos una de las fuentes entregadas. Si no puede hacerlo, se usa la capa
+            // local verificable en vez de publicar una respuesta factual sin trazabilidad.
+            if (($modelOutput['status'] ?? null) === 'supported'
+                && $numberedSources->isNotEmpty()
+                && $usedSourceIds->isEmpty()
+                && ! $this->consultaDefinicionDominio($this->normalizarMensaje($message))) {
+                throw new \RuntimeException('OpenAI marked the answer as supported without a valid source.');
+            }
+
             // Una respuesta que reconoce no haber encontrado respaldo nunca debe terminar
             // acompañada por tarjetas "por si acaso". Ese fue el origen de los enlaces
             // irrelevantes que aparecían después de saludos o consultas incomprensibles.
@@ -248,6 +344,35 @@ class ChatbotController extends Controller
         $sessionHash = substr(hash('sha256', $validated['conversacion']), 0, 32);
         \DB::table('chatbot_consultas')->where('sesion', $sessionHash)->delete();
 
+        return response()->json(null, 204);
+    }
+
+    public function feedback(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'conversacion' => ['required', 'string', 'min:8', 'max:64'],
+            'util' => ['required', 'boolean'],
+        ]);
+
+        if (! \Schema::hasTable('chatbot_consultas')
+            || ! \Schema::hasColumn('chatbot_consultas', 'feedback')) {
+            return response()->json(null, 204);
+        }
+
+        $sessionHash = substr(hash('sha256', $validated['conversacion']), 0, 32);
+        $latestId = \DB::table('chatbot_consultas')
+            ->where('sesion', $sessionHash)
+            ->orderByDesc('id')
+            ->value('id');
+
+        if ($latestId) {
+            \DB::table('chatbot_consultas')->where('id', $latestId)->update([
+                'feedback' => $validated['util'] ? 1 : -1,
+                'feedback_at' => now(),
+            ]);
+        }
+
+        // No se revela si un identificador de conversación existe.
         return response()->json(null, 204);
     }
 
@@ -345,7 +470,7 @@ PROMPT;
             return $respuesta;
         }
 
-        if ($respuesta = $this->respuestaDatosPortal($message, $sources)) {
+        if ($respuesta = $this->respuestaDatosPortal($message, $sources, $history)) {
             return $respuesta;
         }
 
@@ -360,8 +485,26 @@ PROMPT;
         $consulta = $message;
         $tokens = $this->terminos($message);
         $originalTokens = $tokens;
+        $tieneIdentificadorCompuesto = (bool) preg_match(
+            '/\b\d{1,5}\s*[-\/]\s*\d{1,4}\b/',
+            $this->normalizarMensaje($message)
+        );
         $pageType = $this->tipoPagina($pagePath);
-        $usesPageContext = $pageType !== null && $this->debeUsarContextoPagina($message, $tokens);
+        $paginaEsRegistro = $this->paginaTieneRegistroEspecifico($pagePath);
+        $temasPagina = $this->temasExplicitosMensaje($message)
+            // «DRE Huánuco» aparece en numerosos títulos y no significa por sí solo
+            // que la persona haya abandonado la noticia o ficha que está leyendo.
+            ->reject(fn (string $tema) => in_array($tema, ['institucion', 'procedimiento'], true))
+            ->values();
+        $cambiaTemaPagina = $temasPagina->isNotEmpty() && ! $temasPagina->contains($pageType);
+        $pideListadoPagina = $temasPagina->contains($pageType)
+            && (bool) preg_match(
+                '/\b(?:ultim\w*|recient\w*|list\w*|muestr\w*|cuales|hay|todas?|todos?)\b/',
+                $this->normalizarMensaje($message)
+            );
+        $usesPageContext = $pageType !== null
+            && (($paginaEsRegistro && ! $cambiaTemaPagina && ! $pideListadoPagina)
+                || $this->debeUsarContextoPagina($message, $tokens));
 
         if ($usesPageContext) {
             $consulta = "{$pageType} {$message}";
@@ -373,15 +516,22 @@ PROMPT;
         // contaminaba consultas de noticias o convocatorias con respuestas antiguas.
         if ($history !== []
             && $this->esSeguimiento($message, $originalTokens, $history)
-            && (! $usesPageContext || ! $this->paginaTieneRegistroEspecifico($pagePath))) {
+            && (! $usesPageContext || ! $paginaEsRegistro)) {
             $reciente = $this->contextoSeguimiento($history);
 
             if ($reciente !== '') {
                 // La consulta actual va primero para que sus atributos (fecha, requisitos,
                 // archivo, contacto...) no queden fuera del límite de términos después de
                 // varias respuestas largas. El ancla histórica aporta después la entidad.
-                $consulta = ($usesPageContext ? $pageType."\n" : '').$message."\n".$reciente;
-                $tokens = $this->terminos($consulta, 10);
+                $identificadores = $this->identificadoresSeguimiento($reciente);
+                $consulta = ($usesPageContext ? $pageType."\n" : '').$message
+                    .($identificadores !== '' ? "\n".$identificadores : '')
+                    ."\n".$reciente;
+                $tokens = $this->terminos($message, 10)
+                    ->concat($this->terminos($identificadores, 8))
+                    ->concat($this->terminos($reciente, 8))
+                    ->unique()
+                    ->values();
             }
         }
 
@@ -449,17 +599,24 @@ PROMPT;
             );
         }
 
+        $limiteNoticias = $noticiaActual
+            ? 1
+            : ($pideNoticias && $terminosNoticia->isEmpty() ? 3 : null);
+        $consultaNoticias->latest('fechapubli');
+        if ($limiteNoticias !== null) {
+            $consultaNoticias->limit($limiteNoticias);
+        }
+
         $noticias = \Schema::hasTable((new Noticia)->getTable())
-            ? $consultaNoticias
-                ->latest('fechapubli')->limit(3)->get()
+            ? $consultaNoticias->get()
                 ->map(fn ($item) => [
                     'type' => 'noticia',
                     'record_id' => $item->id,
                     'title' => $item->titulo,
                     'summary' => $this->conFecha('Publicada', $item->fechapubli)
-                        .Str::limit(strip_tags($item->descripcioncorta), 240),
+                        .Str::limit($this->textoHtml($item->descripcioncorta), 240),
                     'context' => $this->conFecha('Publicada', $item->fechapubli)
-                        .Str::limit(strip_tags((string) $item->contenido), 2000),
+                        .Str::limit($this->textoHtml($item->contenido), 2000),
                     'url' => route('noticia', $item),
                     'published_at' => $this->fechaCorta($item->fechapubli),
                 ])
@@ -498,10 +655,7 @@ PROMPT;
         // que no lo hacían, y el asistente afirmaba que ninguna había cerrado.
         $pideCategoria = $tokens->contains('convocatoria');
         $terminosConvocatoria = $this->terminosEspecificosCategoria($tokens, 'convocatoria');
-        $pideVigentes = (bool) preg_match(
-            '/\b(vigent\w*|abiert\w*|vacant\w*|chamb\w*|trabaj\w*|empleos?|oportunidad(?:es)? laboral(?:es)?|puedo postular|se puede postular)\b/',
-            $this->normalizarMensaje($message)
-        );
+        $pideVigentes = $pideCategoria && $this->consultaConvocatoriasVigentes($message);
 
         $consultaConvocatorias = Convocatoria::query()->where('es_activo', 1);
         $convocatoriaActual = null;
@@ -511,7 +665,7 @@ PROMPT;
             $consultaConvocatorias->whereKey($convocatoriaActual);
         }
 
-        if (! $convocatoriaActual && $pideVigentes) {
+        if (! $convocatoriaActual && $pideVigentes && $terminosConvocatoria->isEmpty()) {
             $hoy = now()->toDateString();
             $consultaConvocatorias
                 ->where(function ($query) use ($hoy) {
@@ -521,7 +675,8 @@ PROMPT;
                 ->whereDate('fecha_termino', '>=', $hoy);
         }
 
-        if (! $convocatoriaActual && (! $pideCategoria || $terminosConvocatoria->isNotEmpty())) {
+        if (! $convocatoriaActual && ! $tieneIdentificadorCompuesto
+            && (! $pideCategoria || $terminosConvocatoria->isNotEmpty())) {
             if ($pideCategoria) {
                 $terminosConvocatoria = $this->corregirTerminosContraTitulos(
                     $terminosConvocatoria,
@@ -535,9 +690,13 @@ PROMPT;
             );
         }
 
+        if (! $tieneIdentificadorCompuesto) {
+            $consultaConvocatorias->limit($pideVigentes ? 20 : 40);
+        }
+
         $convocatorias = \Schema::hasTable((new Convocatoria)->getTable())
             ? $consultaConvocatorias
-                ->latest('fecha_inicio')->limit($pideVigentes ? 20 : 40)->get()
+                ->latest('fecha_inicio')->get()
                 ->map(function ($item) {
                     $plazo = $this->datosPlazoConvocatoria($item);
 
@@ -631,12 +790,53 @@ PROMPT;
         }, null, 3);
 
         $gestion = $this->buscarEnTabla($applySearch, 'documentodegestion', ['titulo'], function ($item) {
+            $archivos = \Schema::hasTable('archivodocumentogestion')
+                ? \DB::table('archivodocumentogestion')
+                    ->where('id_documentogestion', $item->id)
+                    ->get(['id', 'nombre', 'url_archivo'])
+                    ->map(fn ($archivo) => [
+                        'id' => $archivo->id,
+                        'nombre' => trim((string) $archivo->nombre),
+                        'url' => $this->urlSegura($archivo->url_archivo),
+                    ])
+                    ->filter(fn (array $archivo) => $archivo['nombre'] !== '' || $archivo['url'])
+                    ->values()
+                : collect();
+
             return [
                 'type' => 'documento',
+                'record_id' => $item->id,
                 'title' => $item->titulo,
-                'summary' => 'Documento de gestión institucional de la DRE Huánuco.',
-                'url' => route('documentosdegestionweb'),
+                'summary' => $archivos->isEmpty()
+                    ? 'Documento de gestión institucional de la DRE Huánuco.'
+                    : 'Archivos oficiales publicados: '.$archivos->pluck('nombre')->filter()->implode('; ').'.',
+                'context' => $archivos->isEmpty()
+                    ? 'Documento de gestión institucional de la DRE Huánuco.'
+                    : 'Categoría: '.$item->titulo.'. Archivos oficiales publicados: '
+                        .$archivos->pluck('nombre')->filter()->implode('; ').'.',
+                'url' => $archivos->pluck('url')->filter()->first() ?: route('documentosdegestionweb'),
+                'management_files' => $archivos->all(),
             ];
+        })->flatMap(function (array $source) {
+            $archivos = collect($source['management_files'] ?? []);
+            unset($source['management_files']);
+
+            if ($archivos->isEmpty()) {
+                return [$source];
+            }
+
+            return $archivos->map(function (array $archivo) use ($source) {
+                $nombre = $archivo['nombre'] !== '' ? $archivo['nombre'] : $source['title'];
+
+                return [
+                    ...$source,
+                    'record_id' => $archivo['id'],
+                    'title' => $nombre,
+                    'summary' => 'Archivo oficial de '.$source['title'].': '.$nombre.'.',
+                    'context' => 'Categoría de gestión: '.$source['title'].'. Archivo oficial publicado: '.$nombre.'.',
+                    'url' => $archivo['url'] ?: route('documentosdegestionweb'),
+                ];
+            });
         });
 
         $direccionActual = null;
@@ -691,7 +891,7 @@ PROMPT;
         // Si el diálogo ya está tratando una categoría concreta, no deben colarse fichas
         // de otra solo porque comparten una fecha o una palabra como «prueba». Este era el
         // motivo por el que «¿cuándo vence?» terminaba mostrando noticias y comunicados.
-        $portalSources = $this->filtrarCategoriaPublicacion($portalSources, $tokens);
+        $portalSources = $this->filtrarCategoriaPublicacion($portalSources, $tokens, $message);
 
         // Los PDF se consultan solo cuando la pregunta realmente apunta a documentos o
         // cuando las fichas del portal no aportaron nada. Esto evita que un PDF cercano
@@ -820,6 +1020,28 @@ PROMPT;
                         $porDocumento[$documentId][] = $s['chunk'];
                     }
 
+                    // Una etapa puede quedar justo al inicio del fragmento siguiente (p. ej.
+                    // la fecha de entrevista después de "postulantes aptos"). Incorporar los
+                    // vecinos inmediatos evita respuestas incompletas sin abrir documentos
+                    // ajenos ni aumentar indiscriminadamente el contexto.
+                    foreach ($porDocumento as $documentId => $trozos) {
+                        $indices = collect($trozos)
+                            ->flatMap(fn ($trozo) => [
+                                max(0, (int) $trozo->chunk_index - 1),
+                                (int) $trozo->chunk_index,
+                                (int) $trozo->chunk_index + 1,
+                            ])
+                            ->unique()
+                            ->values();
+
+                        $porDocumento[$documentId] = \DB::table('ai_knowledge_chunks')
+                            ->where('document_id', $documentId)
+                            ->whereIn('chunk_index', $indices)
+                            ->orderBy('chunk_index')
+                            ->get()
+                            ->all();
+                    }
+
                     foreach ($porDocumento as $documentId => $trozos) {
                         $doc = \DB::table('ai_knowledge_documents')
                             ->where('id', $documentId)
@@ -861,7 +1083,30 @@ PROMPT;
             }
         }
 
+        // La búsqueda vectorial ya armó el contexto con los fragmentos pertinentes.
+        // Solo se abre el documento completo cuando esa búsqueda no devolvió nada;
+        // sobrescribirla aquí hacía que el modelo recibiera la portada en vez del artículo.
         if ($searchKnowledge && $knowledge->isEmpty()) {
+            $identificados = $this->documentosIdentificados($tokens);
+
+            if ($identificados->isNotEmpty()) {
+                $knowledge = KnowledgeDocument::query()
+                    ->whereIn('id', $identificados)
+                    ->where('status', 'ready')
+                    ->where('is_published', true)
+                    ->get()
+                    ->map(fn ($item) => [
+                        'type' => 'documento',
+                        'record_id' => $item->id,
+                        'title' => $item->title,
+                        'summary' => Str::limit(preg_replace('/\s+/', ' ', $item->markdown), 240),
+                        'context' => Str::limit($item->markdown, 8000),
+                        'url' => route('knowledge.download', $item),
+                    ]);
+            }
+        }
+
+        if ($searchKnowledge && $knowledge->isEmpty() && \Schema::hasTable('ai_knowledge_documents')) {
             $knowledge = $applySearch(
                 KnowledgeDocument::query()->where('status', 'ready')->where('is_published', true),
                 ['title', 'markdown']
@@ -885,16 +1130,22 @@ PROMPT;
         // siempre con los PDFs delante: al quedarse con las tres primeras, la página que de
         // verdad respondía la consulta desaparecía de los enlaces y el ciudadano veía citadas
         // fuentes que no contienen lo que se le acaba de decir.
+        $todas = $this->filtrarPorIdentificadorExacto($todas, $message);
+
         return $this->ordenarPorRelevancia($todas, $tokens, $usesPageContext ? $pageType : null)->take(6)->values();
     }
 
-    private function filtrarCategoriaPublicacion($sources, $tokens)
+    private function filtrarCategoriaPublicacion($sources, $tokens, ?string $message = null)
     {
+        $temas = $message !== null
+            ? $this->temasExplicitosMensaje($message)
+            : collect($tokens);
         $categorias = collect([
             'convocatoria' => 'convocatoria',
             'noticia' => 'noticia',
             'comunicado' => 'comunicado',
-        ])->filter(fn (string $type, string $term) => collect($tokens)->contains($term));
+            'documento' => 'documento',
+        ])->filter(fn (string $type, string $term) => $temas->contains($term));
 
         // Una consulta que nombra varias categorías es comparativa y debe conservarlas.
         if ($categorias->count() !== 1) {
@@ -1039,6 +1290,12 @@ PROMPT;
                 $temasAnteriores
             );
 
+            if ($empiezaContinuacion
+                && $pideAtributo
+                && ! preg_match('/\b(?:cas|rdr|rgg|rof|poi|poa|fut)?\s*\d{2,}(?:[-\/]\d{1,4})*\b/', $normalizado)) {
+                return true;
+            }
+
             if ($temasActuales->intersect($temasAnteriores)->isEmpty() && ! $documentoComoRequisito) {
                 return false;
             }
@@ -1093,6 +1350,19 @@ PROMPT;
             ->filter(fn (string $pattern) => preg_match($pattern, $normalizado))
             ->keys()
             ->values();
+    }
+
+    /**
+     * Reconoce por significado una búsqueda de oportunidades actualmente abiertas.
+     * Se usa junto con el tema «convocatoria»; por sí sola la palabra «vigente» también
+     * puede describir un ROF, una directiva o cualquier otro documento institucional.
+     */
+    private function consultaConvocatoriasVigentes(string $message): bool
+    {
+        return (bool) preg_match(
+            '/\b(vigent\w*|abiert\w*|vacant\w*|chamb\w*|trabaj\w*|empleos?|puestos?|oportunidad(?:es)? laboral(?:es)?|puedo postular|se puede postular|hay tiempo para postular)\b/',
+            $this->normalizarMensaje($message)
+        );
     }
 
     private function temasHistorial(array $history)
@@ -1251,6 +1521,25 @@ PROMPT;
         return implode("\n", $contexto);
     }
 
+    private function identificadoresSeguimiento(string $contexto): string
+    {
+        preg_match_all(
+            '/\b(?:CAS|RDR|RER|RSG|ROF|POI|FUT|convocatoria|resoluci[oó]n|informe)\s*(?:n[.°º*o\-]*\s*)?[A-Z0-9.°º*\/\-]{2,}/iu',
+            $contexto,
+            $coincidencias
+        );
+
+        $identificadores = collect($coincidencias[0] ?? [])
+            ->map(fn (string $codigo) => trim(preg_replace('/\s+/u', ' ', $codigo)))
+            ->unique()
+            ->take(6);
+        $normalizado = $this->normalizarMensaje($contexto);
+        $temas = collect(['cronograma', 'resultado', 'convocatoria', 'comunicado', 'resolucion', 'informe'])
+            ->filter(fn (string $tema) => str_contains($normalizado, $tema));
+
+        return $identificadores->concat($temas)->unique()->implode(' ');
+    }
+
     private function respuestaDescartaReferencia(string $answer): bool
     {
         $normalizado = $this->normalizarMensaje($answer);
@@ -1363,13 +1652,282 @@ PROMPT;
         }
     }
 
-    private function respuestaDatosPortal(string $message, $sources): ?array
+    /**
+     * Un código compuesto (por ejemplo 014-2026) identifica una publicación mejor que
+     * palabras compartidas como CAS, temporal o DRE. Conserva todas las coincidencias
+     * exactas y nunca sustituye un código inexistente por publicaciones parecidas.
+     */
+    private function filtrarPorIdentificadorExacto($sources, string $message)
+    {
+        $sources = collect($sources)->values();
+        $normalizado = preg_replace('/\s*([-\/])\s*/', '$1', $this->normalizarMensaje($message));
+        preg_match_all('/\b\d{1,5}(?:[-\/]\d{1,4})+\b/', $normalizado, $matches);
+
+        $identificadores = [];
+        foreach (array_unique($matches[0] ?? []) as $identificador) {
+            // Una fecha completa no es el identificador de una ficha.
+            if (preg_match('/^(?:\d{1,2}\/\d{1,2}\/\d{4}|\d{4}-\d{1,2}-\d{1,2})$/', $identificador)) {
+                continue;
+            }
+            $identificadores[] = $identificador;
+        }
+        if ($identificadores === []) {
+            return $sources;
+        }
+
+        return $sources->filter(function (array $source) use ($identificadores) {
+            foreach ($identificadores as $identificador) {
+                $titulo = preg_replace(
+                    '/\s*([-\/])\s*/',
+                    '$1',
+                    $this->normalizarMensaje((string) ($source['title'] ?? ''))
+                );
+
+                $partes = array_map(fn ($n) => '0*'.preg_quote(ltrim($n, '0') ?: '0', '~'), preg_split('~[-/]~', $identificador));
+                if (preg_match('~(?<!\d)'.implode('[-/]', $partes).'(?!\d)~', $titulo)) {
+                    return true;
+                }
+            }
+            return false;
+        })->values();
+    }
+
+    /** Resuelve la posición mostrada al usuario, no la posición de una nueva búsqueda. */
+    private function fuentesOrdinales(string $message, array $history)
     {
         $normalizado = $this->normalizarMensaje($message);
+        if (! preg_match('/\b(?:primer[oa]?|segund[oa]?|tercer[oa]?|[123](?:er|ro|do|to|ra|da)?)\b/', $normalizado)
+            || ! preg_match('/\b(?:resum\w*|explic\w*|abre|abrir|enlace|link|fecha|cuando|detalle\w*)\b/', $normalizado)) {
+            return null;
+        }
+        $indice = $this->indiceOrdinalSolicitado($normalizado);
+        $anterior = collect($history)->where('role', 'assistant')->last();
+        preg_match_all('/^\s*(?:[-*]|\d+[.)])\s+(.+)$/mu', $anterior['content'] ?? '', $lineas);
+        $linea = $lineas[1][$indice] ?? null;
+        if (! $linea) {
+            return collect();
+        }
+        $linea = $this->normalizarMensaje($linea);
+        foreach ([[Noticia::class, 'activo', '/noticia/'], [Convocatoria::class, 'es_activo', '/verconvocatoria/']] as [$model, $activo, $ruta]) {
+            if (! \Schema::hasTable((new $model)->getTable())) {
+                continue;
+            }
+            $registro = $model::query()->where($activo, 1)->get(['id', 'titulo'])
+                ->filter(fn ($item) => trim($item->titulo) !== '' && str_starts_with($linea, $this->normalizarMensaje($item->titulo)))
+                ->sortByDesc(fn ($item) => mb_strlen($item->titulo))->first();
+            if ($registro) {
+                return $this->findSources($message, [], $ruta.$registro->id);
+            }
+        }
+        return collect();
+    }
+
+    /** Convierte contenido del editor HTML en texto sin pegar párrafos consecutivos. */
+    private function textoHtml(?string $html): string
+    {
+        $conSeparadores = preg_replace(
+            '/<\s*(?:br\s*\/?|\/p|\/div|\/li|\/h[1-6]|\/tr)\s*>/iu',
+            ' ',
+            (string) $html
+        );
+        $texto = html_entity_decode(strip_tags($conSeparadores), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim(preg_replace('/\s+/u', ' ', $texto));
+    }
+
+    /**
+     * Responde cantidades verificables de publicaciones sin confundir «cuántas» con
+     * «cuáles». Acepta el tema explícito, la sección abierta o el tema reciente del chat.
+     */
+    private function respuestaConteoPortal(string $message, array $history = [], string $pagePath = ''): ?array
+    {
+        $normalizado = $this->normalizarMensaje($message);
+        $consultaCantidad = (bool) preg_match(
+            '/\b(?:cuant[oa]s?|cantidad(?:es)?|numero|total)\b/',
+            $normalizado
+        );
+
+        if (! $consultaCantidad) {
+            return null;
+        }
+
+        $publicaciones = collect(['noticia', 'comunicado', 'convocatoria']);
+        $temas = $this->temasExplicitosMensaje($message)->intersect($publicaciones)->values();
+
+        if ($temas->isEmpty()) {
+            $tipoPagina = $this->tipoPagina($pagePath);
+            if ($tipoPagina && $publicaciones->contains($tipoPagina)) {
+                $temas = collect([$tipoPagina]);
+            } else {
+                $temas = $this->temasHistorial($history)->intersect($publicaciones)->values();
+            }
+        }
+
+        if ($temas->isEmpty()) {
+            return null;
+        }
+
+        // Si se añadió un asunto concreto («cuántas noticias sobre SUTEP»), el total global
+        // ya no responde la pregunta. Esa consulta continúa hacia la búsqueda por contenido.
+        foreach ($temas as $tema) {
+            $especificos = $this->terminosEspecificosCategoria($this->terminos($message, 12), $tema)
+                // «número» se expande a «teléfono» para búsquedas de contacto; en una
+                // pregunta de cantidad esa equivalencia no representa un asunto adicional.
+                ->reject(fn (string $token) => $token === 'telefono')
+                ->values();
+
+            if ($especificos->isNotEmpty()) {
+                return null;
+            }
+        }
+
+        try {
+            $resultados = $temas->unique()->map(function (string $tema) use ($message) {
+                return match ($tema) {
+                    'noticia' => $this->contarPublicaciones(
+                        Noticia::query()->where('activo', 1),
+                        'noticia',
+                        'noticias publicadas',
+                        route('allnoticias')
+                    ),
+                    'comunicado' => $this->contarPublicaciones(
+                        Comunicado::query(),
+                        'comunicado',
+                        'comunicados publicados',
+                        route('comunicadosall')
+                    ),
+                    'convocatoria' => $this->contarConvocatorias($message),
+                };
+            })->filter()->values();
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return null;
+        }
+
+        if ($resultados->isEmpty()) {
+            return null;
+        }
+
+        $answer = $resultados->count() === 1
+            ? 'Actualmente, el portal tiene '.$resultados->first()['total'].' '.$resultados->first()['label'].'.'
+            : "Actualmente, el portal tiene:\n- ".$resultados
+                ->map(fn (array $item) => $item['total'].' '.$item['label'])
+                ->implode(".\n- ").'.';
+
+        return [
+            'answer' => $answer,
+            'links' => $resultados->map(fn (array $item) => [
+                'title' => $item['link_title'],
+                'url' => $item['url'],
+            ])->values(),
+        ];
+    }
+
+    private function contarPublicaciones($query, string $singular, string $plural, string $url): ?array
+    {
+        $tabla = $query->getModel()->getTable();
+        if (! \Schema::hasTable($tabla)) {
+            return null;
+        }
+
+        $total = (int) $query->count();
+
+        return [
+            'total' => $total,
+            'label' => $total === 1 ? $singular.' publicada' : $plural,
+            'link_title' => 'Ver '.($total === 1 ? $singular : $plural),
+            'url' => $url,
+        ];
+    }
+
+    private function contarConvocatorias(string $message): ?array
+    {
+        if (! \Schema::hasTable((new Convocatoria)->getTable())) {
+            return null;
+        }
+
+        $query = Convocatoria::query()->where('es_activo', 1);
+        $soloVigentes = $this->consultaConvocatoriasVigentes($message);
+
+        if ($soloVigentes) {
+            $hoy = now()->toDateString();
+            $query
+                ->where(function ($consulta) use ($hoy) {
+                    $consulta->whereNull('fecha_inicio')->orWhereDate('fecha_inicio', '<=', $hoy);
+                })
+                ->whereNotNull('fecha_termino')
+                ->whereDate('fecha_termino', '>=', $hoy);
+        }
+
+        $total = (int) $query->count();
+        $label = $soloVigentes
+            ? ($total === 1 ? 'convocatoria vigente' : 'convocatorias vigentes')
+            : ($total === 1 ? 'convocatoria activa' : 'convocatorias activas');
+
+        return [
+            'total' => $total,
+            'label' => $label,
+            'link_title' => 'Ver convocatorias',
+            'url' => route('convocatoriaweb'),
+        ];
+    }
+
+    private function respuestaDatosPortal(string $message, $sources, array $history = []): ?array
+    {
+        $normalizado = $this->normalizarMensaje($message);
+        $sources = collect($sources)->values();
+        $temasMensaje = $this->temasExplicitosMensaje($message);
+
+        // Cuando la respuesta anterior nombró una ficha concreta, una elipsis como
+        // «¿cómo postulo?», «¿cuándo vence?» o «pásame el enlace» debe conservar esa
+        // misma entidad. La búsqueda puede traer registros parecidos por compartir CAS,
+        // año o categoría; el título ya confirmado en el diálogo es un ancla más fuerte.
+        if ($history !== [] && $this->esSeguimiento($message, $this->terminos($message), $history)) {
+            $historialNormalizado = $this->normalizarMensaje(collect($history)
+                ->pluck('content')
+                ->filter()
+                ->take(-8)
+                ->implode(' '));
+            $fuentesNombradas = $sources->filter(function (array $source) use ($historialNormalizado) {
+                $titulo = $this->normalizarMensaje((string) ($source['title'] ?? ''));
+
+                return mb_strlen($titulo) >= 8 && str_contains($historialNormalizado, $titulo);
+            })->values();
+
+            if ($fuentesNombradas->isNotEmpty()) {
+                $sources = $fuentesNombradas;
+            }
+        }
+
+        $sources = $this->filtrarPorIdentificadorExacto($sources, $message);
+
         $fuentesAccesibles = collect($sources)
             ->filter(fn (array $source) => ! empty($source['title']) && ! empty($source['url']))
             ->unique('url')
             ->values();
+
+        // Una palabra transversal como «vigente» no debe convertir «enlace del ROF
+        // vigente» en una consulta de convocatorias. Si el mensaje nombra una categoría,
+        // las peticiones de enlace se limitan a las fuentes de esa categoría.
+        $tiposSolicitados = $temasMensaje
+            ->map(fn (string $tema) => match ($tema) {
+                'convocatoria', 'noticia', 'comunicado', 'documento', 'directorio', 'siagie' => $tema,
+                default => null,
+            })
+            ->filter()
+            ->values();
+        $fuentesDelTema = $fuentesAccesibles
+            ->filter(fn (array $source) => $tiposSolicitados->contains($source['type'] ?? null))
+            ->values();
+
+        if ($fuentesDelTema->isNotEmpty()) {
+            $fuentesAccesibles = $fuentesDelTema;
+        }
+
+        $tiposFuente = $sources->pluck('type')->filter()->unique()->values();
+        $contextoConvocatoria = $temasMensaje->contains('convocatoria')
+            || ($tiposFuente->count() === 1 && $tiposFuente->first() === 'convocatoria');
 
         $esCategoriaSola = in_array($normalizado, [
             'noticia', 'noticias', 'comunicado', 'comunicados', 'convocatoria', 'convocatorias',
@@ -1414,6 +1972,44 @@ PROMPT;
             }
         }
 
+        // Si la persona escribe el título de una noticia abierta o pide que se la
+        // explique, devolvemos el contenido de esa ficha. Antes el historial de
+        // «últimas noticias» podía desplazar una publicación antigua y el modelo
+        // afirmaba que no tenía su texto aunque sí existía en la tabla `noticias`.
+        $noticiasEnContexto = collect($sources)
+            ->filter(fn (array $source) => ($source['type'] ?? null) === 'noticia')
+            ->values();
+
+        if ($noticiasEnContexto->count() === 1 && ! $consultaListadoGeneral) {
+            $noticia = $noticiasEnContexto->first();
+            $tituloNormalizado = $this->normalizarMensaje((string) ($noticia['title'] ?? ''));
+            $mencionaTitulo = mb_strlen($tituloNormalizado) >= 10
+                && (str_contains($normalizado, $tituloNormalizado)
+                    || (mb_strlen($normalizado) >= 10 && str_contains($tituloNormalizado, $normalizado)));
+            $pideContenido = (bool) preg_match(
+                '/\b(?:resum\w*|explic\w*|cuent\w*|contenido|de que trata|que dice|acuerdos?|demandas?|resultados?)\b/',
+                $normalizado
+            );
+
+            if ($mencionaTitulo || $pideContenido) {
+                $detalle = trim(preg_replace(
+                    '/\s+/u',
+                    ' ',
+                    strip_tags((string) ($noticia['context'] ?? $noticia['summary'] ?? ''))
+                ));
+
+                if ($detalle !== '') {
+                    return [
+                        'answer' => Str::limit($detalle, 900),
+                        'links' => [[
+                            'title' => $noticia['title'],
+                            'url' => $noticia['url'],
+                        ]],
+                    ];
+                }
+            }
+        }
+
         if ($consultaListadoGeneral && str_contains($normalizado, 'notici')) {
             return $this->respuestaListadoPortal($sources, 'noticia', 'noticias');
         }
@@ -1422,23 +2018,37 @@ PROMPT;
             return $this->respuestaListadoPortal($sources, 'comunicado', 'comunicados');
         }
 
-        $consultaPostulacion = (bool) preg_match(
+        $consultaPostulacion = $contextoConvocatoria && (bool) preg_match(
             '/\b(?:como|donde|quier\w*|necesit\w*|pued\w*|debo|tengo que|que hago|que necesito)\b.{0,45}\b(?:postul\w*|inscrib\w*|particip\w*|present\w*)\b|\b(?:postul\w*|inscrib\w*)\b.{0,25}\b(?:como|donde)\b/',
             $normalizado
         );
-        $consultaPlazo = (bool) preg_match(
+        $consultaPlazo = $contextoConvocatoria && (bool) preg_match(
             '/\b(?:fech\w*|dias?|plaz\w*|cier\w*|cerr\w*|vigent\w*|postul\w*|termin\w*|finaliz\w*|venc\w*|inici\w*|abiert\w*|hasta cuando|hasta que dia|todavia hay tiempo|sigue abiert\w*)\b/',
+            $normalizado
+        );
+        $consultaRequisitos = $contextoConvocatoria && (bool) preg_match(
+            '/\b(?:requisit\w*|document\w*|papel\w*|bases?|perfil\w*|experienci\w*|estudi\w*|titulo\w*|grado\w*|formacion\w*)\b/',
             $normalizado
         );
         $consultaListado = $consultaListadoGeneral
             && $this->temasExplicitosMensaje($message)->contains('convocatoria');
+        $consultaUnaReciente = $consultaListado
+            && (bool) preg_match('/\b(?:ultima|ultimo|mas reciente|mas nueva|mas nuevo|reciente)\b/', $normalizado)
+            && ! (bool) preg_match('/\b(?:ultimas|ultimos|recientes|nuevas|nuevos)\b/', $normalizado);
 
-        if (! $consultaPlazo && ! $consultaListado) {
+        if (! $consultaPlazo && ! $consultaListado && ! $consultaRequisitos) {
             // Las peticiones de acceso a una fuente se expresan de muchas formas: «pásame la
             // ficha», «quiero descargarla», «¿dónde encuentro las bases?» o «ábreme la segunda».
             // Se resuelven después de fechas y listados para que «ver últimas noticias» o
             // «fecha de publicación» no sean confundidas con una solicitud de enlace.
-            if ($fuentesAccesibles->isNotEmpty() && $this->solicitaAccesoFuente($normalizado)) {
+            $consultaSustantiva = (bool) preg_match(
+                '/\b(?:cuando|fecha|hora|quien|quienes|como postular|requisit\w*|plaz\w*|firm\w*|contrat\w*|entrevist\w*|resultad\w*|ganador\w*|cronogram\w*)\b/',
+                $normalizado
+            );
+
+            if ($fuentesAccesibles->isNotEmpty()
+                && $this->solicitaAccesoFuente($normalizado)
+                && ! $consultaSustantiva) {
                 $indice = $this->indiceOrdinalSolicitado($normalizado);
                 $seleccionadas = $indice !== null && $fuentesAccesibles->has($indice)
                     ? collect([$fuentesAccesibles->get($indice)])
@@ -1468,7 +2078,9 @@ PROMPT;
             return null;
         }
 
-        $soloVigentes = preg_match('/\b(vigent\w*|abiert\w*|vacant\w*|chamb\w*|trabaj\w*|empleos?|oportunidad(?:es)? laboral(?:es)?|postular)\b/', $normalizado);
+        $soloVigentes = ! $consultaPostulacion
+            && $contextoConvocatoria
+            && $this->consultaConvocatoriasVigentes($message);
 
         if ($soloVigentes) {
             $convocatorias = $convocatorias
@@ -1483,7 +2095,7 @@ PROMPT;
             ];
         }
 
-        $seleccionadas = $convocatorias->take(3);
+        $seleccionadas = $convocatorias->take($consultaUnaReciente ? 1 : 3);
         $lineas = $seleccionadas->map(function (array $source) {
             $inicio = $source['starts_at'] ?? null;
             $fin = $source['ends_at'] ?? null;
@@ -1517,6 +2129,10 @@ PROMPT;
                 'cerrada' => "El plazo de {$title} ya está cerrado".($end ? " desde el {$end}" : '').'. Puedes abrir la ficha para consultar sus bases y resultados publicados.',
                 default => "La ficha de {$title} no publica una fecha de cierre verificable. Ábrela para revisar las bases, requisitos y archivos disponibles.",
             };
+        } elseif ($consultaRequisitos && $seleccionadas->count() === 1) {
+            $source = $seleccionadas->first();
+            $title = $source['title'] ?? 'esta convocatoria';
+            $answer = "La ficha resumida de {$title} no enumera requisitos verificables. Abre la ficha oficial y revisa sus bases y archivos publicados para confirmar el perfil, los documentos y la forma de presentación.";
         }
 
         return [
@@ -1548,7 +2164,8 @@ PROMPT;
 
         if (($objetoEnlace && ($accionAcceso || $preguntaUbicacion))
             || ($objetoPublicacion && $accionAcceso)
-            || $cliticoAcceso) {
+            || $cliticoAcceso
+            || ($accionAcceso && preg_match('/\b\d{1,5}\s*[-\/]\s*\d{1,4}\b/', $normalizado))) {
             return true;
         }
 
@@ -1576,6 +2193,13 @@ PROMPT;
     {
         $seleccionadas = collect($sources)
             ->filter(fn (array $source) => ($source['type'] ?? null) === $type)
+            ->sortByDesc(function (array $source) {
+                try {
+                    return empty($source['published_at']) ? 0 : Carbon::createFromFormat('d/m/Y', $source['published_at'])->timestamp;
+                } catch (\Throwable) {
+                    return 0;
+                }
+            })
             ->take(3)
             ->values();
 
@@ -1758,7 +2382,7 @@ PROMPT;
                 'pregunta' => Str::limit(PersonalDataRedactor::redact($pregunta), 1600, ''),
                 'respuesta' => $respuesta['answer'] ?? null,
                 'fuentes' => json_encode($respuesta['links'] ?? [], JSON_UNESCAPED_UNICODE),
-                'origen' => $origen,
+                'origen' => Str::limit($origen, 40, ''),
                 'modelo' => $extra['modelo'] ?? null,
                 'tokens_entrada' => $extra['tokens_entrada'] ?? null,
                 'tokens_salida' => $extra['tokens_salida'] ?? null,
@@ -1805,7 +2429,7 @@ PROMPT;
         'puesto' => 'convocatoria', 'laboral' => 'convocatoria', 'contrato' => 'convocatoria',
         'profe' => 'docente', 'maestro' => 'docente', 'maestra' => 'docente',
         'fono' => 'telefono', 'fonito' => 'telefono',
-        'plazo' => 'convocatoria', 'cierre' => 'convocatoria', 'vigente' => 'convocatoria',
+        'plazo' => 'convocatoria', 'cierre' => 'convocatoria',
         'termina' => 'convocatoria', 'finaliza' => 'convocatoria', 'vence' => 'convocatoria',
         'vencimiento' => 'convocatoria',
         'aprueba' => 'aprobar', 'aprobo' => 'aprobar', 'aprobado' => 'aprobar',
@@ -1838,10 +2462,13 @@ PROMPT;
         $documentos = KnowledgeDocument::query()
             ->where('status', 'ready')
             ->where('is_published', true)
-            ->get(['id', 'title'])
+            ->get(['id', 'title', 'original_filename'])
             ->map(fn ($documento) => [
                 'id' => $documento->id,
                 'title' => Str::lower(Str::ascii($documento->title)),
+                'order' => ctype_digit(pathinfo((string) $documento->original_filename, PATHINFO_FILENAME))
+                    ? (int) pathinfo((string) $documento->original_filename, PATHINFO_FILENAME)
+                    : (int) $documento->id,
             ]);
 
         if ($documentos->isEmpty()) {
@@ -1861,6 +2488,34 @@ PROMPT;
             })
             ->unique()
             ->values();
+
+        // Si hay varias publicaciones del mismo proceso, el nombre numérico del archivo
+        // heredado representa su fecha de carga (timestamp Unix). Para cronogramas y
+        // resultados se usa la versión más reciente; la similitud semántica por sí sola
+        // tendía a escoger el escaneo más limpio aunque estuviera desactualizado.
+        $code = collect($tokens)->first(fn (string $token) => preg_match('/^\d{2,3}$/', $token));
+        if ($code) {
+            $anchors = collect($tokens)->intersect([
+                'cas', 'cronograma', 'resultado', 'entrevista', 'convocatoria', 'comunicado',
+            ])->values();
+            $primaryAnchor = collect(['cronograma', 'resultado', 'comunicado', 'convocatoria', 'entrevista'])
+                ->first(fn (string $anchor) => $anchors->contains($anchor));
+            $versiones = $documentos->filter(function (array $documento) use ($code, $anchors, $primaryAnchor) {
+                if (! str_contains($documento['title'], $code)) {
+                    return false;
+                }
+
+                if ($primaryAnchor) {
+                    return str_contains($documento['title'], $primaryAnchor);
+                }
+
+                return $anchors->isEmpty() || str_contains($documento['title'], 'cas');
+            });
+
+            if ($versiones->isNotEmpty()) {
+                $explicitDocuments->prepend($versiones->sortByDesc('order')->first()['id']);
+            }
+        }
 
         $asksAboutOrganization = collect($tokens)->intersect([
             'mision', 'vision', 'funcion', 'estructura', 'organizacion', 'naturaleza',
@@ -1896,6 +2551,7 @@ PROMPT;
             'publicado', 'publicacion', 'oficial', 'disponible', 'disponibl', 'existir',
             'existent', 'recient', 'educativa', 'requisito', 'detalle', 'informacion',
             'link', 'enlace', 'archivo', 'pdf', 'primero', 'segundo', 'tercero',
+            'hay', 'cantidad', 'cantidades', 'numero', 'total',
         ];
 
         if ($categoria === 'convocatoria') {
@@ -1931,7 +2587,6 @@ PROMPT;
             }
 
             $titulos = (clone $query)
-                ->limit(100)
                 ->pluck('titulo')
                 ->map(fn ($title) => Str::lower(Str::ascii((string) $title)))
                 ->filter()
@@ -1950,7 +2605,7 @@ PROMPT;
             return $tokens->map(function (string $token) use ($titulos, $vocabulario) {
                 $ascii = Str::lower(Str::ascii($token));
 
-                if (strlen($ascii) < 4
+                if (ctype_digit($ascii) || strlen($ascii) < 4
                     || $titulos->contains(fn (string $title) => str_contains($title, $ascii))) {
                     return $ascii;
                 }
@@ -2040,6 +2695,11 @@ PROMPT;
             'cunado' => 'cuando',
             'convocatoraia' => 'convocatoria',
             'convocotaria' => 'convocatoria',
+            'conbocatoria' => 'convocatoria',
+            'conbocatorias' => 'convocatorias',
+            'vijente' => 'vigente',
+            'vijentes' => 'vigentes',
+            'nesesito' => 'necesito',
         ];
 
         if (isset($correccionesFrecuentes[$ascii])) {
@@ -2081,6 +2741,12 @@ PROMPT;
      */
     private function singular(string $token): string
     {
+        // En plurales terminados en vocal + s se elimina solo la s: «vigentes» debe
+        // convertirse en «vigente», no en «vigent».
+        if (mb_strlen($token) >= 5 && preg_match('/[aeiou]s$/', Str::ascii($token))) {
+            return mb_substr($token, 0, -1);
+        }
+
         if (mb_strlen($token) >= 6 && Str::endsWith($token, 'es')) {
             return mb_substr($token, 0, -2);
         }
@@ -2200,17 +2866,32 @@ PROMPT;
 
     private function queryEmbedding(string $text)
     {
+        $model = 'text-embedding-3-small';
+        $text = PersonalDataRedactor::redact($text);
+        $text = trim(preg_replace('/\s+/u', ' ', Str::limit($text, 8000, '')));
+        if ($text === '') {
+            return null;
+        }
+
+        $cacheKey = 'chatbot:query-embedding:'.hash('sha256', $model.'|'.Str::lower($text));
+
         // Pasa por el cliente compartido para heredar el forzado de IPv4; con Guzzle
         // directo esta llamada fallaba con "Could not resolve host" y la búsqueda
         // semántica caía al respaldo por palabras clave sin avisar.
-        $resp = OpenAi::http(15)
-            ->retry(2, 300)
-            ->post('https://api.openai.com/v1/embeddings', [
-                'model' => 'text-embedding-3-small',
-                'input' => $text,
-            ]);
+        return \Cache::remember($cacheKey, now()->addHours(24), function () use ($model, $text) {
+            $resp = OpenAi::http(15)
+                ->retry(2, 300)
+                ->post('https://api.openai.com/v1/embeddings', [
+                    'model' => $model,
+                    'input' => $text,
+                ]);
 
-        return $resp->json('data.0.embedding');
+            if (! $resp->successful() || ! is_array($resp->json('data.0.embedding'))) {
+                throw new \RuntimeException('OpenAI embedding request failed: '.$resp->status());
+            }
+
+            return $resp->json('data.0.embedding');
+        });
     }
 
     /**
@@ -2253,7 +2934,7 @@ PROMPT;
     {
         $normalized = $this->normalizarMensaje($message);
 
-        if (! preg_match('/\b(?:ignora (?:tus|las) reglas|revela (?:el )?(?:system prompt|prompt del sistema|instrucciones internas)|system prompt|prompt del sistema|clave api|api key)\b/', $normalized)) {
+        if (! preg_match('/\b(?:(?:ignora|olvida|omite|desobedece|salta|no sigas) (?:tus |las |el )?(?:reglas|instrucciones)|revela (?:el )?(?:system prompt|prompt del sistema|instrucciones internas)|system prompt|prompt del sistema|clave api|api key)\b/', $normalized)) {
             return null;
         }
 
@@ -2565,15 +3246,25 @@ PROMPT;
         $data = $this->datosPublicosInstitucion();
         $directoryLink = [['title' => 'Ver directorio institucional', 'url' => route('directorioweb')]];
 
+        $asksLocation = $genericLocation || (bool) preg_match('/\b(?:donde queda|donde esta|donde se ubica|ubicacion de|direccion(?: de)?|como llego a)\b/', $normalized);
+        $asksHours = (bool) preg_match('/\b(?:horario|hora de atencion|a que hora atienden|cuando atienden)\b/', $normalized);
+        if (($mentionsDre || $genericLocation) && $asksLocation && $asksHours) {
+            return [
+                'answer' => 'La sede de la DRE Huánuco está en '.$data['address']
+                    .' El horario publicado es '.$data['hours'].', de lunes a viernes.',
+                'links' => $directoryLink,
+            ];
+        }
+
         if (($mentionsDre || $genericLocation)
-            && ($genericLocation || preg_match('/\b(?:donde queda|donde esta|donde se ubica|ubicacion de|direccion de|como llego a)\b/', $normalized))) {
+            && $asksLocation) {
             return [
                 'answer' => 'La sede de la DRE Huánuco está en '.$data['address'],
                 'links' => $directoryLink,
             ];
         }
 
-        if (preg_match('/\b(?:horario|hora de atencion|a que hora atienden|cuando atienden)\b/', $normalized)) {
+        if ($asksHours) {
             return [
                 'answer' => 'El horario publicado es '.$data['hours'].', de lunes a viernes.',
                 'links' => $directoryLink,
@@ -2648,7 +3339,12 @@ PROMPT;
             $data['phone'] = trim((string) ($row->celular ?? '')) ?: $data['phone'];
             $data['email'] = trim((string) ($row->email ?? '')) ?: $data['email'];
         } catch (\Throwable $exception) {
-            report($exception);
+            // La auditoría nunca debe convertir una respuesta válida en error 500,
+            // incluso si también está temporalmente averiado el canal de logs.
+            try {
+                report($exception);
+            } catch (\Throwable) {
+            }
         }
 
         return $data;
@@ -2680,21 +3376,58 @@ PROMPT;
             $normalized = $this->normalizarMensaje((string) $previousUserMessage);
         }
 
-        $sectionOnly = in_array($normalized, [
-            'documento', 'documentos', 'documentos de gestion', 'resolucion', 'resoluciones',
-            'directorio', 'siagie', 'infraestructura', 'galeria', 'fotos',
-        ], true);
-        $quickNavigation = (bool) preg_match(
-            '/^(?:buscar|ver|consultar|mostrar) (?:(?:los?|las?) )?(?:documentos? de gestion|resoluciones?|directorio|siagie|infraestructura|galeria|fotos)$/',
-            $normalized
-        );
-
-        if (! $sectionOnly && ! $quickNavigation
-            && ! preg_match('/\b(?:donde|en que seccion|como (?:puedo )?(?:entrar|entro|ingresar|acceder|ver|consultar|postular)|llevame|abre|abrir|ir a)\b/', $normalized)) {
+        // Un identificador compuesto señala un registro concreto. Aunque el usuario diga
+        // «abre», debe pasar por la recuperación exacta para no degradarse al índice general.
+        if (preg_match('/\b\d{1,5}\s*[-\/]\s*\d{1,4}\b/', $normalized)) {
             return null;
         }
 
+        // Una posición dentro del listado anterior es navegación contextual, no una
+        // petición del índice de Noticias o Convocatorias.
+        if (preg_match('/\b(?:primer[oa]?|segund[oa]?|tercer[oa]?|[123](?:er|ro|do|to|ra|da)?)\b/', $normalized)
+            && preg_match('/\b(?:notici\w*|convocatori\w*|comunicad\w*|resultad\w*|publicacion\w*)\b/', $normalized)) {
+            return null;
+        }
+
+        $sectionOnly = in_array($normalized, [
+            'documento', 'documentos', 'documentos de gestion', 'resolucion', 'resoluciones',
+            'directorio', 'siagie', 'infraestructura', 'galeria', 'fotos', 'fut',
+            'formato unico de tramite', 'mesa de partes', 'mesa partes',
+        ], true);
+        $quickNavigation = (bool) preg_match(
+            '/^(?:(?:necesito|quiero) )?(?:(?:buscar|ver|consultar|mostrar|descargar) )?(?:(?:los?|las?|el) )?(?:documentos? de gestion|resoluciones?|directorio|siagie|infraestructura|galeria|fotos|fut|formato unico de tramite)$/',
+            $normalized
+        );
+        $directResourceRequest = (bool) preg_match(
+            '/\b(?:dame|pasame|mandame|comparte|quiero|necesito|descargar|abre|abrir)\b.*\b(?:link|enlace|archivo|formato|fut)\b/',
+            $normalized
+        );
+
+        if (! $sectionOnly && ! $quickNavigation && ! $directResourceRequest
+            && ! preg_match('/\b(?:donde|en que seccion|como (?:puedo )?(?:entrar|entro|ingresar|acceder|ver|consultar|postular|presentar|presento|registrar|registro)|llevame|abre|abrir|ir a)\b/', $normalized)) {
+            return null;
+        }
+
+        // Usar el mismo enlace administrable que la portada, no una copia fija del archivo.
+        if (preg_match('/\b(?:fut|formato unico de tramite)\b/', $normalized) && \Schema::hasTable('mainright')) {
+            $fut = \DB::table('mainright')->orderBy('id')->get(['nombre', 'url'])
+                ->first(fn ($item) => preg_match('/\b(?:fut|formato unico de tramite)\b/', $this->normalizarMensaje($item->nombre))
+                    && $this->urlSegura($item->url));
+            if ($fut) {
+                return [
+                    'answer' => 'Puedes descargar el Formato Único de Trámite (FUT) desde el enlace publicado en la portada del portal.',
+                    'links' => [['title' => 'Descargar FUT', 'url' => $this->urlSegura($fut->url)]],
+                ];
+            }
+        }
+
         $sections = [
+            [
+                'terms' => ['mesa de partes', 'mesa partes', 'presentar documento', 'ingresar documento'],
+                'answer' => 'Puedes presentar documentos en la Mesa de Partes Virtual de la DRE Huánuco. Antes de enviarlos, verifica que correspondan al trámite y que incluyan los anexos requeridos.',
+                'title' => 'Ir a Mesa de Partes Virtual',
+                'url' => 'https://digital.regionhuanuco.gob.pe/registro/mesa-partes-virtual/57',
+            ],
             [
                 'terms' => ['convocatoria', 'convocatorias', 'postular', 'plaza', 'cas'],
                 'answer' => 'Las convocatorias están en la sección Convocatorias. Allí puedes revisar el estado, las fechas, las bases y los archivos publicados de cada proceso.',
@@ -2714,7 +3447,7 @@ PROMPT;
                 'url' => route('comunicadosall'),
             ],
             [
-                'terms' => ['documento', 'documentos', 'gestion', 'rof', 'poi', 'poa'],
+                'terms' => ['documento', 'documentos', 'gestion', 'rof', 'poi', 'poa', 'fut', 'formato unico de tramite'],
                 'answer' => 'Los instrumentos institucionales están en la sección Documentos de gestión.',
                 'title' => 'Ir a Documentos de gestión',
                 'url' => route('documentosdegestionweb'),
@@ -2944,6 +3677,29 @@ PROMPT;
         foreach ($reemplazos as $patron => $reemplazo) {
             $normalized = preg_replace($patron, $reemplazo, $normalized) ?: $normalized;
         }
+
+        // Corrige únicamente vocabulario de intención conocido. No se aplica una
+        // autocorrección abierta a nombres, números ni siglas porque alteraría códigos
+        // oficiales. La distancia 1 cubre errores móviles comunes de forma general.
+        $vocabularioIntencion = [
+            'necesito', 'convocatoria', 'convocatorias', 'vigente', 'vigentes',
+            'noticia', 'noticias', 'comunicado', 'comunicados', 'documento', 'documentos',
+            'resolucion', 'resoluciones', 'directorio', 'horario', 'telefono',
+        ];
+        $normalized = collect(preg_split('/\s+/u', $normalized))
+            ->map(function (string $word) use ($vocabularioIntencion) {
+                $plain = trim($word, ".,;:!?¿¡()[]{}\"'");
+                if (mb_strlen($plain) < 6 || preg_match('/\d/', $plain) || in_array($plain, $vocabularioIntencion, true)) {
+                    return $word;
+                }
+                foreach ($vocabularioIntencion as $known) {
+                    if (abs(strlen($plain) - strlen($known)) <= 1 && levenshtein($plain, $known) === 1) {
+                        return str_replace($plain, $known, $word);
+                    }
+                }
+                return $word;
+            })
+            ->implode(' ');
 
         return preg_replace('/\s+/', ' ', $normalized) ?: '';
     }

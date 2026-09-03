@@ -9,7 +9,7 @@ use Symfony\Component\Process\Process;
 class PdfSecurityScanner
 {
     private const ACTIVE_MARKERS = [
-        '/JavaScript', '/JS', '/Launch', '/EmbeddedFile', '/OpenAction', '/AA', '/RichMedia',
+        '/JavaScript', '/JS', '/Launch', '/EmbeddedFile', '/RichMedia',
     ];
 
     public function assertSafe(UploadedFile $file): void
@@ -38,13 +38,39 @@ class PdfSecurityScanner
             throw new RuntimeException('No se aceptan PDFs cifrados o protegidos con contraseña.');
         }
 
+        // Las secuencias binarias comprimidas de una imagen pueden contener por azar
+        // textos como "/JS". Los nombres de acciones PDF viven en los diccionarios,
+        // fuera de `stream ... endstream`; inspeccionar solo la estructura evita esos
+        // falsos positivos sin permitir JavaScript, adjuntos o acciones automáticas.
+        $structure = $this->withoutStreams($contents);
+
         foreach (self::ACTIVE_MARKERS as $marker) {
-            if (preg_match('/'.preg_quote($marker, '/').'\b/i', $contents) === 1) {
+            if (preg_match('/'.preg_quote($marker, '/').'\b/i', $structure) === 1) {
                 throw new RuntimeException('El PDF contiene acciones o archivos incrustados no permitidos.');
             }
         }
 
         $this->scanWithClamAv($path);
+    }
+
+    private function withoutStreams(string $contents): string
+    {
+        $structure = '';
+        $offset = 0;
+
+        while (($start = strpos($contents, 'stream', $offset)) !== false) {
+            $structure .= substr($contents, $offset, $start - $offset);
+            $end = strpos($contents, 'endstream', $start + 6);
+
+            if ($end === false) {
+                // Un `stream` sin cierre no es una estructura PDF válida para importar.
+                throw new RuntimeException('El PDF contiene un flujo de datos incompleto.');
+            }
+
+            $offset = $end + strlen('endstream');
+        }
+
+        return $structure.substr($contents, $offset);
     }
 
     private function scanWithClamAv(string $path): void

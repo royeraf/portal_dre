@@ -5,6 +5,7 @@ return [
     'openai' => [
         'key' => env('OPENAI_API_KEY'),
         'chatbot_model' => env('OPENAI_CHATBOT_MODEL', 'gpt-5-nano'),
+        'chatbot_prompt_cache_key' => env('OPENAI_CHATBOT_PROMPT_CACHE_KEY', 'dre-huanuco-chatbot-v1'),
         'chatbot_reasoning' => env('OPENAI_CHATBOT_REASONING', 'medium'),
         'ca_bundle' => env('OPENAI_CA_BUNDLE'),
 
@@ -18,6 +19,17 @@ return [
         // Al superarlo el asistente sigue respondiendo, pero con enlaces en vez de IA.
         // 0 = sin límite (no recomendado en producción).
         'limite_diario_tokens' => (int) env('OPENAI_LIMITE_DIARIO_TOKENS', 500000),
+    ],
+
+    'local_pdf_ocr' => [
+        'enabled' => env('LOCAL_PDF_OCR', false),
+        'tesseract' => env('TESSERACT_BINARY', 'tesseract'),
+        'pdftoppm' => env('PDFTOPPM_BINARY', 'pdftoppm'),
+        'tessdata' => env('TESSDATA_PREFIX'),
+        'languages' => env('TESSERACT_LANGUAGES', 'spa+eng'),
+        'dpi' => (int) env('LOCAL_PDF_OCR_DPI', 180),
+        'pdf_timeout' => (int) env('LOCAL_PDF_OCR_PDF_TIMEOUT', 900),
+        'page_timeout' => (int) env('LOCAL_PDF_OCR_PAGE_TIMEOUT', 180),
     ],
 
     /*

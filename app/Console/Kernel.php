@@ -15,6 +15,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('chatbot:purge-logs')->dailyAt('02:30')->withoutOverlapping();
+        $documents = escapeshellarg(public_path('archivos'));
+        $schedule
+            ->command("knowledge:import-directory {$documents} --limit=5 --index --only-referenced")
+            ->everyTenMinutes()
+            ->withoutOverlapping(120);
     }
 
     /**

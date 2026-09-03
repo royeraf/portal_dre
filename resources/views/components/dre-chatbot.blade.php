@@ -1,5 +1,5 @@
-<div class="dre-chatbot" id="dre-chatbot" data-endpoint="{{ route('api.chat') }}" data-reset-endpoint="{{ route('api.chat.delete') }}" data-open="false">
-    <section class="dre-chatbot__panel" id="dre-chatbot-panel" role="dialog" aria-modal="true" aria-label="Asistente virtual DRE Huánuco" aria-hidden="true">
+<div class="dre-chatbot" id="dre-chatbot" data-endpoint="{{ route('api.chat') }}" data-reset-endpoint="{{ route('api.chat.delete') }}" data-feedback-endpoint="{{ route('api.chat.feedback') }}" data-open="false">
+    <section class="dre-chatbot__panel" id="dre-chatbot-panel" role="dialog" aria-modal="false" aria-label="Asistente virtual DRE Huánuco" aria-hidden="true">
         <header class="dre-chatbot__header">
             <div class="dre-chatbot__identity">
                 <span class="dre-chatbot__seal" aria-hidden="true">

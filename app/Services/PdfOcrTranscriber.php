@@ -15,7 +15,7 @@ use RuntimeException;
 class PdfOcrTranscriber
 {
     /** Páginas por petición cuando el documento es largo y no cabe en una sola respuesta. */
-    private const PAGINAS_POR_TANDA = 25;
+    private const PAGINAS_POR_TANDA = 5;
 
     private const INSTRUCCION = 'Transcribe integramente el texto de este documento, pagina por pagina, de forma literal. '
         .'No resumas, no comentes y no agregues nada que no este en el documento. '
@@ -39,17 +39,22 @@ class PdfOcrTranscriber
 
                 for ($desde = 1; $desde <= $paginas; $desde += self::PAGINAS_POR_TANDA) {
                     $hasta = min($desde + self::PAGINAS_POR_TANDA - 1, $paginas);
-                    $partes[] = $this->pedir(
+                    $texto = $this->pedir(
                         $fileId,
                         $apiKey,
                         self::INSTRUCCION." Transcribe unicamente las paginas {$desde} a {$hasta}."
                     );
+                    $this->assertTranscription($texto, $desde, $hasta);
+                    $partes[] = $texto;
                 }
 
                 return trim(implode("\n\n", array_filter($partes)));
             }
 
-            return $this->pedir($fileId, $apiKey, self::INSTRUCCION);
+            $texto = $this->pedir($fileId, $apiKey, self::INSTRUCCION);
+            $this->assertTranscription($texto, 1, max(1, $paginas));
+
+            return $texto;
         } finally {
             $this->borrar($fileId, $apiKey);
         }
@@ -110,6 +115,27 @@ class PdfOcrTranscriber
             }
         } catch (\Throwable $e) {
             report($e);
+        }
+    }
+
+    /**
+     * Impide almacenar como conocimiento una negativa o explicación del modelo.
+     * Una transcripción válida siempre contiene por lo menos un encabezado de página,
+     * tal como se solicita explícitamente en la instrucción de OCR.
+     */
+    private function assertTranscription(string $texto, int $desde, int $hasta): void
+    {
+        $normalizado = mb_strtolower($texto);
+        $esNegativa = preg_match(
+            '/(?:demasiado texto|si (?:lo )?divides|no puedo transcribir|no es posible transcribir|no puedo procesar)/u',
+            $normalizado
+        );
+        $tienePagina = preg_match('/^##\s+p[aá]gina\s+\d+/miu', $texto);
+
+        if (trim($texto) === '' || $esNegativa || ! $tienePagina) {
+            throw new RuntimeException(
+                "La OCR no devolvió una transcripción válida para las páginas {$desde} a {$hasta}."
+            );
         }
     }
 }

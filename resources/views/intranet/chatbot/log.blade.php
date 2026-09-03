@@ -12,6 +12,8 @@
             ['Sin fuente encontrada', $resumen['sin_fuentes'], 'warning'],
             ['Piden aclaración', $resumen['aclaraciones'], 'secondary'],
             ['Con error', $resumen['errores'], 'danger'],
+            ['Respuestas útiles', $resumen['utiles'], 'success'],
+            ['Por revisar', $resumen['no_utiles'], 'danger'],
             ['Tokens (30 días)', number_format($resumen['tokens']), 'info'],
             ['Latencia media', $resumen['ms_medio'] . ' ms', 'success'],
         ] as [$titulo, $valor, $color])
@@ -47,6 +49,7 @@
                     <th style="width:140px">Fecha</th>
                     <th>Consulta y respuesta</th>
                     <th style="width:150px">Fuentes citadas</th>
+                    <th style="width:90px">Valoración</th>
                     <th style="width:110px">Coste</th>
                 </tr>
             </thead>
@@ -79,6 +82,15 @@
                                 <span class="text-muted">—</span>
                             @endforelse
                         </td>
+                        <td class="text-center tx-16" title="Valoración anónima de esta respuesta">
+                            @if((int) $c->feedback === 1)
+                                👍
+                            @elseif((int) $c->feedback === -1)
+                                👎
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
+                        </td>
                         <td class="text-nowrap tx-11">
                             @if($c->tokens_entrada || $c->tokens_salida)
                                 {{ number_format($c->tokens_entrada) }} ent.<br>
@@ -88,7 +100,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="text-center text-muted">Todavía no hay consultas registradas.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted">Todavía no hay consultas registradas.</td></tr>
                 @endforelse
             </tbody>
         </table>

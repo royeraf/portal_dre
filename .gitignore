@@ -32,6 +32,8 @@ yarn-error.log
 /.agents
 
 # Archivos subidos por usuarios (contenido dinámico)
+/public/archivos/*
+!/public/archivos/.htaccess
 /public/img/noticias/*
 /public/img/slider/*
 /public/img/popup/*

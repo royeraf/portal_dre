@@ -113,7 +113,14 @@ class KnowledgeDocumentController extends Controller
         if (! $knowledgeDocument->is_published) {
             abort_unless(request()->user()?->can('manage-ai-knowledge'), 404);
         }
-        abort_unless(Storage::disk('local')->exists($knowledgeDocument->pdf_path), 404);
+        if (! Storage::disk('local')->exists($knowledgeDocument->pdf_path)) {
+            $filename = basename((string) $knowledgeDocument->original_filename);
+            abort_if($filename === '' || $filename !== $knowledgeDocument->original_filename, 404);
+
+            return redirect()->away(
+                'https://www.drehuanuco.gob.pe/archivos/'.rawurlencode($filename)
+            );
+        }
 
         return Storage::disk('local')->download($knowledgeDocument->pdf_path, $knowledgeDocument->original_filename);
     }

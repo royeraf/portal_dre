@@ -4,7 +4,7 @@
         <h2><i class="far fa-clone"></i> CONVOCATORIAS
     </x-slot>
     <h6 class="br-section-label">Registro</h6>
-    <form action="{{ route('archivo.convocatoria.store', $convocatoria) }}" method="POST">
+    <form action="{{ route('archivo.convocatoria.store', $convocatoria) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-6">
@@ -32,10 +32,20 @@
                     </select>               
                 </div>
             </div>
-            <div class="col">
+            <div class="col-lg-4">
                 <div class="form-group">
-                    <label class="form-control-label" for="url_archivo">URL : <span class="tx-danger">*</span></label>
-                    <input type="text" name="url_archivo" value="" class="form-control" placeholder="http://">                
+                    <label class="form-control-label" for="file">Subir PDF</label>
+                    <input type="file" name="file" id="file" class="form-control" accept="application/pdf">
+                    <small class="form-text text-muted">Máximo 20 MB. Se sincronizará como borrador para la IA.</small>
+                    <x-input-error :messages="$errors->get('file')" class="mt-2" />
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label class="form-control-label" for="url_archivo">O pegar URL</label>
+                    <input type="text" name="url_archivo" id="url_archivo" value="{{ old('url_archivo') }}" class="form-control" placeholder="https://...">
+                    <small class="form-text text-muted">Usa archivo o URL; no necesitas completar ambos.</small>
+                    <x-input-error :messages="$errors->get('url_archivo')" class="mt-2" />
                 </div>
             </div>
         </div><!-- row -->

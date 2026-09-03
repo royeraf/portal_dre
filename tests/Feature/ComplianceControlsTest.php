@@ -75,6 +75,62 @@ class ComplianceControlsTest extends TestCase
         $this->assertDatabaseHas('chatbot_consultas', ['sesion' => str_repeat('a', 32)]);
     }
 
+    public function test_feedback_updates_only_the_latest_answer_in_the_anonymous_conversation(): void
+    {
+        $conversation = 'conversation-for-feedback';
+        $targetHash = substr(hash('sha256', $conversation), 0, 32);
+
+        DB::table('chatbot_consultas')->insert([
+            [
+                'pregunta' => 'primera respuesta',
+                'origen' => 'modelo',
+                'sesion' => $targetHash,
+                'created_at' => now()->subSecond(),
+            ],
+            [
+                'pregunta' => 'respuesta más reciente',
+                'origen' => 'modelo',
+                'sesion' => $targetHash,
+                'created_at' => now(),
+            ],
+            [
+                'pregunta' => 'respuesta de otra sesión',
+                'origen' => 'modelo',
+                'sesion' => str_repeat('b', 32),
+                'created_at' => now(),
+            ],
+        ]);
+
+        $this->postJson('/api/chat/feedback', [
+            'conversacion' => $conversation,
+            'util' => false,
+        ])->assertNoContent();
+
+        $this->assertDatabaseHas('chatbot_consultas', [
+            'pregunta' => 'respuesta más reciente',
+            'feedback' => -1,
+        ]);
+        $this->assertDatabaseHas('chatbot_consultas', [
+            'pregunta' => 'primera respuesta',
+            'feedback' => null,
+        ]);
+        $this->assertDatabaseHas('chatbot_consultas', [
+            'pregunta' => 'respuesta de otra sesión',
+            'feedback' => null,
+        ]);
+    }
+
+    public function test_chatbot_exposes_accessible_anonymous_feedback_controls(): void
+    {
+        $component = file_get_contents(resource_path('views/components/dre-chatbot.blade.php'));
+        $javascript = file_get_contents(resource_path('js/app.js'));
+
+        $this->assertStringContainsString('data-feedback-endpoint', $component);
+        $this->assertStringContainsString('¿Te sirvió esta respuesta?', $javascript);
+        $this->assertStringContainsString("label: 'Sí, fue útil'", $javascript);
+        $this->assertStringContainsString("label: 'No fue útil'", $javascript);
+    }
+
     public function test_retention_command_purges_only_expired_records(): void
     {
         DB::table('chatbot_consultas')->insert([
@@ -112,7 +168,7 @@ class ComplianceControlsTest extends TestCase
 
         $active = UploadedFile::fake()->createWithContent(
             'active.pdf',
-            "%PDF-1.4\n1 0 obj\n<< /OpenAction 2 0 R >>\nendobj\n%%EOF"
+            "%PDF-1.4\n1 0 obj\n<< /OpenAction << /S /JavaScript /JS (app.alert('x')) >> >>\nendobj\n%%EOF"
         );
 
         $this->expectException(\RuntimeException::class);

@@ -64,7 +64,11 @@
                     </td>
                     <td class="border border-slate-500">{{ $item->categoria }}</td>
                     <td class="border border-slate-500">
-                    <a href="{{ route('archivos.destroy', $item->id) }}" class="btn btn-danger btn-sm eliminar" title="Eliminar"><i class="fas fa-trash"></i></a>
+                    <form method="POST" action="{{ route('archivos.destroy', $item) }}" class="d-inline" onsubmit="return confirm('¿Eliminar este archivo?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
+                    </form>
                     <a href="{{route('archivos.edit', $item->id)}}" class="btn btn-warning btn-sm" title="Editar"><i class="icon ion-edit"></i></a>&nbsp;
                     </td>
                 </tr>

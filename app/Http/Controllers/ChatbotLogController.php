@@ -29,6 +29,8 @@ class ChatbotLogController extends Controller
                 'sin_fuentes' => DB::table('chatbot_consultas')->where('estado', 'not_found')->count(),
                 'aclaraciones' => DB::table('chatbot_consultas')->where('estado', 'clarification')->count(),
                 'errores' => DB::table('chatbot_consultas')->where('origen', 'like', 'respaldo_%')->count(),
+                'utiles' => DB::table('chatbot_consultas')->where('feedback', 1)->count(),
+                'no_utiles' => DB::table('chatbot_consultas')->where('feedback', -1)->count(),
                 'tokens' => DB::table('chatbot_consultas')->where('created_at', '>=', $desde)
                     ->sum(DB::raw('COALESCE(tokens_entrada,0) + COALESCE(tokens_salida,0)')),
                 'ms_medio' => (int) DB::table('chatbot_consultas')->where('origen', 'modelo')->avg('ms'),

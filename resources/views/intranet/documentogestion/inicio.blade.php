@@ -9,7 +9,7 @@
             <div class="col-lg-6">
                 <div class="form-group">
                     <label class="form-control-label" for="titulo">Titulo: <span class="tx-danger">*</span></label>
-                    <input class="form-control" type="text" name="titulo" id="titulo" :value="old('titulo')" placeholder="titulo" required>
+                    <input class="form-control" type="text" name="titulo" id="titulo" value="{{ old('titulo') }}" placeholder="titulo" required>
                     <x-input-error :messages="$errors->get('titulo')" class="mt-2" />
                 </div>
             </div>
@@ -42,7 +42,11 @@
                     <td class="border border-slate-500">{{ $item->titulo }}</td>
                     <td class="border border-slate-500">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <a href="{{ route('Documentogestion.destroy', $item->id) }}" class="btn btn-danger btn-sm eliminar" title="Eliminar"><i class="fas fa-trash"></i></a>
+                            <form method="POST" action="{{ route('Documentogestion.destroy', $item) }}" class="d-inline" onsubmit="return confirm('¿Eliminar esta categoría y todos sus documentos?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            </form>
                             <a href="{{ route('Documentogestion.show', $item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="fa fa-eye"></i></a>
                         </div>
                     </td>

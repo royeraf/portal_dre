@@ -22,9 +22,16 @@
     @endif
 
     <div class="alert alert-info">
-        Los PDFs se analizan y convierten a Markdown, pero <strong>no se publican automáticamente</strong>.
+        Los PDFs subidos desde Convocatorias, Documentos de gestión o Archivos se detectan automáticamente
+        y aparecen aquí como borradores. <strong>No necesitas volver a cargar el mismo PDF.</strong>
         Revisa el contenido extraído y apruébalo antes de incorporarlo a las respuestas del asistente.
         No cargues documentos con datos personales que no sean necesarios para la finalidad institucional.
+    </div>
+
+    <div class="alert alert-warning">
+        Los enlaces externos, como Google Drive, continúan publicados como enlaces, pero no se copian
+        automáticamente al conocimiento de la IA. Para documentos nuevos, es preferible usar
+        <strong>Subir PDF</strong> en el módulo correspondiente; así el portal conserva una copia estable.
     </div>
 
     <form method="POST" action="{{ route('knowledge.store') }}" enctype="multipart/form-data" class="form-layout form-layout-4">
