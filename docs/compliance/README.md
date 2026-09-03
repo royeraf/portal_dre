@@ -18,7 +18,7 @@ competente; el repositorio no sustituye esos actos.
 - Los módulos de conocimiento y auditoría tienen permisos diferentes.
 - Se validan cabecera, cifrado, contenido activo y, cuando se configura, antivirus en PDFs.
 - Se aplican encabezados de seguridad, CORS limitado y sesiones cifradas.
-- El framework fue actualizado de Laravel 9 a Laravel 13.24 con PHP 8.3.
+- La plataforma requerida es Laravel 9.52 y PHP 8.1.x. Laravel 9 carece de soporte de seguridad; existe una excepción explícita autorizada para sus avisos en Composer. No se considera una auditoría de seguridad limpia.
 - El diálogo tiene modalidad, foco contenido, cierre con Escape, anuncios accesibles y respeto
   por `prefers-reduced-motion`.
 

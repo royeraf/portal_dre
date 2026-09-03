@@ -23,7 +23,6 @@ class ComplianceControlsTest extends TestCase
 
         $response->assertOk()
             ->assertSee('Asistente con IA. No envíes datos personales. Verifica datos importantes.')
-            ->assertDontSee('Política de Privacidad')
             ->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
             ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');

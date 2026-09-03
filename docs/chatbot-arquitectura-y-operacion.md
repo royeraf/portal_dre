@@ -34,6 +34,29 @@ Los archivos subidos son contenido dinámico y no se versionan en Git. Solo se c
 
 ## Configuración
 
+### Compatibilidad solicitada
+
+Esta rama utiliza Laravel 9.52 y exclusivamente PHP 8.1.x (`~8.1.0`). Composer resuelve
+las dependencias tomando PHP 8.1.0 como plataforma mínima; las pruebas utilizan
+PHPUnit 9.6. Instalar siempre con el `composer.lock` de esta rama.
+
+Laravel 9 es una versión sin soporte de seguridad. Por autorización expresa del
+responsable se configuró una excepción de Composer únicamente para
+`laravel/framework` en `config.policy.advisories.ignore`. Esta excepción permite
+resolver las dependencias, pero no corrige las vulnerabilidades. Los demás
+paquetes mantienen el bloqueo de avisos de seguridad. Revisar el riesgo antes de
+desplegar y planificar una actualización a una versión mantenida.
+
+Después de cambiar de rama, ejecutar `composer install`, limpiar las cachés con
+`php artisan optimize:clear` y ejecutar las pruebas antes de aplicar migraciones.
+Esta adaptación en Git no cambia automáticamente el servidor publicado.
+
+Verificación de esta adaptación: PHP 8.1.34, Laravel 9.52.22 y PHPUnit 9.6.36;
+129 pruebas aprobadas y 816 aserciones. SQLite se habilitó para las pruebas en
+memoria. Se añadió Doctrine DBAL 3 para las migraciones con modificación de
+columnas. La clave fija de `phpunit.xml` es exclusivamente de pruebas, nunca
+debe utilizarse como clave del entorno publicado.
+
 Variables relevantes, documentadas también en `.env.example`:
 
 - `OPENAI_API_KEY`: credencial del proveedor; nunca debe incorporarse al repositorio.

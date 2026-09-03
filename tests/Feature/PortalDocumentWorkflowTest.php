@@ -129,7 +129,7 @@ class PortalDocumentWorkflowTest extends TestCase
         ]);
         $convocatoria = Convocatoria::query()->findOrFail($convocatoriaId);
 
-        $this->actingAs($user)->get(route('convocatoria.destroy', $convocatoria))->assertMethodNotAllowed();
+        $this->actingAs($user)->get(route('convocatoria.destroy', $convocatoria))->assertStatus(405);
         $this->assertDatabaseHas('convocatoria', ['id' => $convocatoriaId]);
 
         $this->actingAs($user)->delete(route('convocatoria.destroy', $convocatoria))->assertRedirect(route('convocatoria'));
