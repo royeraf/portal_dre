@@ -51,6 +51,37 @@ class PortalDocumentWorkflowTest extends TestCase
         Storage::disk('portal_documents')->assertExists(basename($record->url_archivo));
     }
 
+    public function test_public_convocatoria_cleans_description_markup_and_shows_download_link(): void
+    {
+        $convocatoriaId = DB::table('convocatoria')->insertGetId([
+            'titulo' => 'Convocatoria pública',
+            'tipo' => 'DIRECTIVO',
+            'descripcion' => '<p>Descripción oficial</p><script>alert("xss")</script>',
+            'fecha_inicio' => now()->toDateString(),
+            'fecha_termino' => now()->addDay()->toDateString(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('archivo_convocatoria')->insert([
+            'nom_archivo' => 'Cronograma',
+            'url_archivo' => '/archivos/cronograma.pdf',
+            'etapa' => 'INSCRIPCION',
+            'id_convocatoria' => $convocatoriaId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->get(route('verconvocatoria', $convocatoriaId));
+
+        $response->assertOk();
+        $response->assertSeeText('Descripción oficial');
+        $response->assertDontSee('alert("xss")');
+        $response->assertDontSee('&lt;/p&gt;', false);
+        $response->assertSee('Ver / descargar');
+        $response->assertSee('href="'.url('/archivos/cronograma.pdf').'"', false);
+        $response->assertSee('rel="noopener noreferrer"', false);
+    }
+
     public function test_portal_sync_imports_only_referenced_pdfs_as_drafts_and_does_not_duplicate_them(): void
     {
         Storage::fake('local');
