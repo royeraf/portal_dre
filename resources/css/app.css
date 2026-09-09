@@ -264,6 +264,12 @@
     .dre-chatbot__welcome {
         display: none !important;
     }
+
+    .dre-chatbot__launcher,
+    .dre-chatbot__launcher-icon img {
+        width: 60px !important;
+        height: 60px !important;
+    }
 }
 
 /* ── Alpine.js x-cloak — must be outside @layer so it loads immediately ── */
