@@ -31,6 +31,7 @@
                 openModal(data, id) {
                     this.modal = data;
                     document.body.style.overflow = 'hidden';
+                    document.getElementById('dre-chatbot')?.setAttribute('hidden', '');
                     const url = new URL(window.location.href);
                     url.searchParams.set('convocatoria', id);
                     window.history.replaceState({}, '', url);
@@ -39,6 +40,7 @@
                 closeModal() {
                     this.modal = null;
                     document.body.style.overflow = '';
+                    document.getElementById('dre-chatbot')?.removeAttribute('hidden');
                     const url = new URL(window.location.href);
                     url.searchParams.delete('convocatoria');
                     window.history.replaceState({}, '', url);
