@@ -225,11 +225,10 @@ function initDreChatbot() {
             const anchor = document.createElement('a');
             anchor.className = 'dre-chatbot__link';
             anchor.href = link.url;
-            anchor.target = '_blank';
-            anchor.rel = 'noopener noreferrer';
+            anchor.target = '_self';
             anchor.textContent = link.title;
-            anchor.title = `${link.title} (se abre en una pestaña nueva)`;
-            anchor.setAttribute('aria-label', `${link.title}, abrir fuente en una pestaña nueva`);
+            anchor.title = link.title;
+            anchor.setAttribute('aria-label', `${link.title}, abrir fuente`);
             group.appendChild(anchor);
         });
         messages.appendChild(group);

@@ -130,6 +130,15 @@ class ComplianceControlsTest extends TestCase
         $this->assertStringContainsString("label: 'No fue útil'", $javascript);
     }
 
+    public function test_chatbot_links_reuse_the_current_browser_tab(): void
+    {
+        $javascript = file_get_contents(resource_path('js/app.js'));
+
+        $this->assertStringContainsString("anchor.target = '_self';", $javascript);
+        $this->assertStringNotContainsString("anchor.target = '_blank';", $javascript);
+        $this->assertStringNotContainsString('se abre en una pestaña nueva', $javascript);
+    }
+
     public function test_retention_command_purges_only_expired_records(): void
     {
         DB::table('chatbot_consultas')->insert([
