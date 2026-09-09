@@ -49,6 +49,8 @@ class ChatbotController extends Controller
 
     public function chat(Request $request): JsonResponse
     {
+        @ini_set('memory_limit', '512M');
+
         $validated = $request->validate([
             'message' => ['required', 'string', 'min:2', 'max:1600'],
             'history' => ['sometimes', 'array', 'max:20'],
@@ -601,11 +603,10 @@ PROMPT;
 
         $limiteNoticias = $noticiaActual
             ? 1
-            : ($pideNoticias && $terminosNoticia->isEmpty() ? 3 : null);
-        $consultaNoticias->latest('fechapubli');
-        if ($limiteNoticias !== null) {
-            $consultaNoticias->limit($limiteNoticias);
-        }
+            : ($pideNoticias && $terminosNoticia->isEmpty() ? 3 : 25);
+        $consultaNoticias->select(['id', 'titulo', 'descripcioncorta', 'contenido', 'fechapubli'])
+            ->latest('fechapubli')
+            ->limit($limiteNoticias);
 
         $noticias = \Schema::hasTable((new Noticia)->getTable())
             ? $consultaNoticias->get()
@@ -907,14 +908,20 @@ PROMPT;
                         ->where('document.status', 'ready')
                         ->where('document.is_published', true)
                         ->whereNotNull('chunk.embedding')
-                        ->select('chunk.*');
+                        ->select([
+                            'chunk.id',
+                            'chunk.document_id',
+                            'chunk.chunk_index',
+                            'chunk.heading',
+                            'chunk.text',
+                            'chunk.page',
+                            'chunk.embedding',
+                        ]);
                     $documentosIdentificados = $this->documentosIdentificados($tokens);
 
                     if ($documentosIdentificados->isNotEmpty()) {
                         $chunkQuery->whereIn('chunk.document_id', $documentosIdentificados);
                     }
-
-                    $chunks = $chunkQuery->get();
 
                     // La norma de la consulta no cambia entre fragmentos: calcularla dentro
                     // del bucle repetía el mismo trabajo una vez por chunk.
@@ -925,8 +932,9 @@ PROMPT;
                     $qnorm = sqrt($qnorm);
 
                     $scores = [];
-                    foreach ($chunks as $chunk) {
+                    foreach ($chunkQuery->cursor() as $chunk) {
                         $emb = json_decode($chunk->embedding, true);
+                        unset($chunk->embedding);
                         if (! is_array($emb)) {
                             continue;
                         }
@@ -943,6 +951,7 @@ PROMPT;
                         $scores[] = ['score' => $score, 'chunk' => $chunk];
                     }
                     usort($scores, fn ($a, $b) => $b['score'] <=> $a['score']);
+                    $scores = array_slice($scores, 0, 50);
 
                     // Segundo ranking por coincidencia literal. El vector de una consulta corta
                     // con relleno ("explicame de la pisa 20") se parece más a una pregunta
