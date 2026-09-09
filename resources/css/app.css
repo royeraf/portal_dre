@@ -259,6 +259,13 @@
     .dre-chatbot__panel, .dre-chatbot__message, .dre-chatbot__launcher-pulse::after { animation: none !important; }
 }
 
+/* En pantallas pequeñas el saludo flotante cubría títulos y controles del portal. */
+@media (max-width: 639px) {
+    .dre-chatbot__welcome {
+        display: none !important;
+    }
+}
+
 /* ── Alpine.js x-cloak — must be outside @layer so it loads immediately ── */
 [x-cloak] { display: none !important; }
 
