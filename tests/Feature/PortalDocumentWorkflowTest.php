@@ -77,9 +77,10 @@ class PortalDocumentWorkflowTest extends TestCase
         $response->assertSeeText('Descripción oficial');
         $response->assertDontSee('alert("xss")');
         $response->assertDontSee('&lt;/p&gt;', false);
-        $response->assertSee('Ver / descargar');
+        $response->assertSee('Ver / descargar: Cronograma');
         $response->assertSee('href="'.url('/archivos/cronograma.pdf').'"', false);
         $response->assertSee('rel="noopener noreferrer"', false);
+        $response->assertSeeText('Documentos adjuntos (1)');
     }
 
     public function test_portal_sync_imports_only_referenced_pdfs_as_drafts_and_does_not_duplicate_them(): void
