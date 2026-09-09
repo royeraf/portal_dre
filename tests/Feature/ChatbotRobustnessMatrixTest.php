@@ -61,7 +61,7 @@ class ChatbotRobustnessMatrixTest extends TestCase
         foreach ($variants as $message) {
             $response = $this->postJson('/api/chat', ['message' => $message])->assertOk();
             $this->assertStringNotContainsString('0011-2026', $response->json('answer'), $message);
-            $this->assertNotContains(url('/verconvocatoria/'.$this->validCall), array_column($response->json('links'), 'url'), $message);
+            $this->assertNotContains(route('convocatoriaweb', ['convocatoria' => $this->validCall]), array_column($response->json('links'), 'url'), $message);
         }
     }
 
@@ -75,7 +75,7 @@ class ChatbotRobustnessMatrixTest extends TestCase
         ] as $message) {
             $response = $this->postJson('/api/chat', ['message' => $message])->assertOk();
             $this->assertSame(
-                url('/verconvocatoria/'.$this->validCall),
+                route('convocatoriaweb', ['convocatoria' => $this->validCall]),
                 data_get($response->json(), 'links.0.url'),
                 $message.' | '.json_encode($response->json(), JSON_UNESCAPED_UNICODE)
             );

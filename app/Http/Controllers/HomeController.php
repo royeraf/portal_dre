@@ -154,7 +154,23 @@ class HomeController extends Controller
         $convocatorias->whereBetween('fecha_inicio', [$request->startDate, $request->endDate]);
     }
 
-    $convocatorias = $convocatorias->orderBy('id', 'desc')->paginate(12);
+    $convocatoriaSolicitada = max(0, (int) $request->query('convocatoria'));
+    $paginaSolicitada = null;
+
+    // Los enlaces del chatbot apuntan al listado y abren su modal existente. Si la
+    // convocatoria está en una página posterior, calculamos esa página antes de
+    // paginar para que el navegador reciba la tarjeta que debe abrir.
+    if ($convocatoriaSolicitada > 0
+        && ! $request->filled('page')
+        && (clone $convocatorias)->whereKey($convocatoriaSolicitada)->exists()) {
+        $anteriores = (clone $convocatorias)->where('id', '>', $convocatoriaSolicitada)->count();
+        $paginaSolicitada = intdiv($anteriores, 12) + 1;
+    }
+
+    $convocatorias = $convocatorias
+        ->orderBy('id', 'desc')
+        ->paginate(12, ['*'], 'page', $paginaSolicitada)
+        ->withQueryString();
 
     foreach ($convocatorias as $row) {
         $archivoconvocatoria = ArchivoConvocatoria::where('id_convocatoria', $row->id)->orderBy('created_at', 'desc')->get();
@@ -179,11 +195,11 @@ class HomeController extends Controller
     return view('paginas/convocatorias', $data);
     }
     public function verconvocatoria(Convocatoria $convocatoria){
-        $data['convocatoria']=$convocatoria;
-        $data['archivos']=ArchivoConvocatoria::where('id_convocatoria', $convocatoria->id)->orderBy('id', 'desc')->paginate(5);
-        $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();
-        $data['submenus']=Menu::whereNotNull('categoriamenu')->get();
-        return view('paginas/verconvocatoria', $data);
+        abort_unless((bool) $convocatoria->es_activo, 404);
+
+        return redirect()->route('convocatoriaweb', [
+            'convocatoria' => $convocatoria->id,
+        ]);
     }
     public function comunicadosall(){
         $data['menus']=Menu::where('activo_menu', 1)->whereNull('categoriamenu')->get();

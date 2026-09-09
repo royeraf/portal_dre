@@ -791,8 +791,8 @@ class ChatbotTest extends TestCase
             'descripcion' => 'Proceso institucional vigente.',
             'tipo' => 'PRUEBA',
             'es_activo' => 1,
-            'fecha_inicio' => '2026-08-04',
-            'fecha_termino' => '2026-09-03',
+            'fecha_inicio' => now()->subDay()->toDateString(),
+            'fecha_termino' => now()->addDays(30)->toDateString(),
         ]);
 
         try {
@@ -804,7 +804,7 @@ class ChatbotTest extends TestCase
             $response->assertOk();
             $this->assertStringContainsString('Convocatoria de prueba', $response->json('answer'));
             $this->assertCount(1, $response->json('links'));
-            $this->assertStringContainsString('/verconvocatoria/9001', $response->json('links.0.url'));
+            $this->assertStringContainsString('/convocatoriaweb?convocatoria=9001', $response->json('links.0.url'));
         } finally {
             \Schema::dropIfExists('convocatoria');
         }

@@ -27,10 +27,29 @@
             x-data="{
                 view:  localStorage.getItem('conv_view') || 'grid',
                 modal: null,
-                openModal(data)  { this.modal = data; document.body.style.overflow = 'hidden'; },
-                closeModal()     { this.modal = null; document.body.style.overflow = ''; }
+                convocatoriaInicial: {{ max(0, (int) request('convocatoria')) }},
+                openModal(data, id) {
+                    this.modal = data;
+                    document.body.style.overflow = 'hidden';
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('convocatoria', id);
+                    window.history.replaceState({}, '', url);
+                    this.$nextTick(() => reInitLucideIcons());
+                },
+                closeModal() {
+                    this.modal = null;
+                    document.body.style.overflow = '';
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('convocatoria');
+                    window.history.replaceState({}, '', url);
+                },
+                abrirConvocatoriaInicial() {
+                    if (!this.convocatoriaInicial) return;
+                    const boton = this.$root.querySelector(`[data-convocatoria-id='${this.convocatoriaInicial}']`);
+                    if (boton) boton.click();
+                }
             }"
-            x-init="$watch('view', v => { localStorage.setItem('conv_view', v); $nextTick(() => reInitLucideIcons()); })"
+            x-init="$watch('view', v => { localStorage.setItem('conv_view', v); $nextTick(() => reInitLucideIcons()); }); $nextTick(() => abrirConvocatoriaInicial())"
             @keydown.escape.window="closeModal()">
 
             {{-- ── FILTROS ───────────────────────────────────── --}}
@@ -168,7 +187,7 @@
                         'nuevo'       => $nuevo,
                         'fi'          => $fi,
                         'ft'          => $ft,
-                        'descripcion' => $row->descripcion,
+                        'descripcion' => \Mews\Purifier\Facades\Purifier::clean($row->descripcion, 'rich_content'),
                         'archivos'    => collect($row->archivos)->map(function ($a) use ($fileIcon) {
                             $icon = $fileIcon($a['url_archivo']);
                             return [
@@ -256,15 +275,14 @@
                                     </div>
                                     @endif
                                 </div>
-                                @if($detail)
-                                <button data-modal="{{ json_encode($mdata) }}"
-                                        @click="openModal(JSON.parse($el.dataset.modal))"
+                                <button data-convocatoria-id="{{ $row->id }}"
+                                        data-modal="{{ json_encode($mdata) }}"
+                                        @click="openModal(JSON.parse($el.dataset.modal), {{ $row->id }})"
                                         class="w-full sm:w-auto justify-center flex items-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-xl sm:rounded-lg text-xs font-bold shadow-sm transition-all duration-200 shrink-0
                                                {{ $abierto ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200' : 'bg-dre-primary text-white hover:bg-dre-accent shadow-blue-200' }}">
                                     <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0 pointer-events-none"></i>
                                     Ver detalle
                                 </button>
-                                @endif
                             </div>
                         </template>
 
@@ -287,15 +305,14 @@
                                     </div>
                                     @endif
                                 </div>
-                                @if($detail)
-                                <button data-modal="{{ json_encode($mdata) }}"
-                                        @click="openModal(JSON.parse($el.dataset.modal))"
+                                <button data-convocatoria-id="{{ $row->id }}"
+                                        data-modal="{{ json_encode($mdata) }}"
+                                        @click="openModal(JSON.parse($el.dataset.modal), {{ $row->id }})"
                                         class="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl sm:rounded-lg text-xs font-bold shadow-sm transition-all duration-200
                                                {{ $abierto ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-200' : 'bg-dre-primary text-white hover:bg-dre-accent shadow-blue-200' }}">
                                     <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0 pointer-events-none"></i>
                                     Ver detalle
                                 </button>
-                                @endif
                             </div>
                         </template>
 

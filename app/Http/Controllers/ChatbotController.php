@@ -708,7 +708,7 @@ PROMPT;
                             .Str::limit(strip_tags($item->descripcion), 400),
                         'context' => $this->plazoConvocatoria($item)
                             .Str::limit(strip_tags((string) $item->descripcion), 2000),
-                        'url' => route('verconvocatoria', $item),
+                        'url' => route('convocatoriaweb', ['convocatoria' => $item->id]),
                         'starts_at' => $plazo['inicio'],
                         'ends_at' => $plazo['fin'],
                         'deadline_status' => $plazo['estado'],

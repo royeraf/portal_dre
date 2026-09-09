@@ -71,16 +71,64 @@ class PortalDocumentWorkflowTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $response = $this->get(route('verconvocatoria', $convocatoriaId));
+        $response = $this->get(route('convocatoriaweb', ['convocatoria' => $convocatoriaId]));
 
         $response->assertOk();
-        $response->assertSeeText('Descripción oficial');
+        $response->assertSee('Descripci\\u00f3n oficial', false);
         $response->assertDontSee('alert("xss")');
-        $response->assertDontSee('&lt;/p&gt;', false);
-        $response->assertSee('Ver / descargar: Cronograma');
-        $response->assertSee('href="'.url('/archivos/cronograma.pdf').'"', false);
-        $response->assertSee('rel="noopener noreferrer"', false);
-        $response->assertSeeText('Documentos adjuntos (1)');
+        $response->assertSee('data-convocatoria-id="'.$convocatoriaId.'"', false);
+        $response->assertSee('cronograma.pdf', false);
+        $response->assertSee('Documentos adjuntos');
+    }
+
+    public function test_old_convocatoria_url_redirects_to_the_existing_listing_modal(): void
+    {
+        $convocatoriaId = DB::table('convocatoria')->insertGetId([
+            'titulo' => 'Convocatoria enlazada',
+            'tipo' => 'CAS',
+            'descripcion' => 'Detalle',
+            'fecha_inicio' => now()->toDateString(),
+            'fecha_termino' => now()->addDay()->toDateString(),
+            'es_activo' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->get(route('verconvocatoria', $convocatoriaId))
+            ->assertRedirect(route('convocatoriaweb', ['convocatoria' => $convocatoriaId]));
+    }
+
+    public function test_requested_convocatoria_is_loaded_even_when_it_is_on_another_page(): void
+    {
+        $convocatoriaId = DB::table('convocatoria')->insertGetId([
+            'titulo' => 'Convocatoria antigua enlazada',
+            'tipo' => 'CAS',
+            'descripcion' => 'Debe abrirse desde el chatbot',
+            'fecha_inicio' => now()->subMonth()->toDateString(),
+            'fecha_termino' => now()->addDay()->toDateString(),
+            'es_activo' => 1,
+            'created_at' => now()->subMonth(),
+            'updated_at' => now()->subMonth(),
+        ]);
+
+        foreach (range(1, 13) as $index) {
+            DB::table('convocatoria')->insert([
+                'titulo' => 'Convocatoria reciente '.$index,
+                'tipo' => 'CAS',
+                'descripcion' => 'Detalle reciente',
+                'fecha_inicio' => now()->toDateString(),
+                'fecha_termino' => now()->addDays(2)->toDateString(),
+                'es_activo' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $this->get(route('convocatoriaweb', ['convocatoria' => $convocatoriaId]))
+            ->assertOk()
+            ->assertSeeText('Convocatoria antigua enlazada')
+            ->assertSee('data-convocatoria-id="'.$convocatoriaId.'"', false)
+            ->assertSee('abrirConvocatoriaInicial()', false);
     }
 
     public function test_portal_sync_imports_only_referenced_pdfs_as_drafts_and_does_not_duplicate_them(): void
