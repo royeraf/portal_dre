@@ -3,9 +3,11 @@ import './bootstrap';
 import Alpine from 'alpinejs';
 import intersect from '@alpinejs/intersect';
 import collapse from '@alpinejs/collapse';
+import convocatoriaModal from './convocatoria-modal';
 
 Alpine.plugin(intersect);
 Alpine.plugin(collapse);
+Alpine.data('convocatoriaModal', convocatoriaModal);
 
 window.Alpine = Alpine;
 
@@ -31,7 +33,7 @@ import {
     // Directorio
     Phone,
     // Convocatorias
-    SlidersHorizontal, Filter, Paperclip, LayoutGrid, List, Sparkles,
+    SlidersHorizontal, Filter, Paperclip, LayoutGrid, List,
     FileSpreadsheet, Presentation, FileArchive, FileImage, FileType, File, Flag,
     // Infraestructura slider
     Expand,
@@ -53,7 +55,7 @@ const icons = {
     Briefcase, FileCheck, BarChart2, Receipt, Landmark, Building2, BookMarked,
     Video, Play,
     Phone,
-    SlidersHorizontal, Filter, Paperclip, LayoutGrid, List, Sparkles,
+    SlidersHorizontal, Filter, Paperclip, LayoutGrid, List,
     FileSpreadsheet, Presentation, FileArchive, FileImage, FileType, File, Flag,
     Expand,
     Download, Info, AlertCircle, User, Network, Calendar, CalendarCheck, Tag,

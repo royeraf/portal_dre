@@ -64,8 +64,6 @@
 
 @include('principal.footer')
 
-<x-dre-chatbot />
-
 @stack('scripts')
 </body>
 </html>

@@ -974,6 +974,8 @@
     <span>Visitas: <span class="tracking-wide ml-0.5">{{ $contador }}</span></span>
 </div>
 
+<x-dre-chatbot />
+
 @endsection
 
 @push('scripts')
