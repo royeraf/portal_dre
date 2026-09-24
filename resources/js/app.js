@@ -63,8 +63,16 @@ const icons = {
     Lightbulb, Images, ImageOff, Image
 };
 
-createIcons({ icons, attrs: { 'stroke-width': 1.75 } });
-window.reInitLucideIcons = () => createIcons({ icons, attrs: { 'stroke-width': 1.75 } });
+const iconAttrs = { 'stroke-width': 1.75 };
+
+const renderIcons = () => {
+    if (!document.querySelector('[data-lucide]')) return;
+    createIcons({ icons, attrs: iconAttrs });
+    document.querySelectorAll('svg[data-lucide]').forEach(svg => svg.removeAttribute('data-lucide'));
+};
+
+renderIcons();
+window.reInitLucideIcons = renderIcons;
 
 // ── Skeleton removal on image load ─────────────────────────
 document.querySelectorAll('.img-wrap').forEach(wrap => {
@@ -78,14 +86,12 @@ document.querySelectorAll('.img-wrap').forEach(wrap => {
 // Re-create icons when Alpine.js updates the DOM — debounced to avoid thrashing
 document.addEventListener('alpine:initialized', () => {
     // Pass inicial: Alpine ya renderizó x-if/x-show durante la init
-    setTimeout(() => createIcons({ icons, attrs: { 'stroke-width': 1.75 } }), 100);
+    setTimeout(renderIcons, 100);
 
     let iconTimer;
     const observer = new MutationObserver(() => {
         clearTimeout(iconTimer);
-        iconTimer = setTimeout(() => {
-            createIcons({ icons, attrs: { 'stroke-width': 1.75 } });
-        }, 50);
+        iconTimer = setTimeout(renderIcons, 50);
     });
     observer.observe(document.body, { childList: true, subtree: true });
 });
